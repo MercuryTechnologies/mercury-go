@@ -18,7 +18,6 @@ import (
 type Client struct {
 	Options          []option.RequestOption
 	Ar               ArService
-	Books            BookService
 	Categories       CategoryService
 	Credit           CreditService
 	Events           EventService
@@ -66,7 +65,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r = Client{Options: opts}
 
 	r.Ar = NewArService(opts...)
-	r.Books = NewBookService(opts...)
 	r.Categories = NewCategoryService(opts...)
 	r.Credit = NewCreditService(opts...)
 	r.Events = NewEventService(opts...)
