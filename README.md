@@ -6,7 +6,7 @@
 
 <!-- x-release-please-end -->
 
-The Mercury Go library provides convenient access to the Mercury REST API
+The Mercury Go library provides convenient access to the [Mercury REST API](https://docs.mercury.com/)
 from applications written in Go.
 
 It is generated with [Stainless](https://www.stainless.com/).
