@@ -25,12 +25,12 @@ func TestManualPagination(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	page, err := client.Webhooks.List(context.TODO(), mercury.WebhookListParams{})
+	page, err := client.Treasury.List(context.TODO(), mercury.TreasuryListParams{})
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	for _, webhook := range page.Webhooks {
-		t.Logf("%+v\n", webhook.ID)
+	for _, treasury := range page.Accounts {
+		t.Logf("%+v\n", treasury.ID)
 	}
 	// The mock server isn't going to give us real pagination
 	page, err = page.GetNextPage()
@@ -38,8 +38,8 @@ func TestManualPagination(t *testing.T) {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
 	if page != nil {
-		for _, webhook := range page.Webhooks {
-			t.Logf("%+v\n", webhook.ID)
+		for _, treasury := range page.Accounts {
+			t.Logf("%+v\n", treasury.ID)
 		}
 	}
 }

@@ -277,11 +277,11 @@ This library provides some conveniences for working with paginated list endpoint
 You can use `.ListAutoPaging()` methods to iterate through items across all pages:
 
 ```go
-iter := client.Webhooks.ListAutoPaging(context.TODO(), mercury.WebhookListParams{})
+iter := client.Treasury.ListAutoPaging(context.TODO(), mercury.TreasuryListParams{})
 // Automatically fetches more pages as needed.
 for iter.Next() {
-	apiWebhook := iter.Current()
-	fmt.Printf("%+v\n", apiWebhook)
+	treasuryListResponse := iter.Current()
+	fmt.Printf("%+v\n", treasuryListResponse)
 }
 if err := iter.Err(); err != nil {
 	panic(err.Error())
@@ -292,10 +292,10 @@ Or you can use simple `.List()` methods to fetch a single page and receive a sta
 with additional helper methods like `.GetNextPage()`, e.g.:
 
 ```go
-page, err := client.Webhooks.List(context.TODO(), mercury.WebhookListParams{})
+page, err := client.Treasury.List(context.TODO(), mercury.TreasuryListParams{})
 for page != nil {
-	for _, webhook := range page.Webhooks {
-		fmt.Printf("%+v\n", webhook)
+	for _, treasury := range page.Accounts {
+		fmt.Printf("%+v\n", treasury)
 	}
 	page, err = page.GetNextPage()
 }
