@@ -18,7 +18,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/stainless-sdks/mercury-go/internal"
 	"github.com/stainless-sdks/mercury-go/internal/apierror"
 	"github.com/stainless-sdks/mercury-go/internal/apiform"
@@ -153,10 +152,7 @@ func NewRequestConfig(ctx context.Context, method string, u string, body any, ds
 	if reader != nil {
 		req.Header.Set("Content-Type", contentType)
 	}
-	if method != http.MethodGet {
-		// Note this can be overridden with `WithHeader("Idempotency-Key", myIdempotencyKey)`
-		req.Header.Set("Idempotency-Key", "stainless-go-"+uuid.New().String())
-	}
+
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("X-Stainless-Retry-Count", "0")
 	req.Header.Set("X-Stainless-Timeout", "0")
@@ -598,7 +594,7 @@ func (cfg *RequestConfig) Clone(ctx context.Context) *RequestConfig {
 		Password:       cfg.Password,
 		APIKey:         cfg.APIKey,
 	}
-	new.Request.Header.Set("Idempotency-Key", "stainless-go-"+uuid.New().String())
+
 	return new
 }
 
