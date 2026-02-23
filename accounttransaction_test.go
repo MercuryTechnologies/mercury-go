@@ -74,6 +74,12 @@ func TestAccountTransactionSendWithOptionalParams(t *testing.T) {
 			RecipientID:    "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
 			ExternalMemo:   mercury.String("externalMemo"),
 			Note:           mercury.String("note"),
+			Purpose: mercury.AccountTransactionSendParamsPurpose{
+				Simple: mercury.AccountTransactionSendParamsPurposeSimple{
+					Category:       "Employee",
+					AdditionalInfo: mercury.String("additionalInfo"),
+				},
+			},
 		},
 	)
 	if err != nil {
