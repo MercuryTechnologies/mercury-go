@@ -43,7 +43,7 @@ func NewRecipientService(opts ...option.RequestOption) (r RecipientService) {
 }
 
 // Create a new recipient for making payments
-func (r *RecipientService) New(ctx context.Context, body RecipientNewParams, opts ...option.RequestOption) (res *RecipientInfo, err error) {
+func (r *RecipientService) New(ctx context.Context, body RecipientNewParams, opts ...option.RequestOption) (res *Recipient, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "recipients"
@@ -52,7 +52,7 @@ func (r *RecipientService) New(ctx context.Context, body RecipientNewParams, opt
 }
 
 // Retrieve details of a specific recipient by ID
-func (r *RecipientService) Get(ctx context.Context, recipientID string, opts ...option.RequestOption) (res *RecipientInfo, err error) {
+func (r *RecipientService) Get(ctx context.Context, recipientID string, opts ...option.RequestOption) (res *Recipient, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if recipientID == "" {
@@ -65,7 +65,7 @@ func (r *RecipientService) Get(ctx context.Context, recipientID string, opts ...
 }
 
 // Update an existing recipient's information
-func (r *RecipientService) Update(ctx context.Context, recipientID string, body RecipientUpdateParams, opts ...option.RequestOption) (res *RecipientInfo, err error) {
+func (r *RecipientService) Update(ctx context.Context, recipientID string, body RecipientUpdateParams, opts ...option.RequestOption) (res *Recipient, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if recipientID == "" {
@@ -725,27 +725,27 @@ func (r *InternationalWireRoutingInfoCorrespondentInfo) UnmarshalJSON(data []byt
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type RecipientInfo struct {
+type Recipient struct {
 	// ID for a Mercury account.
-	ID          string                    `json:"id,required" format:"uuid"`
-	Attachments []RecipientInfoAttachment `json:"attachments,required"`
+	ID          string                `json:"id,required" format:"uuid"`
+	Attachments []RecipientAttachment `json:"attachments,required"`
 	// Any of "ach", "check", "domesticWire", "internationalWire", "realTimePayment".
-	DefaultPaymentMethod RecipientInfoDefaultPaymentMethod `json:"defaultPaymentMethod,required"`
-	Emails               []string                          `json:"emails,required"`
-	Name                 string                            `json:"name,required"`
+	DefaultPaymentMethod RecipientDefaultPaymentMethod `json:"defaultPaymentMethod,required"`
+	Emails               []string                      `json:"emails,required"`
+	Name                 string                        `json:"name,required"`
 	// Any of "active", "deleted".
-	Status                       RecipientInfoStatus                     `json:"status,required"`
-	Address                      Address                                 `json:"address,nullable"`
-	CheckInfo                    RecipientInfoCheckInfo                  `json:"checkInfo,nullable"`
-	ContactEmail                 string                                  `json:"contactEmail,nullable"`
-	DateLastPaid                 string                                  `json:"dateLastPaid,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
-	DefaultAddress               AddressWithoutName                      `json:"defaultAddress,nullable"`
-	DomesticWireRoutingInfo      DomesticWireRoutingInfo                 `json:"domesticWireRoutingInfo,nullable"`
-	ElectronicRoutingInfo        ElectronicRoutingInfo                   `json:"electronicRoutingInfo,nullable"`
-	InternationalWireRoutingInfo InternationalWireRoutingInfo            `json:"internationalWireRoutingInfo,nullable"`
-	IsBusiness                   bool                                    `json:"isBusiness,nullable"`
-	Nickname                     string                                  `json:"nickname,nullable"`
-	RealTimePaymentRoutingInfo   RecipientInfoRealTimePaymentRoutingInfo `json:"realTimePaymentRoutingInfo,nullable"`
+	Status                       RecipientStatus                     `json:"status,required"`
+	Address                      Address                             `json:"address,nullable"`
+	CheckInfo                    RecipientCheckInfo                  `json:"checkInfo,nullable"`
+	ContactEmail                 string                              `json:"contactEmail,nullable"`
+	DateLastPaid                 string                              `json:"dateLastPaid,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	DefaultAddress               AddressWithoutName                  `json:"defaultAddress,nullable"`
+	DomesticWireRoutingInfo      DomesticWireRoutingInfo             `json:"domesticWireRoutingInfo,nullable"`
+	ElectronicRoutingInfo        ElectronicRoutingInfo               `json:"electronicRoutingInfo,nullable"`
+	InternationalWireRoutingInfo InternationalWireRoutingInfo        `json:"internationalWireRoutingInfo,nullable"`
+	IsBusiness                   bool                                `json:"isBusiness,nullable"`
+	Nickname                     string                              `json:"nickname,nullable"`
+	RealTimePaymentRoutingInfo   RecipientRealTimePaymentRoutingInfo `json:"realTimePaymentRoutingInfo,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                           respjson.Field
@@ -771,12 +771,12 @@ type RecipientInfo struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r RecipientInfo) RawJSON() string { return r.JSON.raw }
-func (r *RecipientInfo) UnmarshalJSON(data []byte) error {
+func (r Recipient) RawJSON() string { return r.JSON.raw }
+func (r *Recipient) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type RecipientInfoAttachment struct {
+type RecipientAttachment struct {
 	// Name of the uploaded file
 	FileName string `json:"fileName,required"`
 	// Timestamp when the attachment was uploaded
@@ -800,29 +800,29 @@ type RecipientInfoAttachment struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r RecipientInfoAttachment) RawJSON() string { return r.JSON.raw }
-func (r *RecipientInfoAttachment) UnmarshalJSON(data []byte) error {
+func (r RecipientAttachment) RawJSON() string { return r.JSON.raw }
+func (r *RecipientAttachment) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type RecipientInfoDefaultPaymentMethod string
+type RecipientDefaultPaymentMethod string
 
 const (
-	RecipientInfoDefaultPaymentMethodACH               RecipientInfoDefaultPaymentMethod = "ach"
-	RecipientInfoDefaultPaymentMethodCheck             RecipientInfoDefaultPaymentMethod = "check"
-	RecipientInfoDefaultPaymentMethodDomesticWire      RecipientInfoDefaultPaymentMethod = "domesticWire"
-	RecipientInfoDefaultPaymentMethodInternationalWire RecipientInfoDefaultPaymentMethod = "internationalWire"
-	RecipientInfoDefaultPaymentMethodRealTimePayment   RecipientInfoDefaultPaymentMethod = "realTimePayment"
+	RecipientDefaultPaymentMethodACH               RecipientDefaultPaymentMethod = "ach"
+	RecipientDefaultPaymentMethodCheck             RecipientDefaultPaymentMethod = "check"
+	RecipientDefaultPaymentMethodDomesticWire      RecipientDefaultPaymentMethod = "domesticWire"
+	RecipientDefaultPaymentMethodInternationalWire RecipientDefaultPaymentMethod = "internationalWire"
+	RecipientDefaultPaymentMethodRealTimePayment   RecipientDefaultPaymentMethod = "realTimePayment"
 )
 
-type RecipientInfoStatus string
+type RecipientStatus string
 
 const (
-	RecipientInfoStatusActive  RecipientInfoStatus = "active"
-	RecipientInfoStatusDeleted RecipientInfoStatus = "deleted"
+	RecipientStatusActive  RecipientStatus = "active"
+	RecipientStatusDeleted RecipientStatus = "deleted"
 )
 
-type RecipientInfoCheckInfo struct {
+type RecipientCheckInfo struct {
 	Address AddressWithoutName `json:"address,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -833,12 +833,12 @@ type RecipientInfoCheckInfo struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r RecipientInfoCheckInfo) RawJSON() string { return r.JSON.raw }
-func (r *RecipientInfoCheckInfo) UnmarshalJSON(data []byte) error {
+func (r RecipientCheckInfo) RawJSON() string { return r.JSON.raw }
+func (r *RecipientCheckInfo) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type RecipientInfoRealTimePaymentRoutingInfo struct {
+type RecipientRealTimePaymentRoutingInfo struct {
 	AccountNumber string             `json:"accountNumber,required"`
 	RoutingNumber string             `json:"routingNumber,required"`
 	Address       AddressWithoutName `json:"address,nullable"`
@@ -855,8 +855,8 @@ type RecipientInfoRealTimePaymentRoutingInfo struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r RecipientInfoRealTimePaymentRoutingInfo) RawJSON() string { return r.JSON.raw }
-func (r *RecipientInfoRealTimePaymentRoutingInfo) UnmarshalJSON(data []byte) error {
+func (r RecipientRealTimePaymentRoutingInfo) RawJSON() string { return r.JSON.raw }
+func (r *RecipientRealTimePaymentRoutingInfo) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -880,7 +880,7 @@ type RecipientListResponse struct {
 	// Pagination information including cursors for navigating to next/previous pages
 	Page RecipientListResponsePage `json:"page,required"`
 	// List of recipients in the current page
-	Recipients []RecipientInfo `json:"recipients,required"`
+	Recipients []Recipient `json:"recipients,required"`
 	// Total number of recipients in the current page
 	Total int64 `json:"total,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].

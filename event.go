@@ -38,7 +38,7 @@ func NewEventService(opts ...option.RequestOption) (r EventService) {
 }
 
 // Get event by ID
-func (r *EventService) Get(ctx context.Context, eventID string, opts ...option.RequestOption) (res *APIEvent, err error) {
+func (r *EventService) Get(ctx context.Context, eventID string, opts ...option.RequestOption) (res *Event, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if eventID == "" {
@@ -62,7 +62,7 @@ func (r *EventService) List(ctx context.Context, query EventListParams, opts ...
 // Represents a single event in the Mercury API event stream. | Events track
 // changes to resources over time, providing an audit trail | of all modifications
 // with before/after values and metadata about what changed.
-type APIEvent struct {
+type Event struct {
 	// ID for the API event
 	ID string `json:"id,required" format:"uuid"`
 	// List of JSON paths that were modified in this event
@@ -74,14 +74,14 @@ type APIEvent struct {
 	// The type of operation performed (e.g., create, update, delete)
 	//
 	// Any of "create", "update", "delete".
-	OperationType APIEventOperationType `json:"operationType,required"`
+	OperationType EventOperationType `json:"operationType,required"`
 	// The ID of the resource that was affected
 	ResourceID string `json:"resourceId,required" format:"uuid"`
 	// The type of resource that was affected (e.g., transaction, account)
 	//
 	// Any of "transaction", "checkingAccount", "savingsAccount", "treasuryAccount",
 	// "investmentAccount", "creditAccount".
-	ResourceType APIEventResourceType `json:"resourceType,required"`
+	ResourceType EventResourceType `json:"resourceType,required"`
 	// Version number of the resource after this change
 	ResourceVersion int64 `json:"resourceVersion,required"`
 	// JSON object containing the fields that were changed and their previous values
@@ -104,37 +104,37 @@ type APIEvent struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r APIEvent) RawJSON() string { return r.JSON.raw }
-func (r *APIEvent) UnmarshalJSON(data []byte) error {
+func (r Event) RawJSON() string { return r.JSON.raw }
+func (r *Event) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The type of operation performed (e.g., create, update, delete)
-type APIEventOperationType string
+type EventOperationType string
 
 const (
-	APIEventOperationTypeCreate APIEventOperationType = "create"
-	APIEventOperationTypeUpdate APIEventOperationType = "update"
-	APIEventOperationTypeDelete APIEventOperationType = "delete"
+	EventOperationTypeCreate EventOperationType = "create"
+	EventOperationTypeUpdate EventOperationType = "update"
+	EventOperationTypeDelete EventOperationType = "delete"
 )
 
 // The type of resource that was affected (e.g., transaction, account)
-type APIEventResourceType string
+type EventResourceType string
 
 const (
-	APIEventResourceTypeTransaction       APIEventResourceType = "transaction"
-	APIEventResourceTypeCheckingAccount   APIEventResourceType = "checkingAccount"
-	APIEventResourceTypeSavingsAccount    APIEventResourceType = "savingsAccount"
-	APIEventResourceTypeTreasuryAccount   APIEventResourceType = "treasuryAccount"
-	APIEventResourceTypeInvestmentAccount APIEventResourceType = "investmentAccount"
-	APIEventResourceTypeCreditAccount     APIEventResourceType = "creditAccount"
+	EventResourceTypeTransaction       EventResourceType = "transaction"
+	EventResourceTypeCheckingAccount   EventResourceType = "checkingAccount"
+	EventResourceTypeSavingsAccount    EventResourceType = "savingsAccount"
+	EventResourceTypeTreasuryAccount   EventResourceType = "treasuryAccount"
+	EventResourceTypeInvestmentAccount EventResourceType = "investmentAccount"
+	EventResourceTypeCreditAccount     EventResourceType = "creditAccount"
 )
 
 // Paginated response containing a list of API events. | Use the page cursor
 // information to fetch additional pages of events.
 type EventListResponse struct {
 	// List of events in the current page
-	Events []APIEvent `json:"events,required"`
+	Events []Event `json:"events,required"`
 	// Pagination information including cursors for navigating to next/previous pages
 	Page EventListResponsePage `json:"page,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].

@@ -47,6 +47,7 @@ import (
 func main() {
 	client := mercury.NewClient(
 		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("MERCURY_API_KEY")
+		option.WithEnvironmentSandbox(), // defaults to option.WithEnvironmentProduction()
 	)
 	account, err := client.Account.Get(context.TODO(), "REPLACE_ME")
 	if err != nil {
