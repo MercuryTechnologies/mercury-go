@@ -14,7 +14,6 @@ import (
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
@@ -55,27 +54,12 @@ func (r *AccountService) Get(ctx context.Context, accountID string, opts ...opti
 
 // Retrieve a paginated list of accounts. Supports cursor-based pagination with
 // limit, order, start_after, and end_before query parameters.
-func (r *AccountService) List(ctx context.Context, query AccountListParams, opts ...option.RequestOption) (res *pagination.CursorPage[AccountListResponse], err error) {
-	var raw *http.Response
+func (r *AccountService) List(ctx context.Context, query AccountListParams, opts ...option.RequestOption) (res *AccountListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "accounts"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Retrieve a paginated list of accounts. Supports cursor-based pagination with
-// limit, order, start_after, and end_before query parameters.
-func (r *AccountService) ListAutoPaging(ctx context.Context, query AccountListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[AccountListResponse] {
-	return pagination.NewCursorPageAutoPager(r.List(ctx, query, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
 }
 
 // Retrieve all debit and credit cards associated with a specific account.
@@ -94,32 +78,16 @@ func (r *AccountService) ListCards(ctx context.Context, accountID string, opts .
 // Retrieve a paginated list of monthly statements for a specific account. Supports
 // cursor-based pagination with limit, order, start_after, and end_before query
 // parameters, as well as date range filtering with start and end parameters.
-func (r *AccountService) ListStatements(ctx context.Context, accountID string, query AccountListStatementsParams, opts ...option.RequestOption) (res *pagination.CursorPage[AccountListStatementsResponse], err error) {
-	var raw *http.Response
+func (r *AccountService) ListStatements(ctx context.Context, accountID string, query AccountListStatementsParams, opts ...option.RequestOption) (res *AccountListStatementsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
 		return
 	}
 	path := fmt.Sprintf("account/%s/statements", accountID)
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Retrieve a paginated list of monthly statements for a specific account. Supports
-// cursor-based pagination with limit, order, start_after, and end_before query
-// parameters, as well as date range filtering with start and end parameters.
-func (r *AccountService) ListStatementsAutoPaging(ctx context.Context, accountID string, query AccountListStatementsParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[AccountListStatementsResponse] {
-	return pagination.NewCursorPageAutoPager(r.ListStatements(ctx, accountID, query, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
 }
 
 // Create a "request to send money" that will require approval based on your
