@@ -144,9 +144,9 @@ type AccountTransactionSendParams struct {
 	Amount float64 `json:"amount,required"`
 	// Unique string identifying the transaction
 	IdempotencyKey string `json:"idempotencyKey,required"`
-	// Payment method to use, currently only supports "ach".
+	// If domesticWire is used, then the purpose field is required.
 	//
-	// Any of "ach".
+	// Any of "ach", "domesticWire".
 	PaymentMethod AccountTransactionSendParamsPaymentMethod `json:"paymentMethod,omitzero,required"`
 	// ID for a Mercury account.
 	RecipientID string `json:"recipientId,required" format:"uuid"`
@@ -154,6 +154,9 @@ type AccountTransactionSendParams struct {
 	ExternalMemo param.Opt[string] `json:"externalMemo,omitzero"`
 	// Optional note
 	Note param.Opt[string] `json:"note,omitzero"`
+	// External API representation of SendMoneyPurpose. Only exposes the 'simple' field
+	// to decouple internal implementation from external API.
+	Purpose AccountTransactionSendParamsPurpose `json:"purpose,omitzero"`
 	paramObj
 }
 
@@ -165,9 +168,54 @@ func (r *AccountTransactionSendParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Payment method to use, currently only supports "ach".
+// If domesticWire is used, then the purpose field is required.
 type AccountTransactionSendParamsPaymentMethod string
 
 const (
-	AccountTransactionSendParamsPaymentMethodACH AccountTransactionSendParamsPaymentMethod = "ach"
+	AccountTransactionSendParamsPaymentMethodACH          AccountTransactionSendParamsPaymentMethod = "ach"
+	AccountTransactionSendParamsPaymentMethodDomesticWire AccountTransactionSendParamsPaymentMethod = "domesticWire"
 )
+
+// External API representation of SendMoneyPurpose. Only exposes the 'simple' field
+// to decouple internal implementation from external API.
+type AccountTransactionSendParamsPurpose struct {
+	Simple AccountTransactionSendParamsPurposeSimple `json:"simple,omitzero"`
+	paramObj
+}
+
+func (r AccountTransactionSendParamsPurpose) MarshalJSON() (data []byte, err error) {
+	type shadow AccountTransactionSendParamsPurpose
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *AccountTransactionSendParamsPurpose) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Category is required.
+type AccountTransactionSendParamsPurposeSimple struct {
+	// Payment category.
+	//
+	// Any of "Employee", "Landlord", "Vendor", "Contractor", "Subsidiary",
+	// "TransferToMyExternalAccount", "FamilyMemberOrFriend", "ForGoodsOrServices",
+	// "AngelInvestment", "SavingsOrInvestments", "Expenses", "Travel", "Other".
+	Category string `json:"category,omitzero,required"`
+	// Additional information. Required for: Vendor (vendor name), Contractor
+	// (contractor name), Other (payment description). Optional for Subsidiary
+	// (subsidiary name). Not accepted for any other categories.
+	AdditionalInfo param.Opt[string] `json:"additionalInfo,omitzero"`
+	paramObj
+}
+
+func (r AccountTransactionSendParamsPurposeSimple) MarshalJSON() (data []byte, err error) {
+	type shadow AccountTransactionSendParamsPurposeSimple
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *AccountTransactionSendParamsPurposeSimple) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[AccountTransactionSendParamsPurposeSimple](
+		"category", "Employee", "Landlord", "Vendor", "Contractor", "Subsidiary", "TransferToMyExternalAccount", "FamilyMemberOrFriend", "ForGoodsOrServices", "AngelInvestment", "SavingsOrInvestments", "Expenses", "Travel", "Other",
+	)
+}
