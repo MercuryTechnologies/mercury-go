@@ -72,7 +72,7 @@ func (r *TransactionService) Update(ctx context.Context, transactionID string, b
 // Retrieve a paginated list of all transactions across all accounts. Supports
 // advanced filtering by date ranges, status, categories, and cursor-based
 // pagination.
-func (r *TransactionService) List(ctx context.Context, query TransactionListParams, opts ...option.RequestOption) (res *pagination.CursorIDPage[Transaction], err error) {
+func (r *TransactionService) List(ctx context.Context, query TransactionListParams, opts ...option.RequestOption) (res *pagination.CursorIDTransactions[Transaction], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
@@ -92,8 +92,8 @@ func (r *TransactionService) List(ctx context.Context, query TransactionListPara
 // Retrieve a paginated list of all transactions across all accounts. Supports
 // advanced filtering by date ranges, status, categories, and cursor-based
 // pagination.
-func (r *TransactionService) ListAutoPaging(ctx context.Context, query TransactionListParams, opts ...option.RequestOption) *pagination.CursorIDPageAutoPager[Transaction] {
-	return pagination.NewCursorIDPageAutoPager(r.List(ctx, query, opts...))
+func (r *TransactionService) ListAutoPaging(ctx context.Context, query TransactionListParams, opts ...option.RequestOption) *pagination.CursorIDTransactionsAutoPager[Transaction] {
+	return pagination.NewCursorIDTransactionsAutoPager(r.List(ctx, query, opts...))
 }
 
 // Upload a file attachment to a transaction. The file is uploaded via

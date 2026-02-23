@@ -15,6 +15,7 @@ import (
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
@@ -41,12 +42,28 @@ func NewTreasuryService(opts ...option.RequestOption) (r TreasuryService) {
 // Retrieve a paginated list of all treasury accounts associated with the
 // authenticated organization. Use cursor parameters (start_after, end_before) for
 // pagination.
-func (r *TreasuryService) List(ctx context.Context, query TreasuryListParams, opts ...option.RequestOption) (res *TreasuryListResponse, err error) {
+func (r *TreasuryService) List(ctx context.Context, query TreasuryListParams, opts ...option.RequestOption) (res *pagination.CursorIDAccounts[TreasuryListResponse], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "treasury"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieve a paginated list of all treasury accounts associated with the
+// authenticated organization. Use cursor parameters (start_after, end_before) for
+// pagination.
+func (r *TreasuryService) ListAutoPaging(ctx context.Context, query TreasuryListParams, opts ...option.RequestOption) *pagination.CursorIDAccountsAutoPager[TreasuryListResponse] {
+	return pagination.NewCursorIDAccountsAutoPager(r.List(ctx, query, opts...))
 }
 
 // Retrieve a paginated list of statements for a specific treasury account.
@@ -76,35 +93,14 @@ func (r *TreasuryService) GetTransactions(ctx context.Context, treasuryID string
 	return
 }
 
-// Paginated response type for treasury accounts API endpoint
 type TreasuryListResponse struct {
-	// List of treasury accounts in the current page
-	Accounts []TreasuryListResponseAccount `json:"accounts,required"`
-	// Pagination information including cursors for navigating to next/previous pages
-	Page TreasuryListResponsePage `json:"page,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Accounts    respjson.Field
-		Page        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TreasuryListResponse) RawJSON() string { return r.JSON.raw }
-func (r *TreasuryListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type TreasuryListResponseAccount struct {
 	// ID for a Mercury account.
 	ID               string  `json:"id,required" format:"uuid"`
 	AvailableBalance float64 `json:"availableBalance,required"`
 	CreatedAt        string  `json:"createdAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	CurrentBalance   float64 `json:"currentBalance,required"`
 	// Monthly net return breakdown with dividend and fee details
-	NetReturns []TreasuryListResponseAccountNetReturn `json:"netReturns,required"`
+	NetReturns []TreasuryListResponseNetReturn `json:"netReturns,required"`
 	// Any of "active", "deleted", "pending", "archived".
 	Status AccountStatus `json:"status,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -121,15 +117,15 @@ type TreasuryListResponseAccount struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TreasuryListResponseAccount) RawJSON() string { return r.JSON.raw }
-func (r *TreasuryListResponseAccount) UnmarshalJSON(data []byte) error {
+func (r TreasuryListResponse) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Monthly net return breakdown for a treasury account
-type TreasuryListResponseAccountNetReturn struct {
+type TreasuryListResponseNetReturn struct {
 	// List of dividends received by security
-	Dividends []TreasuryListResponseAccountNetReturnDividend `json:"dividends,required"`
+	Dividends []TreasuryListResponseNetReturnDividend `json:"dividends,required"`
 	// First day of the month for this net return
 	Month time.Time `json:"month,required" format:"date"`
 	// Net return amount (dividends minus fees)
@@ -153,13 +149,13 @@ type TreasuryListResponseAccountNetReturn struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TreasuryListResponseAccountNetReturn) RawJSON() string { return r.JSON.raw }
-func (r *TreasuryListResponseAccountNetReturn) UnmarshalJSON(data []byte) error {
+func (r TreasuryListResponseNetReturn) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryListResponseNetReturn) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Dividend information for a specific treasury security
-type TreasuryListResponseAccountNetReturnDividend struct {
+type TreasuryListResponseNetReturnDividend struct {
 	// Security identifier (e.g., "617455696")
 	ID string `json:"id,required"`
 	// Dividend amount for this security
@@ -183,29 +179,8 @@ type TreasuryListResponseAccountNetReturnDividend struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TreasuryListResponseAccountNetReturnDividend) RawJSON() string { return r.JSON.raw }
-func (r *TreasuryListResponseAccountNetReturnDividend) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Pagination information including cursors for navigating to next/previous pages
-type TreasuryListResponsePage struct {
-	// ID for a Mercury account.
-	NextPage string `json:"nextPage" format:"uuid"`
-	// ID for a Mercury account.
-	PreviousPage string `json:"previousPage" format:"uuid"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		NextPage     respjson.Field
-		PreviousPage respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TreasuryListResponsePage) RawJSON() string { return r.JSON.raw }
-func (r *TreasuryListResponsePage) UnmarshalJSON(data []byte) error {
+func (r TreasuryListResponseNetReturnDividend) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryListResponseNetReturnDividend) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

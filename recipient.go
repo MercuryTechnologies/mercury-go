@@ -19,6 +19,7 @@ import (
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
@@ -79,23 +80,54 @@ func (r *RecipientService) Update(ctx context.Context, recipientID string, body 
 
 // Retrieve a paginated list of all recipients. Use cursor parameters (start_after,
 // end_before) for pagination.
-func (r *RecipientService) List(ctx context.Context, query RecipientListParams, opts ...option.RequestOption) (res *RecipientListResponse, err error) {
+func (r *RecipientService) List(ctx context.Context, query RecipientListParams, opts ...option.RequestOption) (res *pagination.CursorIDRecipients[RecipientInfo], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "recipients"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieve a paginated list of all recipients. Use cursor parameters (start_after,
+// end_before) for pagination.
+func (r *RecipientService) ListAutoPaging(ctx context.Context, query RecipientListParams, opts ...option.RequestOption) *pagination.CursorIDRecipientsAutoPager[RecipientInfo] {
+	return pagination.NewCursorIDRecipientsAutoPager(r.List(ctx, query, opts...))
 }
 
 // Retrieve a paginated list of all recipient tax form attachments across all
 // recipients in the organization. Use cursor parameters (start_after, end_before)
 // for pagination.
-func (r *RecipientService) ListAttachments(ctx context.Context, query RecipientListAttachmentsParams, opts ...option.RequestOption) (res *RecipientListAttachmentsResponse, err error) {
+func (r *RecipientService) ListAttachments(ctx context.Context, query RecipientListAttachmentsParams, opts ...option.RequestOption) (res *pagination.CursorIDAttachments[RecipientListAttachmentsResponse], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "recipients/attachments"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieve a paginated list of all recipient tax form attachments across all
+// recipients in the organization. Use cursor parameters (start_after, end_before)
+// for pagination.
+func (r *RecipientService) ListAttachmentsAutoPaging(ctx context.Context, query RecipientListAttachmentsParams, opts ...option.RequestOption) *pagination.CursorIDAttachmentsAutoPager[RecipientListAttachmentsResponse] {
+	return pagination.NewCursorIDAttachmentsAutoPager(r.ListAttachments(ctx, query, opts...))
 }
 
 // Upload a tax form attachment for a recipient. The file is uploaded via
@@ -876,74 +908,7 @@ const (
 	TaxFormTypeUnknown TaxFormType = "unknown"
 )
 
-type RecipientListResponse struct {
-	// Pagination information including cursors for navigating to next/previous pages
-	Page RecipientListResponsePage `json:"page,required"`
-	// List of recipients in the current page
-	Recipients []RecipientInfo `json:"recipients,required"`
-	// Total number of recipients in the current page
-	Total int64 `json:"total,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Page        respjson.Field
-		Recipients  respjson.Field
-		Total       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r RecipientListResponse) RawJSON() string { return r.JSON.raw }
-func (r *RecipientListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Pagination information including cursors for navigating to next/previous pages
-type RecipientListResponsePage struct {
-	// ID for the recipient
-	NextPage string `json:"nextPage" format:"uuid"`
-	// ID for the recipient
-	PreviousPage string `json:"previousPage" format:"uuid"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		NextPage     respjson.Field
-		PreviousPage respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r RecipientListResponsePage) RawJSON() string { return r.JSON.raw }
-func (r *RecipientListResponsePage) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type RecipientListAttachmentsResponse struct {
-	// List of attachments with recipient IDs
-	Attachments []RecipientListAttachmentsResponseAttachment `json:"attachments,required"`
-	// Pagination information
-	Page RecipientListAttachmentsResponsePage `json:"page,required"`
-	// Total number of attachments in the current page
-	Total int64 `json:"total,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Attachments respjson.Field
-		Page        respjson.Field
-		Total       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r RecipientListAttachmentsResponse) RawJSON() string { return r.JSON.raw }
-func (r *RecipientListAttachmentsResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type RecipientListAttachmentsResponseAttachment struct {
 	// Name of the uploaded file
 	FileName string `json:"fileName,required"`
 	// ID for a Mercury account.
@@ -969,29 +934,8 @@ type RecipientListAttachmentsResponseAttachment struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r RecipientListAttachmentsResponseAttachment) RawJSON() string { return r.JSON.raw }
-func (r *RecipientListAttachmentsResponseAttachment) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Pagination information
-type RecipientListAttachmentsResponsePage struct {
-	// ID for the recipient tax form attachment
-	NextPage string `json:"nextPage" format:"uuid"`
-	// ID for the recipient tax form attachment
-	PreviousPage string `json:"previousPage" format:"uuid"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		NextPage     respjson.Field
-		PreviousPage respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r RecipientListAttachmentsResponsePage) RawJSON() string { return r.JSON.raw }
-func (r *RecipientListAttachmentsResponsePage) UnmarshalJSON(data []byte) error {
+func (r RecipientListAttachmentsResponse) RawJSON() string { return r.JSON.raw }
+func (r *RecipientListAttachmentsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

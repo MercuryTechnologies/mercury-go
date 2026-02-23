@@ -14,6 +14,7 @@ import (
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
@@ -51,12 +52,26 @@ func (r *EventService) Get(ctx context.Context, eventID string, opts ...option.R
 }
 
 // Get all events
-func (r *EventService) List(ctx context.Context, query EventListParams, opts ...option.RequestOption) (res *EventListResponse, err error) {
+func (r *EventService) List(ctx context.Context, query EventListParams, opts ...option.RequestOption) (res *pagination.CursorIDEvents[APIEvent], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "events"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Get all events
+func (r *EventService) ListAutoPaging(ctx context.Context, query EventListParams, opts ...option.RequestOption) *pagination.CursorIDEventsAutoPager[APIEvent] {
+	return pagination.NewCursorIDEventsAutoPager(r.List(ctx, query, opts...))
 }
 
 // Represents a single event in the Mercury API event stream. | Events track
@@ -129,49 +144,6 @@ const (
 	APIEventResourceTypeInvestmentAccount APIEventResourceType = "investmentAccount"
 	APIEventResourceTypeCreditAccount     APIEventResourceType = "creditAccount"
 )
-
-// Paginated response containing a list of API events. | Use the page cursor
-// information to fetch additional pages of events.
-type EventListResponse struct {
-	// List of events in the current page
-	Events []APIEvent `json:"events,required"`
-	// Pagination information including cursors for navigating to next/previous pages
-	Page EventListResponsePage `json:"page,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Events      respjson.Field
-		Page        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r EventListResponse) RawJSON() string { return r.JSON.raw }
-func (r *EventListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Pagination information including cursors for navigating to next/previous pages
-type EventListResponsePage struct {
-	// ID for the API event
-	NextPage string `json:"nextPage" format:"uuid"`
-	// ID for the API event
-	PreviousPage string `json:"previousPage" format:"uuid"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		NextPage     respjson.Field
-		PreviousPage respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r EventListResponsePage) RawJSON() string { return r.JSON.raw }
-func (r *EventListResponsePage) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 type EventListParams struct {
 	// The ID of the event to end the page before (exclusive). When provided, results
