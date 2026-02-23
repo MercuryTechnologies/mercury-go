@@ -14,7 +14,6 @@ import (
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
@@ -55,27 +54,12 @@ func (r *AccountService) Get(ctx context.Context, accountID string, opts ...opti
 
 // Retrieve a paginated list of accounts. Supports cursor-based pagination with
 // limit, order, start_after, and end_before query parameters.
-func (r *AccountService) List(ctx context.Context, query AccountListParams, opts ...option.RequestOption) (res *pagination.CursorIDAccounts[Account], err error) {
-	var raw *http.Response
+func (r *AccountService) List(ctx context.Context, query AccountListParams, opts ...option.RequestOption) (res *AccountListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "accounts"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Retrieve a paginated list of accounts. Supports cursor-based pagination with
-// limit, order, start_after, and end_before query parameters.
-func (r *AccountService) ListAutoPaging(ctx context.Context, query AccountListParams, opts ...option.RequestOption) *pagination.CursorIDAccountsAutoPager[Account] {
-	return pagination.NewCursorIDAccountsAutoPager(r.List(ctx, query, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
 }
 
 // Retrieve all debit and credit cards associated with a specific account.
@@ -94,32 +78,16 @@ func (r *AccountService) ListCards(ctx context.Context, accountID string, opts .
 // Retrieve a paginated list of monthly statements for a specific account. Supports
 // cursor-based pagination with limit, order, start_after, and end_before query
 // parameters, as well as date range filtering with start and end parameters.
-func (r *AccountService) ListStatements(ctx context.Context, accountID string, query AccountListStatementsParams, opts ...option.RequestOption) (res *pagination.CursorIDStatements[AccountListStatementsResponse], err error) {
-	var raw *http.Response
+func (r *AccountService) ListStatements(ctx context.Context, accountID string, query AccountListStatementsParams, opts ...option.RequestOption) (res *AccountListStatementsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
 		return
 	}
 	path := fmt.Sprintf("account/%s/statements", accountID)
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Retrieve a paginated list of monthly statements for a specific account. Supports
-// cursor-based pagination with limit, order, start_after, and end_before query
-// parameters, as well as date range filtering with start and end parameters.
-func (r *AccountService) ListStatementsAutoPaging(ctx context.Context, accountID string, query AccountListStatementsParams, opts ...option.RequestOption) *pagination.CursorIDStatementsAutoPager[AccountListStatementsResponse] {
-	return pagination.NewCursorIDStatementsAutoPager(r.ListStatements(ctx, accountID, query, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
 }
 
 // Create a "request to send money" that will require approval based on your
@@ -673,6 +641,49 @@ func (r *TransactionMerchant) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Paginated response containing a list of accounts. | Use the page cursor
+// information to fetch additional pages of accounts.
+type AccountListResponse struct {
+	// List of accounts in the current page
+	Accounts []Account `json:"accounts,required"`
+	// Pagination information including cursors for navigating to next/previous pages
+	Page AccountListResponsePage `json:"page,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Accounts    respjson.Field
+		Page        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AccountListResponse) RawJSON() string { return r.JSON.raw }
+func (r *AccountListResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Pagination information including cursors for navigating to next/previous pages
+type AccountListResponsePage struct {
+	// ID for a Mercury account.
+	NextPage string `json:"nextPage" format:"uuid"`
+	// ID for a Mercury account.
+	PreviousPage string `json:"previousPage" format:"uuid"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		NextPage     respjson.Field
+		PreviousPage respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AccountListResponsePage) RawJSON() string { return r.JSON.raw }
+func (r *AccountListResponsePage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type AccountListCardsResponse struct {
 	Cards []AccountListCardsResponseCard `json:"cards,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -720,7 +731,46 @@ func (r *AccountListCardsResponseCard) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Paginated response for depository account statements (v1 API)
 type AccountListStatementsResponse struct {
+	Page       AccountListStatementsResponsePage        `json:"page,required"`
+	Statements []AccountListStatementsResponseStatement `json:"statements,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Page        respjson.Field
+		Statements  respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AccountListStatementsResponse) RawJSON() string { return r.JSON.raw }
+func (r *AccountListStatementsResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type AccountListStatementsResponsePage struct {
+	// ID for the account statement
+	NextPage string `json:"nextPage" format:"uuid"`
+	// ID for the account statement
+	PreviousPage string `json:"previousPage" format:"uuid"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		NextPage     respjson.Field
+		PreviousPage respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AccountListStatementsResponsePage) RawJSON() string { return r.JSON.raw }
+func (r *AccountListStatementsResponsePage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type AccountListStatementsResponseStatement struct {
 	// ID for the account statement
 	ID                  string  `json:"id,required" format:"uuid"`
 	AccountNumber       string  `json:"accountNumber,required"`
@@ -729,11 +779,11 @@ type AccountListStatementsResponse struct {
 	DownloadURL         string  `json:"downloadUrl,required"`
 	EndDate             string  `json:"endDate,required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// A dollar amount
-	EndingBalance float64                                    `json:"endingBalance,required"`
-	RoutingNumber string                                     `json:"routingNumber,required"`
-	StartDate     string                                     `json:"startDate,required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	Transactions  []AccountListStatementsResponseTransaction `json:"transactions,required"`
-	Ein           string                                     `json:"ein,nullable"`
+	EndingBalance float64                                             `json:"endingBalance,required"`
+	RoutingNumber string                                              `json:"routingNumber,required"`
+	StartDate     string                                              `json:"startDate,required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	Transactions  []AccountListStatementsResponseStatementTransaction `json:"transactions,required"`
+	Ein           string                                              `json:"ein,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                  respjson.Field
@@ -753,12 +803,12 @@ type AccountListStatementsResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r AccountListStatementsResponse) RawJSON() string { return r.JSON.raw }
-func (r *AccountListStatementsResponse) UnmarshalJSON(data []byte) error {
+func (r AccountListStatementsResponseStatement) RawJSON() string { return r.JSON.raw }
+func (r *AccountListStatementsResponseStatement) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type AccountListStatementsResponseTransaction struct {
+type AccountListStatementsResponseStatementTransaction struct {
 	// ID for this transaction
 	ID        string `json:"id,required" format:"uuid"`
 	CreatedAt string `json:"createdAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
@@ -774,8 +824,8 @@ type AccountListStatementsResponseTransaction struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r AccountListStatementsResponseTransaction) RawJSON() string { return r.JSON.raw }
-func (r *AccountListStatementsResponseTransaction) UnmarshalJSON(data []byte) error {
+func (r AccountListStatementsResponseStatementTransaction) RawJSON() string { return r.JSON.raw }
+func (r *AccountListStatementsResponseStatementTransaction) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
