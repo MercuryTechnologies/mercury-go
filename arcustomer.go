@@ -14,7 +14,6 @@ import (
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
@@ -75,27 +74,12 @@ func (r *ArCustomerService) Update(ctx context.Context, customerID string, body 
 
 // Retrieve a paginated list of customers. Supports cursor-based pagination with
 // limit, order, start_after, and end_before query parameters.
-func (r *ArCustomerService) List(ctx context.Context, query ArCustomerListParams, opts ...option.RequestOption) (res *pagination.CursorPage[ArCustomerListResponse], err error) {
-	var raw *http.Response
+func (r *ArCustomerService) List(ctx context.Context, query ArCustomerListParams, opts ...option.RequestOption) (res *ArCustomerListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "ar/customers"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Retrieve a paginated list of customers. Supports cursor-based pagination with
-// limit, order, start_after, and end_before query parameters.
-func (r *ArCustomerService) ListAutoPaging(ctx context.Context, query ArCustomerListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[ArCustomerListResponse] {
-	return pagination.NewCursorPageAutoPager(r.List(ctx, query, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
 }
 
 // Delete a customer. This action cannot be undone.

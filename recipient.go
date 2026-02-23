@@ -19,7 +19,6 @@ import (
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
@@ -80,54 +79,23 @@ func (r *RecipientService) Update(ctx context.Context, recipientID string, body 
 
 // Retrieve a paginated list of all recipients. Use cursor parameters (start_after,
 // end_before) for pagination.
-func (r *RecipientService) List(ctx context.Context, query RecipientListParams, opts ...option.RequestOption) (res *pagination.CursorPage[RecipientListResponse], err error) {
-	var raw *http.Response
+func (r *RecipientService) List(ctx context.Context, query RecipientListParams, opts ...option.RequestOption) (res *RecipientListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "recipients"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Retrieve a paginated list of all recipients. Use cursor parameters (start_after,
-// end_before) for pagination.
-func (r *RecipientService) ListAutoPaging(ctx context.Context, query RecipientListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[RecipientListResponse] {
-	return pagination.NewCursorPageAutoPager(r.List(ctx, query, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
 }
 
 // Retrieve a paginated list of all recipient tax form attachments across all
 // recipients in the organization. Use cursor parameters (start_after, end_before)
 // for pagination.
-func (r *RecipientService) ListAttachments(ctx context.Context, query RecipientListAttachmentsParams, opts ...option.RequestOption) (res *pagination.CursorPage[RecipientListAttachmentsResponse], err error) {
-	var raw *http.Response
+func (r *RecipientService) ListAttachments(ctx context.Context, query RecipientListAttachmentsParams, opts ...option.RequestOption) (res *RecipientListAttachmentsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "recipients/attachments"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Retrieve a paginated list of all recipient tax form attachments across all
-// recipients in the organization. Use cursor parameters (start_after, end_before)
-// for pagination.
-func (r *RecipientService) ListAttachmentsAutoPaging(ctx context.Context, query RecipientListAttachmentsParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[RecipientListAttachmentsResponse] {
-	return pagination.NewCursorPageAutoPager(r.ListAttachments(ctx, query, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
 }
 
 // Upload a tax form attachment for a recipient. The file is uploaded via
