@@ -25,11 +25,11 @@ func TestAutoPagination(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	iter := client.Transactions.ListAutoPaging(context.TODO(), mercury.TransactionListParams{})
+	iter := client.Webhooks.ListAutoPaging(context.TODO(), mercury.WebhookListParams{})
 	// The mock server isn't going to give us real pagination
 	for i := 0; i < 3 && iter.Next(); i++ {
-		transaction := iter.Current()
-		t.Logf("%+v\n", transaction.ID)
+		webhook := iter.Current()
+		t.Logf("%+v\n", webhook.ID)
 	}
 	if err := iter.Err(); err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
