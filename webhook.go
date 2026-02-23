@@ -39,7 +39,7 @@ func NewWebhookService(opts ...option.RequestOption) (r WebhookService) {
 }
 
 // Register a new webhook endpoint to receive event notifications
-func (r *WebhookService) New(ctx context.Context, body WebhookNewParams, opts ...option.RequestOption) (res *APIWebhook, err error) {
+func (r *WebhookService) New(ctx context.Context, body WebhookNewParams, opts ...option.RequestOption) (res *Webhook, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "webhooks"
@@ -48,7 +48,7 @@ func (r *WebhookService) New(ctx context.Context, body WebhookNewParams, opts ..
 }
 
 // Retrieve details of a specific webhook endpoint by ID
-func (r *WebhookService) Get(ctx context.Context, webhookEndpointID string, opts ...option.RequestOption) (res *APIWebhook, err error) {
+func (r *WebhookService) Get(ctx context.Context, webhookEndpointID string, opts ...option.RequestOption) (res *Webhook, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if webhookEndpointID == "" {
@@ -63,7 +63,7 @@ func (r *WebhookService) Get(ctx context.Context, webhookEndpointID string, opts
 // Update the configuration of an existing webhook endpoint. A webhook that has
 // been disabled due to consecutive delivery failures can be reactivated by setting
 // its status to 'active'.
-func (r *WebhookService) Update(ctx context.Context, webhookEndpointID string, body WebhookUpdateParams, opts ...option.RequestOption) (res *APIWebhook, err error) {
+func (r *WebhookService) Update(ctx context.Context, webhookEndpointID string, body WebhookUpdateParams, opts ...option.RequestOption) (res *Webhook, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if webhookEndpointID == "" {
@@ -77,7 +77,7 @@ func (r *WebhookService) Update(ctx context.Context, webhookEndpointID string, b
 
 // Retrieve a paginated list of all webhook endpoints for your organization.
 // Supports filtering by status.
-func (r *WebhookService) List(ctx context.Context, query WebhookListParams, opts ...option.RequestOption) (res *pagination.CursorIDWebhooks[APIWebhook], err error) {
+func (r *WebhookService) List(ctx context.Context, query WebhookListParams, opts ...option.RequestOption) (res *pagination.CursorIDWebhooks[Webhook], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
@@ -96,7 +96,7 @@ func (r *WebhookService) List(ctx context.Context, query WebhookListParams, opts
 
 // Retrieve a paginated list of all webhook endpoints for your organization.
 // Supports filtering by status.
-func (r *WebhookService) ListAutoPaging(ctx context.Context, query WebhookListParams, opts ...option.RequestOption) *pagination.CursorIDWebhooksAutoPager[APIWebhook] {
+func (r *WebhookService) ListAutoPaging(ctx context.Context, query WebhookListParams, opts ...option.RequestOption) *pagination.CursorIDWebhooksAutoPager[Webhook] {
 	return pagination.NewCursorIDWebhooksAutoPager(r.List(ctx, query, opts...))
 }
 
@@ -130,7 +130,7 @@ func (r *WebhookService) Verify(ctx context.Context, webhookEndpointID string, b
 }
 
 // Webhook configuration details
-type APIWebhook struct {
+type Webhook struct {
 	// ID for the webhook
 	ID string `json:"id,required" format:"uuid"`
 	// When the webhook was created
@@ -141,7 +141,7 @@ type APIWebhook struct {
 	// updating its status to 'active'.
 	//
 	// Any of "active", "paused", "disabled".
-	Status APIWebhookStatus `json:"status,required"`
+	Status WebhookStatus `json:"status,required"`
 	// When the webhook was last updated
 	UpdatedAt string `json:"updatedAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// The URL that will receive webhook POST requests
@@ -183,8 +183,8 @@ type APIWebhook struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r APIWebhook) RawJSON() string { return r.JSON.raw }
-func (r *APIWebhook) UnmarshalJSON(data []byte) error {
+func (r Webhook) RawJSON() string { return r.JSON.raw }
+func (r *Webhook) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -192,12 +192,12 @@ func (r *APIWebhook) UnmarshalJSON(data []byte) error {
 // 'paused': paused by the user. 'disabled': automatically disabled by the system
 // due to consecutive delivery failures. A disabled webhook can be reactivated by
 // updating its status to 'active'.
-type APIWebhookStatus string
+type WebhookStatus string
 
 const (
-	APIWebhookStatusActive   APIWebhookStatus = "active"
-	APIWebhookStatusPaused   APIWebhookStatus = "paused"
-	APIWebhookStatusDisabled APIWebhookStatus = "disabled"
+	WebhookStatusActive   WebhookStatus = "active"
+	WebhookStatusPaused   WebhookStatus = "paused"
+	WebhookStatusDisabled WebhookStatus = "disabled"
 )
 
 type WebhookNewParams struct {

@@ -38,7 +38,7 @@ func NewUserService(opts ...option.RequestOption) (r UserService) {
 }
 
 // Get user by ID
-func (r *UserService) Get(ctx context.Context, userID string, opts ...option.RequestOption) (res *UserDetails, err error) {
+func (r *UserService) Get(ctx context.Context, userID string, opts ...option.RequestOption) (res *User, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if userID == "" {
@@ -60,7 +60,7 @@ func (r *UserService) List(ctx context.Context, query UserListParams, opts ...op
 }
 
 // Details of a user within an organization.
-type UserDetails struct {
+type User struct {
 	// User's email address
 	Email string `json:"email,required"`
 	// User's first name
@@ -70,7 +70,7 @@ type UserDetails struct {
 	// User's role within the organization
 	//
 	// Any of "administrator", "bookkeeper", "customUser", "cardOnlyUser", "employee".
-	OrganizationRole UserDetailsOrganizationRole `json:"organizationRole,required"`
+	OrganizationRole UserOrganizationRole `json:"organizationRole,required"`
 	// ID for the user
 	UserID string `json:"userId,required" format:"uuid"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -86,20 +86,20 @@ type UserDetails struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r UserDetails) RawJSON() string { return r.JSON.raw }
-func (r *UserDetails) UnmarshalJSON(data []byte) error {
+func (r User) RawJSON() string { return r.JSON.raw }
+func (r *User) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // User's role within the organization
-type UserDetailsOrganizationRole string
+type UserOrganizationRole string
 
 const (
-	UserDetailsOrganizationRoleAdministrator UserDetailsOrganizationRole = "administrator"
-	UserDetailsOrganizationRoleBookkeeper    UserDetailsOrganizationRole = "bookkeeper"
-	UserDetailsOrganizationRoleCustomUser    UserDetailsOrganizationRole = "customUser"
-	UserDetailsOrganizationRoleCardOnlyUser  UserDetailsOrganizationRole = "cardOnlyUser"
-	UserDetailsOrganizationRoleEmployee      UserDetailsOrganizationRole = "employee"
+	UserOrganizationRoleAdministrator UserOrganizationRole = "administrator"
+	UserOrganizationRoleBookkeeper    UserOrganizationRole = "bookkeeper"
+	UserOrganizationRoleCustomUser    UserOrganizationRole = "customUser"
+	UserOrganizationRoleCardOnlyUser  UserOrganizationRole = "cardOnlyUser"
+	UserOrganizationRoleEmployee      UserOrganizationRole = "employee"
 )
 
 // Paginated response containing a list of organization users.
@@ -107,7 +107,7 @@ type UserListResponse struct {
 	// Pagination information including cursors for navigating to next/previous pages
 	Page UserListResponsePage `json:"page,required"`
 	// List of users in the current page
-	Users []UserDetails `json:"users,required"`
+	Users []User `json:"users,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Page        respjson.Field

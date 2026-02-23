@@ -36,7 +36,7 @@ func NewSafeService(opts ...option.RequestOption) (r SafeService) {
 }
 
 // Retrieve a specific SAFE request by its ID.
-func (r *SafeService) Get(ctx context.Context, safeRequestID string, opts ...option.RequestOption) (res *APISafeRequest, err error) {
+func (r *SafeService) Get(ctx context.Context, safeRequestID string, opts ...option.RequestOption) (res *SafeRequest, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if safeRequestID == "" {
@@ -50,7 +50,7 @@ func (r *SafeService) Get(ctx context.Context, safeRequestID string, opts ...opt
 
 // Retrieve all SAFE (Simple Agreement for Future Equity) requests for your
 // organization.
-func (r *SafeService) List(ctx context.Context, opts ...option.RequestOption) (res *[]APISafeRequest, err error) {
+func (r *SafeService) List(ctx context.Context, opts ...option.RequestOption) (res *[]SafeRequest, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "safes"
@@ -73,7 +73,7 @@ func (r *SafeService) DownloadDocument(ctx context.Context, safeRequestID string
 }
 
 // A summary of a SAFE request.
-type APISafeRequest struct {
+type SafeRequest struct {
 	// ID for the SAFE request
 	ID                              string `json:"id,required" format:"uuid"`
 	DocumentURL                     string `json:"documentUrl,required"`
@@ -84,13 +84,13 @@ type APISafeRequest struct {
 	InvestmentAmount float64   `json:"investmentAmount,required"`
 	InvestmentDate   time.Time `json:"investmentDate,required" format:"date"`
 	// Details about the investor buying the equity.
-	Investor APISafeRequestInvestor `json:"investor,required"`
+	Investor SafeRequestInvestor `json:"investor,required"`
 	// Details about the organization selling the equity
-	Organization APISafeRequestOrganization `json:"organization,required"`
+	Organization SafeRequestOrganization `json:"organization,required"`
 	// Any of "PreMoney", "PostMoney", "NoValuation".
-	ValuationType APISafeRequestValuationType `json:"valuationType,required"`
-	CanceledAt    string                      `json:"canceledAt,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
-	DiscountRate  float64                     `json:"discountRate,nullable"`
+	ValuationType SafeRequestValuationType `json:"valuationType,required"`
+	CanceledAt    string                   `json:"canceledAt,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	DiscountRate  float64                  `json:"discountRate,nullable"`
 	// Any of "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI",
 	// "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS",
 	// "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR",
@@ -126,13 +126,13 @@ type APISafeRequest struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r APISafeRequest) RawJSON() string { return r.JSON.raw }
-func (r *APISafeRequest) UnmarshalJSON(data []byte) error {
+func (r SafeRequest) RawJSON() string { return r.JSON.raw }
+func (r *SafeRequest) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Details about the investor buying the equity.
-type APISafeRequestInvestor struct {
+type SafeRequestInvestor struct {
 	// Any of "SafeRequestInvestorTypeIndividual",
 	// "SafeRequestInvestorTypeVentureFund", "SafeRequestInvestorTypeOther".
 	InvestorType      string `json:"investorType,required"`
@@ -157,13 +157,13 @@ type APISafeRequestInvestor struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r APISafeRequestInvestor) RawJSON() string { return r.JSON.raw }
-func (r *APISafeRequestInvestor) UnmarshalJSON(data []byte) error {
+func (r SafeRequestInvestor) RawJSON() string { return r.JSON.raw }
+func (r *SafeRequestInvestor) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Details about the organization selling the equity
-type APISafeRequestOrganization struct {
+type SafeRequestOrganization struct {
 	LegalEntityName string `json:"legalEntityName,required"`
 	SignatoryEmail  string `json:"signatoryEmail,required"`
 	SignatoryName   string `json:"signatoryName,required"`
@@ -180,17 +180,17 @@ type APISafeRequestOrganization struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r APISafeRequestOrganization) RawJSON() string { return r.JSON.raw }
-func (r *APISafeRequestOrganization) UnmarshalJSON(data []byte) error {
+func (r SafeRequestOrganization) RawJSON() string { return r.JSON.raw }
+func (r *SafeRequestOrganization) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type APISafeRequestValuationType string
+type SafeRequestValuationType string
 
 const (
-	APISafeRequestValuationTypePreMoney    APISafeRequestValuationType = "PreMoney"
-	APISafeRequestValuationTypePostMoney   APISafeRequestValuationType = "PostMoney"
-	APISafeRequestValuationTypeNoValuation APISafeRequestValuationType = "NoValuation"
+	SafeRequestValuationTypePreMoney    SafeRequestValuationType = "PreMoney"
+	SafeRequestValuationTypePostMoney   SafeRequestValuationType = "PostMoney"
+	SafeRequestValuationTypeNoValuation SafeRequestValuationType = "NoValuation"
 )
 
 type UsState string

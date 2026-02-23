@@ -40,7 +40,7 @@ func NewArInvoiceService(opts ...option.RequestOption) (r ArInvoiceService) {
 }
 
 // Create a new invoice for the organization
-func (r *ArInvoiceService) New(ctx context.Context, body ArInvoiceNewParams, opts ...option.RequestOption) (res *InvoiceResponse, err error) {
+func (r *ArInvoiceService) New(ctx context.Context, body ArInvoiceNewParams, opts ...option.RequestOption) (res *Invoice, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "ar/invoices"
@@ -49,7 +49,7 @@ func (r *ArInvoiceService) New(ctx context.Context, body ArInvoiceNewParams, opt
 }
 
 // Retrieve details of an invoice by its ID
-func (r *ArInvoiceService) Get(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *InvoiceResponse, err error) {
+func (r *ArInvoiceService) Get(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *Invoice, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if invoiceID == "" {
@@ -62,7 +62,7 @@ func (r *ArInvoiceService) Get(ctx context.Context, invoiceID string, opts ...op
 }
 
 // Update an existing invoice
-func (r *ArInvoiceService) Update(ctx context.Context, invoiceID string, body ArInvoiceUpdateParams, opts ...option.RequestOption) (res *InvoiceResponse, err error) {
+func (r *ArInvoiceService) Update(ctx context.Context, invoiceID string, body ArInvoiceUpdateParams, opts ...option.RequestOption) (res *Invoice, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if invoiceID == "" {
@@ -125,7 +125,7 @@ func (r *ArInvoiceService) ListAttachments(ctx context.Context, invoiceID string
 }
 
 // The response type for an invoice in the api.
-type InvoiceResponse struct {
+type Invoice struct {
 	// ID for the invoice.
 	ID string `json:"id,required" format:"uuid"`
 	// Whether or not the invoice can be paid via ach debit.
@@ -205,8 +205,8 @@ type InvoiceResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r InvoiceResponse) RawJSON() string { return r.JSON.raw }
-func (r *InvoiceResponse) UnmarshalJSON(data []byte) error {
+func (r Invoice) RawJSON() string { return r.JSON.raw }
+func (r *Invoice) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

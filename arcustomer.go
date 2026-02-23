@@ -38,7 +38,7 @@ func NewArCustomerService(opts ...option.RequestOption) (r ArCustomerService) {
 }
 
 // Create a new customer for the organization
-func (r *ArCustomerService) New(ctx context.Context, body ArCustomerNewParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+func (r *ArCustomerService) New(ctx context.Context, body ArCustomerNewParams, opts ...option.RequestOption) (res *Customer, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "ar/customers"
@@ -47,7 +47,7 @@ func (r *ArCustomerService) New(ctx context.Context, body ArCustomerNewParams, o
 }
 
 // Retrieve details of a specific customer by their ID
-func (r *ArCustomerService) Get(ctx context.Context, customerID string, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+func (r *ArCustomerService) Get(ctx context.Context, customerID string, opts ...option.RequestOption) (res *Customer, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if customerID == "" {
@@ -60,7 +60,7 @@ func (r *ArCustomerService) Get(ctx context.Context, customerID string, opts ...
 }
 
 // Update an existing customer
-func (r *ArCustomerService) Update(ctx context.Context, customerID string, body ArCustomerUpdateParams, opts ...option.RequestOption) (res *CustomerResponse, err error) {
+func (r *ArCustomerService) Update(ctx context.Context, customerID string, body ArCustomerUpdateParams, opts ...option.RequestOption) (res *Customer, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if customerID == "" {
@@ -126,7 +126,7 @@ func (r *AddressInputParam) UnmarshalJSON(data []byte) error {
 }
 
 // Response data for Accounts Receivable customer API endpoints
-type CustomerResponse struct {
+type Customer struct {
 	// The customer who will receive the invoice. Use the /api/v1/ar/customers endpoint
 	// to list your customers and find the corresponding id, or create a new customer
 	// first.
@@ -136,7 +136,7 @@ type CustomerResponse struct {
 	// Name of customer.
 	Name string `json:"name,required"`
 	// Customer address information for Accounts Receivable API
-	Address CustomerResponseAddress `json:"address,nullable"`
+	Address CustomerAddress `json:"address,nullable"`
 	// The time the customer was deleted, if it was deleted.
 	DeletedAt string `json:"deletedAt,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -152,13 +152,13 @@ type CustomerResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r CustomerResponse) RawJSON() string { return r.JSON.raw }
-func (r *CustomerResponse) UnmarshalJSON(data []byte) error {
+func (r Customer) RawJSON() string { return r.JSON.raw }
+func (r *Customer) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Customer address information for Accounts Receivable API
-type CustomerResponseAddress struct {
+type CustomerAddress struct {
 	// Primary street address line.
 	Address1 string `json:"address1,required"`
 	// City name.
@@ -185,15 +185,15 @@ type CustomerResponseAddress struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r CustomerResponseAddress) RawJSON() string { return r.JSON.raw }
-func (r *CustomerResponseAddress) UnmarshalJSON(data []byte) error {
+func (r CustomerAddress) RawJSON() string { return r.JSON.raw }
+func (r *CustomerAddress) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Paginated response data for Accounts Receivable customers API endpoint
 type ArCustomerListResponse struct {
 	// The list of customers for this page
-	Customers []CustomerResponse `json:"customers,required"`
+	Customers []Customer `json:"customers,required"`
 	// Pagination cursors for navigating to next/previous pages
 	Page ArCustomerListResponsePage `json:"page,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
