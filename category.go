@@ -8,12 +8,11 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/stainless-sdks/mercury-go/internal/apijson"
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
-	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
 
 // CategoryService contains methods and other services that help with interacting
@@ -38,55 +37,28 @@ func NewCategoryService(opts ...option.RequestOption) (r CategoryService) {
 // Retrieve a paginated list of all available custom expense categories for the
 // organization. Supports cursor-based pagination with limit, order, start_after,
 // and end_before query parameters.
-func (r *CategoryService) List(ctx context.Context, query CategoryListParams, opts ...option.RequestOption) (res *CategoryListResponse, err error) {
+func (r *CategoryService) List(ctx context.Context, query CategoryListParams, opts ...option.RequestOption) (res *pagination.CursorIDCategories[CategoryData], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "categories"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
 }
 
-// Paginated response containing a list of categories. | Use the page cursor
-// information to fetch additional pages of categories.
-type CategoryListResponse struct {
-	// List of categories in the current page
-	Categories []CategoryData `json:"categories,required"`
-	// Pagination information including cursors for navigating to next/previous pages
-	Page CategoryListResponsePage `json:"page,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Categories  respjson.Field
-		Page        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r CategoryListResponse) RawJSON() string { return r.JSON.raw }
-func (r *CategoryListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Pagination information including cursors for navigating to next/previous pages
-type CategoryListResponsePage struct {
-	// ID for the category
-	NextPage string `json:"nextPage" format:"uuid"`
-	// ID for the category
-	PreviousPage string `json:"previousPage" format:"uuid"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		NextPage     respjson.Field
-		PreviousPage respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r CategoryListResponsePage) RawJSON() string { return r.JSON.raw }
-func (r *CategoryListResponsePage) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+// Retrieve a paginated list of all available custom expense categories for the
+// organization. Supports cursor-based pagination with limit, order, start_after,
+// and end_before query parameters.
+func (r *CategoryService) ListAutoPaging(ctx context.Context, query CategoryListParams, opts ...option.RequestOption) *pagination.CursorIDCategoriesAutoPager[CategoryData] {
+	return pagination.NewCursorIDCategoriesAutoPager(r.List(ctx, query, opts...))
 }
 
 type CategoryListParams struct {
