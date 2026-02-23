@@ -15,7 +15,6 @@ import (
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
@@ -42,57 +41,26 @@ func NewTreasuryService(opts ...option.RequestOption) (r TreasuryService) {
 // Retrieve a paginated list of all treasury accounts associated with the
 // authenticated organization. Use cursor parameters (start_after, end_before) for
 // pagination.
-func (r *TreasuryService) List(ctx context.Context, query TreasuryListParams, opts ...option.RequestOption) (res *pagination.CursorIDAccounts[TreasuryListResponse], err error) {
-	var raw *http.Response
+func (r *TreasuryService) List(ctx context.Context, query TreasuryListParams, opts ...option.RequestOption) (res *TreasuryListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "treasury"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Retrieve a paginated list of all treasury accounts associated with the
-// authenticated organization. Use cursor parameters (start_after, end_before) for
-// pagination.
-func (r *TreasuryService) ListAutoPaging(ctx context.Context, query TreasuryListParams, opts ...option.RequestOption) *pagination.CursorIDAccountsAutoPager[TreasuryListResponse] {
-	return pagination.NewCursorIDAccountsAutoPager(r.List(ctx, query, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
 }
 
 // Retrieve a paginated list of statements for a specific treasury account.
 // Supports cursor-based pagination and filtering by document type.
-func (r *TreasuryService) GetStatements(ctx context.Context, treasuryID string, query TreasuryGetStatementsParams, opts ...option.RequestOption) (res *pagination.CursorIDStatements[TreasuryGetStatementsResponse], err error) {
-	var raw *http.Response
+func (r *TreasuryService) GetStatements(ctx context.Context, treasuryID string, query TreasuryGetStatementsParams, opts ...option.RequestOption) (res *TreasuryGetStatementsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if treasuryID == "" {
 		err = errors.New("missing required treasuryId parameter")
 		return
 	}
 	path := fmt.Sprintf("treasury/%s/statements", treasuryID)
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Retrieve a paginated list of statements for a specific treasury account.
-// Supports cursor-based pagination and filtering by document type.
-func (r *TreasuryService) GetStatementsAutoPaging(ctx context.Context, treasuryID string, query TreasuryGetStatementsParams, opts ...option.RequestOption) *pagination.CursorIDStatementsAutoPager[TreasuryGetStatementsResponse] {
-	return pagination.NewCursorIDStatementsAutoPager(r.GetStatements(ctx, treasuryID, query, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
 }
 
 // Retrieve paginated treasury transactions for a specific treasury account.
@@ -108,14 +76,35 @@ func (r *TreasuryService) GetTransactions(ctx context.Context, treasuryID string
 	return
 }
 
+// Paginated response type for treasury accounts API endpoint
 type TreasuryListResponse struct {
+	// List of treasury accounts in the current page
+	Accounts []TreasuryListResponseAccount `json:"accounts,required"`
+	// Pagination information including cursors for navigating to next/previous pages
+	Page TreasuryListResponsePage `json:"page,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Accounts    respjson.Field
+		Page        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TreasuryListResponse) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryListResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type TreasuryListResponseAccount struct {
 	// ID for a Mercury account.
 	ID               string  `json:"id,required" format:"uuid"`
 	AvailableBalance float64 `json:"availableBalance,required"`
 	CreatedAt        string  `json:"createdAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	CurrentBalance   float64 `json:"currentBalance,required"`
 	// Monthly net return breakdown with dividend and fee details
-	NetReturns []TreasuryListResponseNetReturn `json:"netReturns,required"`
+	NetReturns []TreasuryListResponseAccountNetReturn `json:"netReturns,required"`
 	// Any of "active", "deleted", "pending", "archived".
 	Status AccountStatus `json:"status,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -132,15 +121,15 @@ type TreasuryListResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TreasuryListResponse) RawJSON() string { return r.JSON.raw }
-func (r *TreasuryListResponse) UnmarshalJSON(data []byte) error {
+func (r TreasuryListResponseAccount) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryListResponseAccount) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Monthly net return breakdown for a treasury account
-type TreasuryListResponseNetReturn struct {
+type TreasuryListResponseAccountNetReturn struct {
 	// List of dividends received by security
-	Dividends []TreasuryListResponseNetReturnDividend `json:"dividends,required"`
+	Dividends []TreasuryListResponseAccountNetReturnDividend `json:"dividends,required"`
 	// First day of the month for this net return
 	Month time.Time `json:"month,required" format:"date"`
 	// Net return amount (dividends minus fees)
@@ -164,13 +153,13 @@ type TreasuryListResponseNetReturn struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TreasuryListResponseNetReturn) RawJSON() string { return r.JSON.raw }
-func (r *TreasuryListResponseNetReturn) UnmarshalJSON(data []byte) error {
+func (r TreasuryListResponseAccountNetReturn) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryListResponseAccountNetReturn) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Dividend information for a specific treasury security
-type TreasuryListResponseNetReturnDividend struct {
+type TreasuryListResponseAccountNetReturnDividend struct {
 	// Security identifier (e.g., "617455696")
 	ID string `json:"id,required"`
 	// Dividend amount for this security
@@ -194,13 +183,73 @@ type TreasuryListResponseNetReturnDividend struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TreasuryListResponseNetReturnDividend) RawJSON() string { return r.JSON.raw }
-func (r *TreasuryListResponseNetReturnDividend) UnmarshalJSON(data []byte) error {
+func (r TreasuryListResponseAccountNetReturnDividend) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryListResponseAccountNetReturnDividend) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Pagination information including cursors for navigating to next/previous pages
+type TreasuryListResponsePage struct {
+	// ID for a Mercury account.
+	NextPage string `json:"nextPage" format:"uuid"`
+	// ID for a Mercury account.
+	PreviousPage string `json:"previousPage" format:"uuid"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		NextPage     respjson.Field
+		PreviousPage respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TreasuryListResponsePage) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryListResponsePage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Paginated response for treasury account statements
+type TreasuryGetStatementsResponse struct {
+	Page       TreasuryGetStatementsResponsePage        `json:"page,required"`
+	Statements []TreasuryGetStatementsResponseStatement `json:"statements,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Page        respjson.Field
+		Statements  respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TreasuryGetStatementsResponse) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryGetStatementsResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type TreasuryGetStatementsResponsePage struct {
+	// ID for the account statement
+	NextPage string `json:"nextPage" format:"uuid"`
+	// ID for the account statement
+	PreviousPage string `json:"previousPage" format:"uuid"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		NextPage     respjson.Field
+		PreviousPage respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TreasuryGetStatementsResponsePage) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryGetStatementsResponsePage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Individual treasury statement in the response
-type TreasuryGetStatementsResponse struct {
+type TreasuryGetStatementsResponseStatement struct {
 	// ID for the account statement
 	ID string `json:"id,required" format:"uuid"`
 	// ID for a Mercury account.
@@ -215,7 +264,7 @@ type TreasuryGetStatementsResponse struct {
 	//
 	// Any of "MonthlyStatement", "TradeConfirmation", "1099", "1099R", "1042S",
 	// "5498", "5498ESA", "1099Q", "FMV", "SDIRA".
-	DocumentType TreasuryGetStatementsResponseDocumentType `json:"documentType,required"`
+	DocumentType string `json:"documentType,required"`
 	// URL to download the statement PDF
 	DownloadURL string `json:"downloadUrl,required"`
 	// End of the period covered by the statement
@@ -242,26 +291,10 @@ type TreasuryGetStatementsResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TreasuryGetStatementsResponse) RawJSON() string { return r.JSON.raw }
-func (r *TreasuryGetStatementsResponse) UnmarshalJSON(data []byte) error {
+func (r TreasuryGetStatementsResponseStatement) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryGetStatementsResponseStatement) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
-
-// Type of document (e.g. monthly statement, trade confirmation, tax form)
-type TreasuryGetStatementsResponseDocumentType string
-
-const (
-	TreasuryGetStatementsResponseDocumentTypeMonthlyStatement  TreasuryGetStatementsResponseDocumentType = "MonthlyStatement"
-	TreasuryGetStatementsResponseDocumentTypeTradeConfirmation TreasuryGetStatementsResponseDocumentType = "TradeConfirmation"
-	TreasuryGetStatementsResponseDocumentType1099              TreasuryGetStatementsResponseDocumentType = "1099"
-	TreasuryGetStatementsResponseDocumentType1099R             TreasuryGetStatementsResponseDocumentType = "1099R"
-	TreasuryGetStatementsResponseDocumentType1042S             TreasuryGetStatementsResponseDocumentType = "1042S"
-	TreasuryGetStatementsResponseDocumentType5498              TreasuryGetStatementsResponseDocumentType = "5498"
-	TreasuryGetStatementsResponseDocumentType5498Esa           TreasuryGetStatementsResponseDocumentType = "5498ESA"
-	TreasuryGetStatementsResponseDocumentType1099Q             TreasuryGetStatementsResponseDocumentType = "1099Q"
-	TreasuryGetStatementsResponseDocumentTypeFmv               TreasuryGetStatementsResponseDocumentType = "FMV"
-	TreasuryGetStatementsResponseDocumentTypeSdira             TreasuryGetStatementsResponseDocumentType = "SDIRA"
-)
 
 // Response type for treasury transactions API endpoint
 type TreasuryGetTransactionsResponse struct {

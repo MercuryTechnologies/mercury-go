@@ -14,7 +14,6 @@ import (
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
@@ -75,27 +74,12 @@ func (r *ArCustomerService) Update(ctx context.Context, customerID string, body 
 
 // Retrieve a paginated list of customers. Supports cursor-based pagination with
 // limit, order, start_after, and end_before query parameters.
-func (r *ArCustomerService) List(ctx context.Context, query ArCustomerListParams, opts ...option.RequestOption) (res *pagination.CursorIDCustomers[CustomerResponse], err error) {
-	var raw *http.Response
+func (r *ArCustomerService) List(ctx context.Context, query ArCustomerListParams, opts ...option.RequestOption) (res *ArCustomerListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "ar/customers"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Retrieve a paginated list of customers. Supports cursor-based pagination with
-// limit, order, start_after, and end_before query parameters.
-func (r *ArCustomerService) ListAutoPaging(ctx context.Context, query ArCustomerListParams, opts ...option.RequestOption) *pagination.CursorIDCustomersAutoPager[CustomerResponse] {
-	return pagination.NewCursorIDCustomersAutoPager(r.List(ctx, query, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
 }
 
 // Delete a customer. This action cannot be undone.
@@ -203,6 +187,52 @@ type CustomerResponseAddress struct {
 // Returns the unmodified JSON received from the API
 func (r CustomerResponseAddress) RawJSON() string { return r.JSON.raw }
 func (r *CustomerResponseAddress) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Paginated response data for Accounts Receivable customers API endpoint
+type ArCustomerListResponse struct {
+	// The list of customers for this page
+	Customers []CustomerResponse `json:"customers,required"`
+	// Pagination cursors for navigating to next/previous pages
+	Page ArCustomerListResponsePage `json:"page,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Customers   respjson.Field
+		Page        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ArCustomerListResponse) RawJSON() string { return r.JSON.raw }
+func (r *ArCustomerListResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Pagination cursors for navigating to next/previous pages
+type ArCustomerListResponsePage struct {
+	// The customer who will receive the invoice. Use the /api/v1/ar/customers endpoint
+	// to list your customers and find the corresponding id, or create a new customer
+	// first.
+	NextPage string `json:"nextPage" format:"uuid"`
+	// The customer who will receive the invoice. Use the /api/v1/ar/customers endpoint
+	// to list your customers and find the corresponding id, or create a new customer
+	// first.
+	PreviousPage string `json:"previousPage" format:"uuid"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		NextPage     respjson.Field
+		PreviousPage respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ArCustomerListResponsePage) RawJSON() string { return r.JSON.raw }
+func (r *ArCustomerListResponsePage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

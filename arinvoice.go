@@ -16,7 +16,6 @@ import (
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
@@ -77,27 +76,12 @@ func (r *ArInvoiceService) Update(ctx context.Context, invoiceID string, body Ar
 
 // Retrieve a paginated list of invoices. Supports cursor-based pagination with
 // limit, order, start_after, and end_before query parameters.
-func (r *ArInvoiceService) List(ctx context.Context, query ArInvoiceListParams, opts ...option.RequestOption) (res *pagination.CursorIDInvoices[ArInvoiceListResponse], err error) {
-	var raw *http.Response
+func (r *ArInvoiceService) List(ctx context.Context, query ArInvoiceListParams, opts ...option.RequestOption) (res *ArInvoiceListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "ar/invoices"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Retrieve a paginated list of invoices. Supports cursor-based pagination with
-// limit, order, start_after, and end_before query parameters.
-func (r *ArInvoiceService) ListAutoPaging(ctx context.Context, query ArInvoiceListParams, opts ...option.RequestOption) *pagination.CursorIDInvoicesAutoPager[ArInvoiceListResponse] {
-	return pagination.NewCursorIDInvoicesAutoPager(r.List(ctx, query, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
 }
 
 // Cancel an invoice. This action cannot be undone.
@@ -294,8 +278,30 @@ const (
 	PaymentLinkStatusProcessing PaymentLinkStatus = "Processing"
 )
 
-// Response data for Accounts Receivable invoices API Endpoint
+// Paginated response containing a list of invoices. | Use the page cursor
+// information to fetch additional pages of invoices.
 type ArInvoiceListResponse struct {
+	// List of invoices in the current page
+	Invoices []ArInvoiceListResponseInvoice `json:"invoices,required"`
+	// Pagination information including cursors for navigating to next/previous pages
+	Page ArInvoiceListResponsePage `json:"page,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Invoices    respjson.Field
+		Page        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ArInvoiceListResponse) RawJSON() string { return r.JSON.raw }
+func (r *ArInvoiceListResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Response data for Accounts Receivable invoices API Endpoint
+type ArInvoiceListResponseInvoice struct {
 	// ID for the invoice.
 	ID string `json:"id,required" format:"uuid"`
 	// Whether or not the invoice can be paid via ach debit.
@@ -373,8 +379,29 @@ type ArInvoiceListResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ArInvoiceListResponse) RawJSON() string { return r.JSON.raw }
-func (r *ArInvoiceListResponse) UnmarshalJSON(data []byte) error {
+func (r ArInvoiceListResponseInvoice) RawJSON() string { return r.JSON.raw }
+func (r *ArInvoiceListResponseInvoice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Pagination information including cursors for navigating to next/previous pages
+type ArInvoiceListResponsePage struct {
+	// ID for the invoice.
+	NextPage string `json:"nextPage" format:"uuid"`
+	// ID for the invoice.
+	PreviousPage string `json:"previousPage" format:"uuid"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		NextPage     respjson.Field
+		PreviousPage respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ArInvoiceListResponsePage) RawJSON() string { return r.JSON.raw }
+func (r *ArInvoiceListResponsePage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

@@ -14,7 +14,6 @@ import (
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
@@ -77,27 +76,12 @@ func (r *WebhookService) Update(ctx context.Context, webhookEndpointID string, b
 
 // Retrieve a paginated list of all webhook endpoints for your organization.
 // Supports filtering by status.
-func (r *WebhookService) List(ctx context.Context, query WebhookListParams, opts ...option.RequestOption) (res *pagination.CursorIDWebhooks[APIWebhook], err error) {
-	var raw *http.Response
+func (r *WebhookService) List(ctx context.Context, query WebhookListParams, opts ...option.RequestOption) (res *WebhookListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "webhooks"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Retrieve a paginated list of all webhook endpoints for your organization.
-// Supports filtering by status.
-func (r *WebhookService) ListAutoPaging(ctx context.Context, query WebhookListParams, opts ...option.RequestOption) *pagination.CursorIDWebhooksAutoPager[APIWebhook] {
-	return pagination.NewCursorIDWebhooksAutoPager(r.List(ctx, query, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return
 }
 
 // Delete a webhook endpoint
@@ -199,6 +183,48 @@ const (
 	APIWebhookStatusPaused   APIWebhookStatus = "paused"
 	APIWebhookStatusDisabled APIWebhookStatus = "disabled"
 )
+
+// API response for listing webhook endpoints with pagination
+type WebhookListResponse struct {
+	// Pagination information including cursors for navigating to next/previous pages
+	Page WebhookListResponsePage `json:"page,required"`
+	// List of webhooks in the current page
+	Webhooks []APIWebhook `json:"webhooks,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Page        respjson.Field
+		Webhooks    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WebhookListResponse) RawJSON() string { return r.JSON.raw }
+func (r *WebhookListResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Pagination information including cursors for navigating to next/previous pages
+type WebhookListResponsePage struct {
+	// ID for the webhook
+	NextPage string `json:"nextPage" format:"uuid"`
+	// ID for the webhook
+	PreviousPage string `json:"previousPage" format:"uuid"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		NextPage     respjson.Field
+		PreviousPage respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r WebhookListResponsePage) RawJSON() string { return r.JSON.raw }
+func (r *WebhookListResponsePage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 type WebhookNewParams struct {
 	// The URL to which webhook events will be delivered
