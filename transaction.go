@@ -18,8 +18,8 @@ import (
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
-	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
 
 // TransactionService contains methods and other services that help with
@@ -72,12 +72,28 @@ func (r *TransactionService) Update(ctx context.Context, transactionID string, b
 // Retrieve a paginated list of all transactions across all accounts. Supports
 // advanced filtering by date ranges, status, categories, and cursor-based
 // pagination.
-func (r *TransactionService) List(ctx context.Context, query TransactionListParams, opts ...option.RequestOption) (res *TransactionListResponse, err error) {
+func (r *TransactionService) List(ctx context.Context, query TransactionListParams, opts ...option.RequestOption) (res *pagination.CursorIDPage[Transaction], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "transactions"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieve a paginated list of all transactions across all accounts. Supports
+// advanced filtering by date ranges, status, categories, and cursor-based
+// pagination.
+func (r *TransactionService) ListAutoPaging(ctx context.Context, query TransactionListParams, opts ...option.RequestOption) *pagination.CursorIDPageAutoPager[Transaction] {
+	return pagination.NewCursorIDPageAutoPager(r.List(ctx, query, opts...))
 }
 
 // Upload a file attachment to a transaction. The file is uploaded via
@@ -93,42 +109,6 @@ func (r *TransactionService) UploadAttachment(ctx context.Context, transactionID
 	path := fmt.Sprintf("transaction/%s/attachments", transactionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
 	return
-}
-
-type TransactionListResponse struct {
-	Page         TransactionListResponsePage `json:"page,required"`
-	Transactions []Transaction               `json:"transactions,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Page         respjson.Field
-		Transactions respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TransactionListResponse) RawJSON() string { return r.JSON.raw }
-func (r *TransactionListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type TransactionListResponsePage struct {
-	NextPage     string `json:"nextPage" format:"uuid"`
-	PreviousPage string `json:"previousPage" format:"uuid"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		NextPage     respjson.Field
-		PreviousPage respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TransactionListResponsePage) RawJSON() string { return r.JSON.raw }
-func (r *TransactionListResponsePage) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }
 
 type TransactionUpdateParams struct {
