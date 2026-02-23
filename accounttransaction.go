@@ -14,6 +14,7 @@ import (
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
@@ -39,16 +40,31 @@ func NewAccountTransactionService(opts ...option.RequestOption) (r AccountTransa
 
 // Retrieve a paginated list of transactions for a specific account. Supports
 // filtering by date range, status, and search terms.
-func (r *AccountTransactionService) List(ctx context.Context, accountID string, query AccountTransactionListParams, opts ...option.RequestOption) (res *AccountTransactionListResponse, err error) {
+func (r *AccountTransactionService) List(ctx context.Context, accountID string, query AccountTransactionListParams, opts ...option.RequestOption) (res *pagination.OffsetPage[AccountTransactionListResponse], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
 		return
 	}
 	path := fmt.Sprintf("account/%s/transactions", accountID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieve a paginated list of transactions for a specific account. Supports
+// filtering by date range, status, and search terms.
+func (r *AccountTransactionService) ListAutoPaging(ctx context.Context, accountID string, query AccountTransactionListParams, opts ...option.RequestOption) *pagination.OffsetPageAutoPager[AccountTransactionListResponse] {
+	return pagination.NewOffsetPageAutoPager(r.List(ctx, accountID, query, opts...))
 }
 
 // Send money from an account to a recipient. Creates a transaction that will be

@@ -15,6 +15,7 @@ import (
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
@@ -41,39 +42,84 @@ func NewTreasuryService(opts ...option.RequestOption) (r TreasuryService) {
 // Retrieve a paginated list of all treasury accounts associated with the
 // authenticated organization. Use cursor parameters (start_after, end_before) for
 // pagination.
-func (r *TreasuryService) List(ctx context.Context, query TreasuryListParams, opts ...option.RequestOption) (res *TreasuryListResponse, err error) {
+func (r *TreasuryService) List(ctx context.Context, query TreasuryListParams, opts ...option.RequestOption) (res *pagination.CursorPage[TreasuryListResponse], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "treasury"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieve a paginated list of all treasury accounts associated with the
+// authenticated organization. Use cursor parameters (start_after, end_before) for
+// pagination.
+func (r *TreasuryService) ListAutoPaging(ctx context.Context, query TreasuryListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[TreasuryListResponse] {
+	return pagination.NewCursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
 // Retrieve a paginated list of statements for a specific treasury account.
 // Supports cursor-based pagination and filtering by document type.
-func (r *TreasuryService) GetStatements(ctx context.Context, treasuryID string, query TreasuryGetStatementsParams, opts ...option.RequestOption) (res *TreasuryGetStatementsResponse, err error) {
+func (r *TreasuryService) GetStatements(ctx context.Context, treasuryID string, query TreasuryGetStatementsParams, opts ...option.RequestOption) (res *pagination.CursorPage[TreasuryGetStatementsResponse], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	if treasuryID == "" {
 		err = errors.New("missing required treasuryId parameter")
 		return
 	}
 	path := fmt.Sprintf("treasury/%s/statements", treasuryID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieve a paginated list of statements for a specific treasury account.
+// Supports cursor-based pagination and filtering by document type.
+func (r *TreasuryService) GetStatementsAutoPaging(ctx context.Context, treasuryID string, query TreasuryGetStatementsParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[TreasuryGetStatementsResponse] {
+	return pagination.NewCursorPageAutoPager(r.GetStatements(ctx, treasuryID, query, opts...))
 }
 
 // Retrieve paginated treasury transactions for a specific treasury account.
-func (r *TreasuryService) GetTransactions(ctx context.Context, treasuryID string, query TreasuryGetTransactionsParams, opts ...option.RequestOption) (res *TreasuryGetTransactionsResponse, err error) {
+func (r *TreasuryService) GetTransactions(ctx context.Context, treasuryID string, query TreasuryGetTransactionsParams, opts ...option.RequestOption) (res *pagination.TreasuryCursorPage[TreasuryGetTransactionsResponse], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	if treasuryID == "" {
 		err = errors.New("missing required treasuryId parameter")
 		return
 	}
 	path := fmt.Sprintf("treasury/%s/transactions", treasuryID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieve paginated treasury transactions for a specific treasury account.
+func (r *TreasuryService) GetTransactionsAutoPaging(ctx context.Context, treasuryID string, query TreasuryGetTransactionsParams, opts ...option.RequestOption) *pagination.TreasuryCursorPageAutoPager[TreasuryGetTransactionsResponse] {
+	return pagination.NewTreasuryCursorPageAutoPager(r.GetTransactions(ctx, treasuryID, query, opts...))
 }
 
 // Paginated response type for treasury accounts API endpoint

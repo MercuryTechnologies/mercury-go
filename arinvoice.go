@@ -16,6 +16,7 @@ import (
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
@@ -76,12 +77,27 @@ func (r *ArInvoiceService) Update(ctx context.Context, invoiceID string, body Ar
 
 // Retrieve a paginated list of invoices. Supports cursor-based pagination with
 // limit, order, start_after, and end_before query parameters.
-func (r *ArInvoiceService) List(ctx context.Context, query ArInvoiceListParams, opts ...option.RequestOption) (res *ArInvoiceListResponse, err error) {
+func (r *ArInvoiceService) List(ctx context.Context, query ArInvoiceListParams, opts ...option.RequestOption) (res *pagination.CursorPage[ArInvoiceListResponse], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "ar/invoices"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieve a paginated list of invoices. Supports cursor-based pagination with
+// limit, order, start_after, and end_before query parameters.
+func (r *ArInvoiceService) ListAutoPaging(ctx context.Context, query ArInvoiceListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[ArInvoiceListResponse] {
+	return pagination.NewCursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
 // Cancel an invoice. This action cannot be undone.
