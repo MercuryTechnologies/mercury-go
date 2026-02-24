@@ -2,7 +2,7 @@ package apiform
 
 import (
 	"bytes"
-	"github.com/stainless-sdks/mercury-go/packages/param"
+	"github.com/MercuryTechnologies/mercury-go/packages/param"
 	"io"
 	"mime/multipart"
 	"strings"

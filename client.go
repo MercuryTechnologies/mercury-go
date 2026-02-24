@@ -8,8 +8,8 @@ import (
 	"os"
 	"slices"
 
-	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
-	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
+	"github.com/MercuryTechnologies/mercury-go/option"
 )
 
 // Client creates a struct with services and top level methods that help with
