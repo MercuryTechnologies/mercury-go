@@ -13,9 +13,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/mercury-go"
-	"github.com/stainless-sdks/mercury-go/internal/testutil"
-	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go"
+	"github.com/MercuryTechnologies/mercury-go/internal/testutil"
+	"github.com/MercuryTechnologies/mercury-go/option"
 )
 
 func TestArInvoiceNewWithOptionalParams(t *testing.T) {

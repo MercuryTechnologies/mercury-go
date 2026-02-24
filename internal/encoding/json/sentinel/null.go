@@ -1,7 +1,7 @@
 package sentinel
 
 import (
-	"github.com/stainless-sdks/mercury-go/internal/encoding/json/shims"
+	"github.com/MercuryTechnologies/mercury-go/internal/encoding/json/shims"
 	"reflect"
 	"sync"
 )

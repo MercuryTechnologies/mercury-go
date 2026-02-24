@@ -3,8 +3,8 @@ package respjson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/mercury-go/internal/apijson"
-	rj "github.com/stainless-sdks/mercury-go/packages/respjson"
+	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
+	rj "github.com/MercuryTechnologies/mercury-go/packages/respjson"
 	"reflect"
 	"testing"
 )
