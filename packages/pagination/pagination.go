@@ -529,6 +529,106 @@ func (r *CursorIDCategoriesAutoPager[T]) Index() int {
 	return r.run
 }
 
+type CursorIDRecipientAttachments[T any] struct {
+	Attachments []T `json:"attachments"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Attachments respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	cfg *requestconfig.RequestConfig
+	res *http.Response
+}
+
+// Returns the unmodified JSON received from the API
+func (r CursorIDRecipientAttachments[T]) RawJSON() string { return r.JSON.raw }
+func (r *CursorIDRecipientAttachments[T]) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *CursorIDRecipientAttachments[T]) GetNextPage() (res *CursorIDRecipientAttachments[T], err error) {
+	if len(r.Attachments) == 0 {
+		return nil, nil
+	}
+	items := r.Attachments
+	if items == nil || len(items) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	value := reflect.ValueOf(items[len(items)-1])
+	field := value.FieldByName("ID")
+	err = cfg.Apply(option.WithQuery("start_after", field.Interface().(string)))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *CursorIDRecipientAttachments[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &CursorIDRecipientAttachments[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type CursorIDRecipientAttachmentsAutoPager[T any] struct {
+	page *CursorIDRecipientAttachments[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+	paramObj
+}
+
+func NewCursorIDRecipientAttachmentsAutoPager[T any](page *CursorIDRecipientAttachments[T], err error) *CursorIDRecipientAttachmentsAutoPager[T] {
+	return &CursorIDRecipientAttachmentsAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *CursorIDRecipientAttachmentsAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.Attachments) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.Attachments) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.Attachments) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.Attachments[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *CursorIDRecipientAttachmentsAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *CursorIDRecipientAttachmentsAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *CursorIDRecipientAttachmentsAutoPager[T]) Index() int {
+	return r.run
+}
+
 type CursorIDRecipients[T any] struct {
 	Recipients []T `json:"recipients"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
