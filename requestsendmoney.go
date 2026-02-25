@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
-	"github.com/MercuryTechnologies/mercury-go/option"
+	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
+	"github.com/stainless-sdks/mercury-go/option"
 )
 
 // RequestSendMoneyService contains methods and other services that help with

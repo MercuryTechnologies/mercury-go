@@ -12,12 +12,12 @@ import (
 	"slices"
 	"time"
 
-	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
-	"github.com/MercuryTechnologies/mercury-go/internal/apiquery"
-	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
-	"github.com/MercuryTechnologies/mercury-go/option"
-	"github.com/MercuryTechnologies/mercury-go/packages/param"
-	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
+	"github.com/stainless-sdks/mercury-go/internal/apijson"
+	"github.com/stainless-sdks/mercury-go/internal/apiquery"
+	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
+	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/stainless-sdks/mercury-go/packages/param"
+	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
 
 // ArInvoiceService contains methods and other services that help with interacting
