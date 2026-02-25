@@ -64,29 +64,29 @@ func (r *EventService) List(ctx context.Context, query EventListParams, opts ...
 // with before/after values and metadata about what changed.
 type Event struct {
 	// ID for the API event
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// List of JSON paths that were modified in this event
-	ChangedPaths []string `json:"changedPaths,required"`
+	ChangedPaths []string `json:"changedPaths" api:"required"`
 	// JSON object containing the fields that were changed and their new values
-	MergePatch any `json:"mergePatch,required"`
+	MergePatch any `json:"mergePatch" api:"required"`
 	// Timestamp when the event occurred
-	OccurredAt string `json:"occurredAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	OccurredAt string `json:"occurredAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// The type of operation performed (e.g., create, update, delete)
 	//
 	// Any of "create", "update", "delete".
-	OperationType EventOperationType `json:"operationType,required"`
+	OperationType EventOperationType `json:"operationType" api:"required"`
 	// The ID of the resource that was affected
-	ResourceID string `json:"resourceId,required" format:"uuid"`
+	ResourceID string `json:"resourceId" api:"required" format:"uuid"`
 	// The type of resource that was affected (e.g., transaction, account)
 	//
 	// Any of "transaction", "checkingAccount", "savingsAccount", "treasuryAccount",
 	// "investmentAccount", "creditAccount".
-	ResourceType EventResourceType `json:"resourceType,required"`
+	ResourceType EventResourceType `json:"resourceType" api:"required"`
 	// Version number of the resource after this change
-	ResourceVersion int64 `json:"resourceVersion,required"`
+	ResourceVersion int64 `json:"resourceVersion" api:"required"`
 	// JSON object containing the fields that were changed and their previous values
 	// before the update
-	PreviousValues any `json:"previousValues,nullable"`
+	PreviousValues any `json:"previousValues" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID              respjson.Field
@@ -134,9 +134,9 @@ const (
 // information to fetch additional pages of events.
 type EventListResponse struct {
 	// List of events in the current page
-	Events []Event `json:"events,required"`
+	Events []Event `json:"events" api:"required"`
 	// Pagination information including cursors for navigating to next/previous pages
-	Page EventListResponsePage `json:"page,required"`
+	Page EventListResponsePage `json:"page" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Events      respjson.Field

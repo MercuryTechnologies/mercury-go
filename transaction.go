@@ -114,9 +114,9 @@ func (r *TransactionService) UploadAttachment(ctx context.Context, transactionID
 type TransactionUpdateParams struct {
 	// Note update action. Omit field to keep current note, send null or empty string
 	// to clear note, send text to set note.
-	Note param.Opt[string] `json:"note,omitzero,required"`
+	Note param.Opt[string] `json:"note,omitzero" api:"required"`
 	// ID for the category
-	CategoryID string `json:"categoryId,required" format:"uuid"`
+	CategoryID string `json:"categoryId" api:"required" format:"uuid"`
 	paramObj
 }
 
@@ -193,7 +193,7 @@ const (
 
 type TransactionUploadAttachmentParams struct {
 	// The file to upload
-	File io.Reader `json:"file,omitzero,required" format:"binary"`
+	File io.Reader `json:"file,omitzero" api:"required" format:"binary"`
 	// Type of attachment: 'receipt', 'bill', or 'other'. Defaults to 'other'.
 	//
 	// Any of "receipt", "bill", "other".

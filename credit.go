@@ -42,7 +42,7 @@ func (r *CreditService) List(ctx context.Context, opts ...option.RequestOption) 
 }
 
 type CreditListResponse struct {
-	Accounts []CreditListResponseAccount `json:"accounts,required"`
+	Accounts []CreditListResponseAccount `json:"accounts" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Accounts    respjson.Field
@@ -59,12 +59,12 @@ func (r *CreditListResponse) UnmarshalJSON(data []byte) error {
 
 type CreditListResponseAccount struct {
 	// ID for a Mercury account.
-	ID               string  `json:"id,required" format:"uuid"`
-	AvailableBalance float64 `json:"availableBalance,required"`
-	CreatedAt        string  `json:"createdAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	CurrentBalance   float64 `json:"currentBalance,required"`
+	ID               string  `json:"id" api:"required" format:"uuid"`
+	AvailableBalance float64 `json:"availableBalance" api:"required"`
+	CreatedAt        string  `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	CurrentBalance   float64 `json:"currentBalance" api:"required"`
 	// Any of "active", "deleted", "pending", "archived".
-	Status AccountStatus `json:"status,required"`
+	Status AccountStatus `json:"status" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field

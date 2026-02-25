@@ -115,13 +115,13 @@ func (r *RecipientService) UploadAttachment(ctx context.Context, recipientID str
 }
 
 type Address struct {
-	Address1   string `json:"address1,required"`
-	City       string `json:"city,required"`
-	Country    string `json:"country,required"`
-	Name       string `json:"name,required"`
-	PostalCode string `json:"postalCode,required"`
-	Region     string `json:"region,required"`
-	Address2   string `json:"address2,nullable"`
+	Address1   string `json:"address1" api:"required"`
+	City       string `json:"city" api:"required"`
+	Country    string `json:"country" api:"required"`
+	Name       string `json:"name" api:"required"`
+	PostalCode string `json:"postalCode" api:"required"`
+	Region     string `json:"region" api:"required"`
+	Address2   string `json:"address2" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Address1    respjson.Field
@@ -143,15 +143,15 @@ func (r *Address) UnmarshalJSON(data []byte) error {
 }
 
 type AddressData struct {
-	Address1   string `json:"address1,required"`
-	City       string `json:"city,required"`
-	PostalCode string `json:"postalCode,required"`
-	Address2   string `json:"address2,nullable"`
+	Address1   string `json:"address1" api:"required"`
+	City       string `json:"city" api:"required"`
+	PostalCode string `json:"postalCode" api:"required"`
+	Address2   string `json:"address2" api:"nullable"`
 	// Any of "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI",
 	// "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS",
 	// "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR",
 	// "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY".
-	State UsState `json:"state,nullable"`
+	State UsState `json:"state" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Address1    respjson.Field
@@ -181,9 +181,9 @@ func (r AddressData) ToParam() AddressDataParam {
 
 // The properties Address1, City, PostalCode are required.
 type AddressDataParam struct {
-	Address1   string            `json:"address1,required"`
-	City       string            `json:"city,required"`
-	PostalCode string            `json:"postalCode,required"`
+	Address1   string            `json:"address1" api:"required"`
+	City       string            `json:"city" api:"required"`
+	PostalCode string            `json:"postalCode" api:"required"`
 	Address2   param.Opt[string] `json:"address2,omitzero"`
 	// Any of "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI",
 	// "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS",
@@ -202,12 +202,12 @@ func (r *AddressDataParam) UnmarshalJSON(data []byte) error {
 }
 
 type AddressWithoutName struct {
-	Address1   string `json:"address1,required"`
-	City       string `json:"city,required"`
-	Country    string `json:"country,required"`
-	PostalCode string `json:"postalCode,required"`
-	Region     string `json:"region,required"`
-	Address2   string `json:"address2,nullable"`
+	Address1   string `json:"address1" api:"required"`
+	City       string `json:"city" api:"required"`
+	Country    string `json:"country" api:"required"`
+	PostalCode string `json:"postalCode" api:"required"`
+	Region     string `json:"region" api:"required"`
+	Address2   string `json:"address2" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Address1    respjson.Field
@@ -238,11 +238,11 @@ func (r AddressWithoutName) ToParam() AddressWithoutNameParam {
 
 // The properties Address1, City, Country, PostalCode, Region are required.
 type AddressWithoutNameParam struct {
-	Address1   string            `json:"address1,required"`
-	City       string            `json:"city,required"`
-	Country    string            `json:"country,required"`
-	PostalCode string            `json:"postalCode,required"`
-	Region     string            `json:"region,required"`
+	Address1   string            `json:"address1" api:"required"`
+	City       string            `json:"city" api:"required"`
+	Country    string            `json:"country" api:"required"`
+	PostalCode string            `json:"postalCode" api:"required"`
+	Region     string            `json:"region" api:"required"`
 	Address2   param.Opt[string] `json:"address2,omitzero"`
 	paramObj
 }
@@ -258,7 +258,7 @@ func (r *AddressWithoutNameParam) UnmarshalJSON(data []byte) error {
 // The property Address is required.
 type CheckInfoRawParam struct {
 	// Mailing address for sending a physical check.
-	Address AddressWithoutNameParam `json:"address,omitzero,required"`
+	Address AddressWithoutNameParam `json:"address,omitzero" api:"required"`
 	paramObj
 }
 
@@ -271,10 +271,10 @@ func (r *CheckInfoRawParam) UnmarshalJSON(data []byte) error {
 }
 
 type DomesticWireRoutingInfo struct {
-	AccountNumber string             `json:"accountNumber,required"`
-	RoutingNumber string             `json:"routingNumber,required"`
-	Address       AddressWithoutName `json:"address,nullable"`
-	BankName      string             `json:"bankName,nullable"`
+	AccountNumber string             `json:"accountNumber" api:"required"`
+	RoutingNumber string             `json:"routingNumber" api:"required"`
+	Address       AddressWithoutName `json:"address" api:"nullable"`
+	BankName      string             `json:"bankName" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccountNumber respjson.Field
@@ -295,12 +295,12 @@ func (r *DomesticWireRoutingInfo) UnmarshalJSON(data []byte) error {
 // The properties AccountNumber, Address, RoutingNumber are required.
 type DomesticWireRoutingInfoRawParam struct {
 	// The account number of the bank account to use for domestic wire payments.
-	AccountNumber string `json:"accountNumber,required"`
+	AccountNumber string `json:"accountNumber" api:"required"`
 	// The address of the bank account to use for domestic wire payments. This has to
 	// be the recipient's legal address.
-	Address AddressWithoutNameParam `json:"address,omitzero,required"`
+	Address AddressWithoutNameParam `json:"address,omitzero" api:"required"`
 	// The routing number of the bank account to use for domestic wire payments.
-	RoutingNumber string `json:"routingNumber,required"`
+	RoutingNumber string `json:"routingNumber" api:"required"`
 	// The name of the beneficiary of the domestic wire. This is the name of the entity
 	// that will receive the domestic wire.
 	DefaultForBenefitOf param.Opt[string] `json:"defaultForBenefitOf,omitzero"`
@@ -325,13 +325,13 @@ const (
 )
 
 type ElectronicRoutingInfo struct {
-	AccountNumber string `json:"accountNumber,required"`
+	AccountNumber string `json:"accountNumber" api:"required"`
 	// Any of "businessChecking", "businessSavings", "personalChecking",
 	// "personalSavings".
-	ElectronicAccountType ElectronicAccountType `json:"electronicAccountType,required"`
-	RoutingNumber         string                `json:"routingNumber,required"`
-	Address               AddressWithoutName    `json:"address,nullable"`
-	BankName              string                `json:"bankName,nullable"`
+	ElectronicAccountType ElectronicAccountType `json:"electronicAccountType" api:"required"`
+	RoutingNumber         string                `json:"routingNumber" api:"required"`
+	Address               AddressWithoutName    `json:"address" api:"nullable"`
+	BankName              string                `json:"bankName" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccountNumber         respjson.Field
@@ -354,17 +354,17 @@ func (r *ElectronicRoutingInfo) UnmarshalJSON(data []byte) error {
 // required.
 type ElectronicRoutingInfoRawParam struct {
 	// The account number of the bank account to use for ACH payments.
-	AccountNumber string `json:"accountNumber,required"`
+	AccountNumber string `json:"accountNumber" api:"required"`
 	// The address of the bank account to use for ACH payments. This has to be the
 	// recipient's legal address.
-	Address AddressWithoutNameParam `json:"address,omitzero,required"`
+	Address AddressWithoutNameParam `json:"address,omitzero" api:"required"`
 	// The type of bank account to use for ACH payments.
 	//
 	// Any of "businessChecking", "businessSavings", "personalChecking",
 	// "personalSavings".
-	ElectronicAccountType ElectronicAccountType `json:"electronicAccountType,omitzero,required"`
+	ElectronicAccountType ElectronicAccountType `json:"electronicAccountType,omitzero" api:"required"`
 	// The routing number of the bank account to use for ACH payments.
-	RoutingNumber string `json:"routingNumber,required"`
+	RoutingNumber string `json:"routingNumber" api:"required"`
 	paramObj
 }
 
@@ -377,14 +377,14 @@ func (r *ElectronicRoutingInfoRawParam) UnmarshalJSON(data []byte) error {
 }
 
 type InternationalWireRoutingInfo struct {
-	CountrySpecific   InternationalWireRoutingInfoCountrySpecific   `json:"countrySpecific,required"`
-	Iban              string                                        `json:"iban,required"`
-	SwiftCode         string                                        `json:"swiftCode,required"`
-	Address           AddressWithoutName                            `json:"address,nullable"`
-	BankDetails       InternationalWireRoutingInfoBankDetails       `json:"bankDetails,nullable"`
-	CorrespondentInfo InternationalWireRoutingInfoCorrespondentInfo `json:"correspondentInfo,nullable"`
-	EmailAddress      string                                        `json:"emailAddress,nullable"`
-	PhoneNumber       string                                        `json:"phoneNumber,nullable"`
+	CountrySpecific   InternationalWireRoutingInfoCountrySpecific   `json:"countrySpecific" api:"required"`
+	Iban              string                                        `json:"iban" api:"required"`
+	SwiftCode         string                                        `json:"swiftCode" api:"required"`
+	Address           AddressWithoutName                            `json:"address" api:"nullable"`
+	BankDetails       InternationalWireRoutingInfoBankDetails       `json:"bankDetails" api:"nullable"`
+	CorrespondentInfo InternationalWireRoutingInfoCorrespondentInfo `json:"correspondentInfo" api:"nullable"`
+	EmailAddress      string                                        `json:"emailAddress" api:"nullable"`
+	PhoneNumber       string                                        `json:"phoneNumber" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CountrySpecific   respjson.Field
@@ -407,20 +407,20 @@ func (r *InternationalWireRoutingInfo) UnmarshalJSON(data []byte) error {
 }
 
 type InternationalWireRoutingInfoCountrySpecific struct {
-	Australia         InternationalWireRoutingInfoCountrySpecificAustralia         `json:"australia,nullable"`
-	Brazil            InternationalWireRoutingInfoCountrySpecificBrazil            `json:"brazil,nullable"`
-	Canada            InternationalWireRoutingInfoCountrySpecificCanada            `json:"canada,nullable"`
-	Chile             InternationalWireRoutingInfoCountrySpecificChile             `json:"chile,nullable"`
-	Colombia          InternationalWireRoutingInfoCountrySpecificColombia          `json:"colombia,nullable"`
-	DominicanRepublic InternationalWireRoutingInfoCountrySpecificDominicanRepublic `json:"dominicanRepublic,nullable"`
-	Honduras          InternationalWireRoutingInfoCountrySpecificHonduras          `json:"honduras,nullable"`
-	India             InternationalWireRoutingInfoCountrySpecificIndia             `json:"india,nullable"`
-	Kazakhstan        InternationalWireRoutingInfoCountrySpecificKazakhstan        `json:"kazakhstan,nullable"`
-	Pakistan          InternationalWireRoutingInfoCountrySpecificPakistan          `json:"pakistan,nullable"`
-	Paraguay          InternationalWireRoutingInfoCountrySpecificParaguay          `json:"paraguay,nullable"`
-	Philippines       InternationalWireRoutingInfoCountrySpecificPhilippines       `json:"philippines,nullable"`
-	Russia            InternationalWireRoutingInfoCountrySpecificRussia            `json:"russia,nullable"`
-	SouthAfrica       InternationalWireRoutingInfoCountrySpecificSouthAfrica       `json:"southAfrica,nullable"`
+	Australia         InternationalWireRoutingInfoCountrySpecificAustralia         `json:"australia" api:"nullable"`
+	Brazil            InternationalWireRoutingInfoCountrySpecificBrazil            `json:"brazil" api:"nullable"`
+	Canada            InternationalWireRoutingInfoCountrySpecificCanada            `json:"canada" api:"nullable"`
+	Chile             InternationalWireRoutingInfoCountrySpecificChile             `json:"chile" api:"nullable"`
+	Colombia          InternationalWireRoutingInfoCountrySpecificColombia          `json:"colombia" api:"nullable"`
+	DominicanRepublic InternationalWireRoutingInfoCountrySpecificDominicanRepublic `json:"dominicanRepublic" api:"nullable"`
+	Honduras          InternationalWireRoutingInfoCountrySpecificHonduras          `json:"honduras" api:"nullable"`
+	India             InternationalWireRoutingInfoCountrySpecificIndia             `json:"india" api:"nullable"`
+	Kazakhstan        InternationalWireRoutingInfoCountrySpecificKazakhstan        `json:"kazakhstan" api:"nullable"`
+	Pakistan          InternationalWireRoutingInfoCountrySpecificPakistan          `json:"pakistan" api:"nullable"`
+	Paraguay          InternationalWireRoutingInfoCountrySpecificParaguay          `json:"paraguay" api:"nullable"`
+	Philippines       InternationalWireRoutingInfoCountrySpecificPhilippines       `json:"philippines" api:"nullable"`
+	Russia            InternationalWireRoutingInfoCountrySpecificRussia            `json:"russia" api:"nullable"`
+	SouthAfrica       InternationalWireRoutingInfoCountrySpecificSouthAfrica       `json:"southAfrica" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Australia         respjson.Field
@@ -449,7 +449,7 @@ func (r *InternationalWireRoutingInfoCountrySpecific) UnmarshalJSON(data []byte)
 }
 
 type InternationalWireRoutingInfoCountrySpecificAustralia struct {
-	BsbCode string `json:"bsbCode,required"`
+	BsbCode string `json:"bsbCode" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		BsbCode     respjson.Field
@@ -465,7 +465,7 @@ func (r *InternationalWireRoutingInfoCountrySpecificAustralia) UnmarshalJSON(dat
 }
 
 type InternationalWireRoutingInfoCountrySpecificBrazil struct {
-	LegalID string `json:"legalId,required"`
+	LegalID string `json:"legalId" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		LegalID     respjson.Field
@@ -481,8 +481,8 @@ func (r *InternationalWireRoutingInfoCountrySpecificBrazil) UnmarshalJSON(data [
 }
 
 type InternationalWireRoutingInfoCountrySpecificCanada struct {
-	BankCode      string `json:"bankCode,required"`
-	TransitNumber string `json:"transitNumber,required"`
+	BankCode      string `json:"bankCode" api:"required"`
+	TransitNumber string `json:"transitNumber" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		BankCode      respjson.Field
@@ -499,7 +499,7 @@ func (r *InternationalWireRoutingInfoCountrySpecificCanada) UnmarshalJSON(data [
 }
 
 type InternationalWireRoutingInfoCountrySpecificChile struct {
-	LegalID string `json:"legalId,required"`
+	LegalID string `json:"legalId" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		LegalID     respjson.Field
@@ -515,7 +515,7 @@ func (r *InternationalWireRoutingInfoCountrySpecificChile) UnmarshalJSON(data []
 }
 
 type InternationalWireRoutingInfoCountrySpecificColombia struct {
-	LegalID string `json:"legalId,required"`
+	LegalID string `json:"legalId" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		LegalID     respjson.Field
@@ -532,8 +532,8 @@ func (r *InternationalWireRoutingInfoCountrySpecificColombia) UnmarshalJSON(data
 
 type InternationalWireRoutingInfoCountrySpecificDominicanRepublic struct {
 	// Any of "checking", "savings".
-	AccountType SwiftBankAccountType `json:"accountType,required"`
-	LegalID     string               `json:"legalId,required"`
+	AccountType SwiftBankAccountType `json:"accountType" api:"required"`
+	LegalID     string               `json:"legalId" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccountType respjson.Field
@@ -553,8 +553,8 @@ func (r *InternationalWireRoutingInfoCountrySpecificDominicanRepublic) Unmarshal
 
 type InternationalWireRoutingInfoCountrySpecificHonduras struct {
 	// Any of "checking", "savings".
-	AccountType SwiftBankAccountType `json:"accountType,required"`
-	LegalID     string               `json:"legalId,required"`
+	AccountType SwiftBankAccountType `json:"accountType" api:"required"`
+	LegalID     string               `json:"legalId" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccountType respjson.Field
@@ -571,7 +571,7 @@ func (r *InternationalWireRoutingInfoCountrySpecificHonduras) UnmarshalJSON(data
 }
 
 type InternationalWireRoutingInfoCountrySpecificIndia struct {
-	IfscCode string `json:"ifscCode,required"`
+	IfscCode string `json:"ifscCode" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		IfscCode    respjson.Field
@@ -587,7 +587,7 @@ func (r *InternationalWireRoutingInfoCountrySpecificIndia) UnmarshalJSON(data []
 }
 
 type InternationalWireRoutingInfoCountrySpecificKazakhstan struct {
-	LegalID string `json:"legalId,required"`
+	LegalID string `json:"legalId" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		LegalID     respjson.Field
@@ -603,9 +603,9 @@ func (r *InternationalWireRoutingInfoCountrySpecificKazakhstan) UnmarshalJSON(da
 }
 
 type InternationalWireRoutingInfoCountrySpecificPakistan struct {
-	LegalID string `json:"legalId,required"`
+	LegalID string `json:"legalId" api:"required"`
 	// Any of "CNIC", "SNIC", "Passport", "NTN".
-	LegalIDType string `json:"legalIdType,required"`
+	LegalIDType string `json:"legalIdType" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		LegalID     respjson.Field
@@ -622,7 +622,7 @@ func (r *InternationalWireRoutingInfoCountrySpecificPakistan) UnmarshalJSON(data
 }
 
 type InternationalWireRoutingInfoCountrySpecificParaguay struct {
-	LegalID string `json:"legalId,required"`
+	LegalID string `json:"legalId" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		LegalID     respjson.Field
@@ -638,7 +638,7 @@ func (r *InternationalWireRoutingInfoCountrySpecificParaguay) UnmarshalJSON(data
 }
 
 type InternationalWireRoutingInfoCountrySpecificPhilippines struct {
-	RoutingNumber string `json:"routingNumber,required"`
+	RoutingNumber string `json:"routingNumber" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		RoutingNumber respjson.Field
@@ -654,7 +654,7 @@ func (r *InternationalWireRoutingInfoCountrySpecificPhilippines) UnmarshalJSON(d
 }
 
 type InternationalWireRoutingInfoCountrySpecificRussia struct {
-	Inn string `json:"inn,required"`
+	Inn string `json:"inn" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Inn         respjson.Field
@@ -670,7 +670,7 @@ func (r *InternationalWireRoutingInfoCountrySpecificRussia) UnmarshalJSON(data [
 }
 
 type InternationalWireRoutingInfoCountrySpecificSouthAfrica struct {
-	BranchCode string `json:"branchCode,required"`
+	BranchCode string `json:"branchCode" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		BranchCode  respjson.Field
@@ -686,9 +686,9 @@ func (r *InternationalWireRoutingInfoCountrySpecificSouthAfrica) UnmarshalJSON(d
 }
 
 type InternationalWireRoutingInfoBankDetails struct {
-	BankCityState string `json:"bankCityState,required"`
-	BankCountry   string `json:"bankCountry,required"`
-	BankName      string `json:"bankName,required"`
+	BankCityState string `json:"bankCityState" api:"required"`
+	BankCountry   string `json:"bankCountry" api:"required"`
+	BankName      string `json:"bankName" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		BankCityState respjson.Field
@@ -706,9 +706,9 @@ func (r *InternationalWireRoutingInfoBankDetails) UnmarshalJSON(data []byte) err
 }
 
 type InternationalWireRoutingInfoCorrespondentInfo struct {
-	BankName      string `json:"bankName,nullable"`
-	RoutingNumber string `json:"routingNumber,nullable"`
-	SwiftCode     string `json:"swiftCode,nullable"`
+	BankName      string `json:"bankName" api:"nullable"`
+	RoutingNumber string `json:"routingNumber" api:"nullable"`
+	SwiftCode     string `json:"swiftCode" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		BankName      respjson.Field
@@ -727,25 +727,25 @@ func (r *InternationalWireRoutingInfoCorrespondentInfo) UnmarshalJSON(data []byt
 
 type Recipient struct {
 	// ID for a Mercury account.
-	ID          string                `json:"id,required" format:"uuid"`
-	Attachments []RecipientAttachment `json:"attachments,required"`
+	ID          string                `json:"id" api:"required" format:"uuid"`
+	Attachments []RecipientAttachment `json:"attachments" api:"required"`
 	// Any of "ach", "check", "domesticWire", "internationalWire", "realTimePayment".
-	DefaultPaymentMethod RecipientDefaultPaymentMethod `json:"defaultPaymentMethod,required"`
-	Emails               []string                      `json:"emails,required"`
-	Name                 string                        `json:"name,required"`
+	DefaultPaymentMethod RecipientDefaultPaymentMethod `json:"defaultPaymentMethod" api:"required"`
+	Emails               []string                      `json:"emails" api:"required"`
+	Name                 string                        `json:"name" api:"required"`
 	// Any of "active", "deleted".
-	Status                       RecipientStatus                     `json:"status,required"`
-	Address                      Address                             `json:"address,nullable"`
-	CheckInfo                    RecipientCheckInfo                  `json:"checkInfo,nullable"`
-	ContactEmail                 string                              `json:"contactEmail,nullable"`
-	DateLastPaid                 string                              `json:"dateLastPaid,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
-	DefaultAddress               AddressWithoutName                  `json:"defaultAddress,nullable"`
-	DomesticWireRoutingInfo      DomesticWireRoutingInfo             `json:"domesticWireRoutingInfo,nullable"`
-	ElectronicRoutingInfo        ElectronicRoutingInfo               `json:"electronicRoutingInfo,nullable"`
-	InternationalWireRoutingInfo InternationalWireRoutingInfo        `json:"internationalWireRoutingInfo,nullable"`
-	IsBusiness                   bool                                `json:"isBusiness,nullable"`
-	Nickname                     string                              `json:"nickname,nullable"`
-	RealTimePaymentRoutingInfo   RecipientRealTimePaymentRoutingInfo `json:"realTimePaymentRoutingInfo,nullable"`
+	Status                       RecipientStatus                     `json:"status" api:"required"`
+	Address                      Address                             `json:"address" api:"nullable"`
+	CheckInfo                    RecipientCheckInfo                  `json:"checkInfo" api:"nullable"`
+	ContactEmail                 string                              `json:"contactEmail" api:"nullable"`
+	DateLastPaid                 string                              `json:"dateLastPaid" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	DefaultAddress               AddressWithoutName                  `json:"defaultAddress" api:"nullable"`
+	DomesticWireRoutingInfo      DomesticWireRoutingInfo             `json:"domesticWireRoutingInfo" api:"nullable"`
+	ElectronicRoutingInfo        ElectronicRoutingInfo               `json:"electronicRoutingInfo" api:"nullable"`
+	InternationalWireRoutingInfo InternationalWireRoutingInfo        `json:"internationalWireRoutingInfo" api:"nullable"`
+	IsBusiness                   bool                                `json:"isBusiness" api:"nullable"`
+	Nickname                     string                              `json:"nickname" api:"nullable"`
+	RealTimePaymentRoutingInfo   RecipientRealTimePaymentRoutingInfo `json:"realTimePaymentRoutingInfo" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                           respjson.Field
@@ -778,16 +778,16 @@ func (r *Recipient) UnmarshalJSON(data []byte) error {
 
 type RecipientAttachment struct {
 	// Name of the uploaded file
-	FileName string `json:"fileName,required"`
+	FileName string `json:"fileName" api:"required"`
 	// Timestamp when the attachment was uploaded
-	UploadedAt string `json:"uploadedAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	UploadedAt string `json:"uploadedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// Presigned URL to download the attachment (valid for 12 hours)
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// The tax form type (W-9 for US persons, W-8BEN for foreign individuals, W-8BEN-E
 	// for foreign entities)
 	//
 	// Any of "w9", "w8BEN", "w8BENE", "unknown".
-	FormType TaxFormType `json:"formType,nullable"`
+	FormType TaxFormType `json:"formType" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		FileName    respjson.Field
@@ -823,7 +823,7 @@ const (
 )
 
 type RecipientCheckInfo struct {
-	Address AddressWithoutName `json:"address,required"`
+	Address AddressWithoutName `json:"address" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Address     respjson.Field
@@ -839,10 +839,10 @@ func (r *RecipientCheckInfo) UnmarshalJSON(data []byte) error {
 }
 
 type RecipientRealTimePaymentRoutingInfo struct {
-	AccountNumber string             `json:"accountNumber,required"`
-	RoutingNumber string             `json:"routingNumber,required"`
-	Address       AddressWithoutName `json:"address,nullable"`
-	BankName      string             `json:"bankName,nullable"`
+	AccountNumber string             `json:"accountNumber" api:"required"`
+	RoutingNumber string             `json:"routingNumber" api:"required"`
+	Address       AddressWithoutName `json:"address" api:"nullable"`
+	BankName      string             `json:"bankName" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccountNumber respjson.Field
@@ -878,11 +878,11 @@ const (
 
 type RecipientListResponse struct {
 	// Pagination information including cursors for navigating to next/previous pages
-	Page RecipientListResponsePage `json:"page,required"`
+	Page RecipientListResponsePage `json:"page" api:"required"`
 	// List of recipients in the current page
-	Recipients []Recipient `json:"recipients,required"`
+	Recipients []Recipient `json:"recipients" api:"required"`
 	// Total number of recipients in the current page
-	Total int64 `json:"total,required"`
+	Total int64 `json:"total" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Page        respjson.Field
@@ -922,11 +922,11 @@ func (r *RecipientListResponsePage) UnmarshalJSON(data []byte) error {
 
 type RecipientListAttachmentsResponse struct {
 	// List of attachments with recipient IDs
-	Attachments []RecipientListAttachmentsResponseAttachment `json:"attachments,required"`
+	Attachments []RecipientListAttachmentsResponseAttachment `json:"attachments" api:"required"`
 	// Pagination information
-	Page RecipientListAttachmentsResponsePage `json:"page,required"`
+	Page RecipientListAttachmentsResponsePage `json:"page" api:"required"`
 	// Total number of attachments in the current page
-	Total int64 `json:"total,required"`
+	Total int64 `json:"total" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Attachments respjson.Field
@@ -945,17 +945,17 @@ func (r *RecipientListAttachmentsResponse) UnmarshalJSON(data []byte) error {
 
 type RecipientListAttachmentsResponseAttachment struct {
 	// Name of the uploaded file
-	FileName string `json:"fileName,required"`
+	FileName string `json:"fileName" api:"required"`
 	// ID for a Mercury account.
-	RecipientID string `json:"recipientId,required" format:"uuid"`
+	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
 	// Timestamp when the attachment was uploaded
-	UploadedAt string `json:"uploadedAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	UploadedAt string `json:"uploadedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// Presigned URL to download the attachment (valid for 12 hours)
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// The tax form type (W-9, W-8BEN, W-8BEN-E, or Unknown)
 	//
 	// Any of "w9", "w8BEN", "w8BENE", "unknown".
-	FormType TaxFormType `json:"formType,nullable"`
+	FormType TaxFormType `json:"formType" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		FileName    respjson.Field
@@ -996,8 +996,8 @@ func (r *RecipientListAttachmentsResponsePage) UnmarshalJSON(data []byte) error 
 }
 
 type RecipientNewParams struct {
-	Emails []string `json:"emails,omitzero,required"`
-	Name   string   `json:"name,required"`
+	Emails []string `json:"emails,omitzero" api:"required"`
+	Name   string   `json:"name" api:"required"`
 	// Contact email address of the recipient
 	ContactEmail param.Opt[string] `json:"contactEmail,omitzero"`
 	Nickname     param.Opt[string] `json:"nickname,omitzero"`
@@ -1119,7 +1119,7 @@ const (
 
 type RecipientUploadAttachmentParams struct {
 	// The file to upload (tax form document)
-	File io.Reader `json:"file,omitzero,required" format:"binary"`
+	File io.Reader `json:"file,omitzero" api:"required" format:"binary"`
 	paramObj
 }
 

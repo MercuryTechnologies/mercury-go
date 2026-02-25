@@ -95,14 +95,14 @@ func (r *TreasuryService) GetTransactions(ctx context.Context, treasuryID string
 
 type TreasuryListResponse struct {
 	// ID for a Mercury account.
-	ID               string  `json:"id,required" format:"uuid"`
-	AvailableBalance float64 `json:"availableBalance,required"`
-	CreatedAt        string  `json:"createdAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	CurrentBalance   float64 `json:"currentBalance,required"`
+	ID               string  `json:"id" api:"required" format:"uuid"`
+	AvailableBalance float64 `json:"availableBalance" api:"required"`
+	CreatedAt        string  `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	CurrentBalance   float64 `json:"currentBalance" api:"required"`
 	// Monthly net return breakdown with dividend and fee details
-	NetReturns []TreasuryListResponseNetReturn `json:"netReturns,required"`
+	NetReturns []TreasuryListResponseNetReturn `json:"netReturns" api:"required"`
 	// Any of "active", "deleted", "pending", "archived".
-	Status AccountStatus `json:"status,required"`
+	Status AccountStatus `json:"status" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -125,17 +125,17 @@ func (r *TreasuryListResponse) UnmarshalJSON(data []byte) error {
 // Monthly net return breakdown for a treasury account
 type TreasuryListResponseNetReturn struct {
 	// List of dividends received by security
-	Dividends []TreasuryListResponseNetReturnDividend `json:"dividends,required"`
+	Dividends []TreasuryListResponseNetReturnDividend `json:"dividends" api:"required"`
 	// First day of the month for this net return
-	Month time.Time `json:"month,required" format:"date"`
+	Month time.Time `json:"month" api:"required" format:"date"`
 	// Net return amount (dividends minus fees)
-	NetAmount float64 `json:"netAmount,required"`
+	NetAmount float64 `json:"netAmount" api:"required"`
 	// Status of this net return calculation
 	//
 	// Any of "processing", "pending", "charged", "error".
-	Status string `json:"status,required"`
+	Status string `json:"status" api:"required"`
 	// Treasury fee charged for this period (positive value)
-	TreasuryFee float64 `json:"treasuryFee,required"`
+	TreasuryFee float64 `json:"treasuryFee" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Dividends   respjson.Field
@@ -157,16 +157,16 @@ func (r *TreasuryListResponseNetReturn) UnmarshalJSON(data []byte) error {
 // Dividend information for a specific treasury security
 type TreasuryListResponseNetReturnDividend struct {
 	// Security identifier (e.g., "617455696")
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Dividend amount for this security
-	Amount float64 `json:"amount,required"`
+	Amount float64 `json:"amount" api:"required"`
 	// Human-readable security name (e.g., "Morgan Stanley Ultra-Short Income Portfolio
 	// Class IR")
-	SecurityName string `json:"securityName,required"`
+	SecurityName string `json:"securityName" api:"required"`
 	// Security identifier type
 	//
 	// Any of "cusip".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID           respjson.Field
@@ -186,8 +186,8 @@ func (r *TreasuryListResponseNetReturnDividend) UnmarshalJSON(data []byte) error
 
 // Paginated response for treasury account statements
 type TreasuryGetStatementsResponse struct {
-	Page       TreasuryGetStatementsResponsePage        `json:"page,required"`
-	Statements []TreasuryGetStatementsResponseStatement `json:"statements,required"`
+	Page       TreasuryGetStatementsResponsePage        `json:"page" api:"required"`
+	Statements []TreasuryGetStatementsResponseStatement `json:"statements" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Page        respjson.Field
@@ -226,28 +226,28 @@ func (r *TreasuryGetStatementsResponsePage) UnmarshalJSON(data []byte) error {
 // Individual treasury statement in the response
 type TreasuryGetStatementsResponseStatement struct {
 	// ID for the account statement
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// ID for a Mercury account.
-	AccountID string `json:"accountId,required" format:"uuid"`
+	AccountID string `json:"accountId" api:"required" format:"uuid"`
 	// Timestamp when the record was created
-	CreatedAt string `json:"createdAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	CreatedAt string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// Date the statement was created by the custodian
-	CreationDate string `json:"creationDate,required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	CreationDate string `json:"creationDate" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// Human-readable description of the statement
-	Description string `json:"description,required"`
+	Description string `json:"description" api:"required"`
 	// Type of document (e.g. monthly statement, trade confirmation, tax form)
 	//
 	// Any of "MonthlyStatement", "TradeConfirmation", "1099", "1099R", "1042S",
 	// "5498", "5498ESA", "1099Q", "FMV", "SDIRA".
-	DocumentType string `json:"documentType,required"`
+	DocumentType string `json:"documentType" api:"required"`
 	// URL to download the statement PDF
-	DownloadURL string `json:"downloadUrl,required"`
+	DownloadURL string `json:"downloadUrl" api:"required"`
 	// End of the period covered by the statement
-	PeriodEnd time.Time `json:"periodEnd,required" format:"date"`
+	PeriodEnd time.Time `json:"periodEnd" api:"required" format:"date"`
 	// Start of the period covered by the statement
-	PeriodStart time.Time `json:"periodStart,required" format:"date"`
+	PeriodStart time.Time `json:"periodStart" api:"required" format:"date"`
 	// Timestamp when the record was last updated
-	UpdatedAt string `json:"updatedAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	UpdatedAt string `json:"updatedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID           respjson.Field
@@ -274,9 +274,9 @@ func (r *TreasuryGetStatementsResponseStatement) UnmarshalJSON(data []byte) erro
 // Response type for treasury transactions API endpoint
 type TreasuryGetTransactionsResponse struct {
 	// List of treasury transactions in the response
-	Transactions []TreasuryGetTransactionsResponseTransaction `json:"transactions,required"`
+	Transactions []TreasuryGetTransactionsResponseTransaction `json:"transactions" api:"required"`
 	// Pagination cursor for retrieving next batch of transactions
-	Cursor int64 `json:"cursor,nullable"`
+	Cursor int64 `json:"cursor" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Transactions respjson.Field
@@ -295,13 +295,13 @@ func (r *TreasuryGetTransactionsResponse) UnmarshalJSON(data []byte) error {
 // Treasury transaction data for external API consumption
 type TreasuryGetTransactionsResponseTransaction struct {
 	// ID for this treasury transaction
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// ID for a Mercury account.
-	AccountID    string    `json:"accountId,required" format:"uuid"`
-	Amount       float64   `json:"amount,required"`
-	Balance      float64   `json:"balance,required"`
-	CanonicalDay time.Time `json:"canonicalDay,required" format:"date"`
-	Description  string    `json:"description,required"`
+	AccountID    string    `json:"accountId" api:"required" format:"uuid"`
+	Amount       float64   `json:"amount" api:"required"`
+	Balance      float64   `json:"balance" api:"required"`
+	CanonicalDay time.Time `json:"canonicalDay" api:"required" format:"date"`
+	Description  string    `json:"description" api:"required"`
 	// Any of "depositCanceled", "depositComplete", "depositFailed", "depositReturned",
 	// "mercuryFeePosted", "mercuryFeeFailed", "mercuryFeeRefunded",
 	// "mercuryFeeCanceled", "withdrawalPosted", "withdrawalFailed",
@@ -311,10 +311,10 @@ type TreasuryGetTransactionsResponseTransaction struct {
 	// "dividendReinvestmentPosted", "mutualFundTradeFailed", "mutualFundTradePosted",
 	// "sweepInPosted", "sweepOutPosted", "sweepReconcilePosted",
 	// "valuationChangePosted".
-	Type              string                                            `json:"type,required"`
-	AdditionalDetails string                                            `json:"additionalDetails,nullable"`
-	Details           TreasuryGetTransactionsResponseTransactionDetails `json:"details,nullable"`
-	Security          string                                            `json:"security,nullable"`
+	Type              string                                            `json:"type" api:"required"`
+	AdditionalDetails string                                            `json:"additionalDetails" api:"nullable"`
+	Details           TreasuryGetTransactionsResponseTransactionDetails `json:"details" api:"nullable"`
+	Security          string                                            `json:"security" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                respjson.Field
@@ -339,16 +339,16 @@ func (r *TreasuryGetTransactionsResponseTransaction) UnmarshalJSON(data []byte) 
 }
 
 type TreasuryGetTransactionsResponseTransactionDetails struct {
-	CreditDescription string `json:"creditDescription,nullable"`
+	CreditDescription string `json:"creditDescription" api:"nullable"`
 	// ID for a Mercury account.
-	DepositCounterpartyID      string `json:"depositCounterpartyId,nullable" format:"uuid"`
-	FeeDescription             string `json:"feeDescription,nullable"`
-	ManualAmendmentDescription string `json:"manualAmendmentDescription,nullable"`
-	Security                   string `json:"security,nullable"`
-	SweepDirection             string `json:"sweepDirection,nullable"`
-	TradeAction                string `json:"tradeAction,nullable"`
+	DepositCounterpartyID      string `json:"depositCounterpartyId" api:"nullable" format:"uuid"`
+	FeeDescription             string `json:"feeDescription" api:"nullable"`
+	ManualAmendmentDescription string `json:"manualAmendmentDescription" api:"nullable"`
+	Security                   string `json:"security" api:"nullable"`
+	SweepDirection             string `json:"sweepDirection" api:"nullable"`
+	TradeAction                string `json:"tradeAction" api:"nullable"`
 	// ID for a Mercury account.
-	WithdrawalCounterpartyID string `json:"withdrawalCounterpartyId,nullable" format:"uuid"`
+	WithdrawalCounterpartyID string `json:"withdrawalCounterpartyId" api:"nullable" format:"uuid"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CreditDescription          respjson.Field

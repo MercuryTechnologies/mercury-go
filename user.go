@@ -62,17 +62,17 @@ func (r *UserService) List(ctx context.Context, query UserListParams, opts ...op
 // Details of a user within an organization.
 type User struct {
 	// User's email address
-	Email string `json:"email,required"`
+	Email string `json:"email" api:"required"`
 	// User's first name
-	FirstName string `json:"firstName,required"`
+	FirstName string `json:"firstName" api:"required"`
 	// User's last name
-	LastName string `json:"lastName,required"`
+	LastName string `json:"lastName" api:"required"`
 	// User's role within the organization
 	//
 	// Any of "administrator", "bookkeeper", "customUser", "cardOnlyUser", "employee".
-	OrganizationRole UserOrganizationRole `json:"organizationRole,required"`
+	OrganizationRole UserOrganizationRole `json:"organizationRole" api:"required"`
 	// ID for the user
-	UserID string `json:"userId,required" format:"uuid"`
+	UserID string `json:"userId" api:"required" format:"uuid"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Email            respjson.Field
@@ -105,9 +105,9 @@ const (
 // Paginated response containing a list of organization users.
 type UserListResponse struct {
 	// Pagination information including cursors for navigating to next/previous pages
-	Page UserListResponsePage `json:"page,required"`
+	Page UserListResponsePage `json:"page" api:"required"`
 	// List of users in the current page
-	Users []User `json:"users,required"`
+	Users []User `json:"users" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Page        respjson.Field

@@ -100,18 +100,18 @@ func (r *ArCustomerService) Delete(ctx context.Context, customerID string, opts 
 // The properties Address1, City, Country, Name, PostalCode, Region are required.
 type AddressInputParam struct {
 	// Primary street address line.
-	Address1 string `json:"address1,required"`
+	Address1 string `json:"address1" api:"required"`
 	// City name.
-	City string `json:"city,required"`
+	City string `json:"city" api:"required"`
 	// Two-letter country code (ISO 3166-1 alpha-2).
-	Country string `json:"country,required"`
+	Country string `json:"country" api:"required"`
 	// The mailing name of the address.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Postal or ZIP code.
-	PostalCode string `json:"postalCode,required"`
+	PostalCode string `json:"postalCode" api:"required"`
 	// Either a two-letter US state code i.e. "CA" for California or a free-form
 	// identification of a particular region worldwide.
-	Region string `json:"region,required"`
+	Region string `json:"region" api:"required"`
 	// Secondary street address line (optional).
 	Address2 param.Opt[string] `json:"address2,omitzero"`
 	paramObj
@@ -130,15 +130,15 @@ type Customer struct {
 	// The customer who will receive the invoice. Use the /api/v1/ar/customers endpoint
 	// to list your customers and find the corresponding id, or create a new customer
 	// first.
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// Email of customer.
-	Email string `json:"email,required"`
+	Email string `json:"email" api:"required"`
 	// Name of customer.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Customer address information for Accounts Receivable API
-	Address CustomerAddress `json:"address,nullable"`
+	Address CustomerAddress `json:"address" api:"nullable"`
 	// The time the customer was deleted, if it was deleted.
-	DeletedAt string `json:"deletedAt,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	DeletedAt string `json:"deletedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -160,17 +160,17 @@ func (r *Customer) UnmarshalJSON(data []byte) error {
 // Customer address information for Accounts Receivable API
 type CustomerAddress struct {
 	// Primary street address line.
-	Address1 string `json:"address1,required"`
+	Address1 string `json:"address1" api:"required"`
 	// City name.
-	City string `json:"city,required"`
+	City string `json:"city" api:"required"`
 	// Two-letter country code (ISO 3166-1 alpha-2).
-	Country string `json:"country,required"`
+	Country string `json:"country" api:"required"`
 	// Postal or ZIP code
-	PostalCode string `json:"postalCode,required"`
+	PostalCode string `json:"postalCode" api:"required"`
 	// State, province, or region.
-	Region string `json:"region,required"`
+	Region string `json:"region" api:"required"`
 	// Secondary street address line (optional).
-	Address2 string `json:"address2,nullable"`
+	Address2 string `json:"address2" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Address1    respjson.Field
@@ -193,9 +193,9 @@ func (r *CustomerAddress) UnmarshalJSON(data []byte) error {
 // Paginated response data for Accounts Receivable customers API endpoint
 type ArCustomerListResponse struct {
 	// The list of customers for this page
-	Customers []Customer `json:"customers,required"`
+	Customers []Customer `json:"customers" api:"required"`
 	// Pagination cursors for navigating to next/previous pages
-	Page ArCustomerListResponsePage `json:"page,required"`
+	Page ArCustomerListResponsePage `json:"page" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Customers   respjson.Field
@@ -238,9 +238,9 @@ func (r *ArCustomerListResponsePage) UnmarshalJSON(data []byte) error {
 
 type ArCustomerNewParams struct {
 	// The email address for the customer.
-	Email string `json:"email,required"`
+	Email string `json:"email" api:"required"`
 	// The name of the customer.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Address input for creating or updating customers
 	Address AddressInputParam `json:"address,omitzero"`
 	paramObj
@@ -256,12 +256,12 @@ func (r *ArCustomerNewParams) UnmarshalJSON(data []byte) error {
 
 type ArCustomerUpdateParams struct {
 	// The email address for the customer.
-	Email string `json:"email,required"`
+	Email string `json:"email" api:"required"`
 	// The name of the customer.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Open invoices for the customer will be resent with updated data when this is
 	// true.
-	ResendOpenInvoices bool `json:"resendOpenInvoices,required"`
+	ResendOpenInvoices bool `json:"resendOpenInvoices" api:"required"`
 	// Address input for creating or updating customers
 	Address AddressInputParam `json:"address,omitzero"`
 	paramObj

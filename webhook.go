@@ -132,20 +132,20 @@ func (r *WebhookService) Verify(ctx context.Context, webhookEndpointID string, b
 // Webhook configuration details
 type Webhook struct {
 	// ID for the webhook
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// When the webhook was created
-	CreatedAt string `json:"createdAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	CreatedAt string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// The status of the webhook endpoint. 'active': delivering events normally.
 	// 'paused': paused by the user. 'disabled': automatically disabled by the system
 	// due to consecutive delivery failures. A disabled webhook can be reactivated by
 	// updating its status to 'active'.
 	//
 	// Any of "active", "paused", "disabled".
-	Status WebhookStatus `json:"status,required"`
+	Status WebhookStatus `json:"status" api:"required"`
 	// When the webhook was last updated
-	UpdatedAt string `json:"updatedAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	UpdatedAt string `json:"updatedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// The URL that will receive webhook POST requests
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// Optional array of event types this webhook is subscribed to. Nothing means all
 	// events.
 	//
@@ -153,7 +153,7 @@ type Webhook struct {
 	// "checkingAccount.balance.updated", "savingsAccount.balance.updated",
 	// "treasuryAccount.balance.updated", "investmentAccount.balance.updated",
 	// "creditAccount.balance.updated".
-	EventTypes []string `json:"eventTypes,nullable"`
+	EventTypes []string `json:"eventTypes" api:"nullable"`
 	// Optional array of resource field paths to filter events by. Nothing means no
 	// filtering.
 	//
@@ -163,10 +163,10 @@ type Webhook struct {
 	// "transaction.mercuryCategory", "transaction.estimatedDeliveryDate",
 	// "transaction.externalMemo", "transaction.failedAt", "transaction.note",
 	// "transaction.postedAt", "transaction.reasonForFailure", "transaction.status".
-	FilterPaths []string `json:"filterPaths,nullable"`
+	FilterPaths []string `json:"filterPaths" api:"nullable"`
 	// Webhook signing secret. Only returned on creation (POST), not on GET or UPDATE
 	// operations.
-	Secret string `json:"secret,nullable"`
+	Secret string `json:"secret" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -202,7 +202,7 @@ const (
 
 type WebhookNewParams struct {
 	// The URL to which webhook events will be delivered
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// Optional array of event types to subscribe to. Nothing means subscribe to all
 	// event types.
 	//
