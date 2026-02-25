@@ -162,7 +162,15 @@ type Webhook struct {
 	// "transaction.customCategory.id", "transaction.customCategory.name",
 	// "transaction.mercuryCategory", "transaction.estimatedDeliveryDate",
 	// "transaction.externalMemo", "transaction.failedAt", "transaction.note",
-	// "transaction.postedAt", "transaction.reasonForFailure", "transaction.status".
+	// "transaction.postedAt", "transaction.reasonForFailure", "transaction.status",
+	// "checkingAccount.availableBalance", "checkingAccount.currentBalance",
+	// "checkingAccount.inFlightBalance", "savingsAccount.availableBalance",
+	// "savingsAccount.currentBalance", "savingsAccount.inFlightBalance",
+	// "treasuryAccount.availableBalance", "treasuryAccount.currentBalance",
+	// "treasuryAccount.inFlightBalance", "investmentAccount.availableBalance",
+	// "investmentAccount.currentBalance", "investmentAccount.inFlightBalance",
+	// "creditAccount.availableBalance", "creditAccount.currentBalance",
+	// "creditAccount.inFlightBalance".
 	FilterPaths []string `json:"filterPaths" api:"nullable"`
 	// Webhook signing secret. Only returned on creation (POST), not on GET or UPDATE
 	// operations.
@@ -220,7 +228,15 @@ type WebhookNewParams struct {
 	// "transaction.customCategory.id", "transaction.customCategory.name",
 	// "transaction.mercuryCategory", "transaction.estimatedDeliveryDate",
 	// "transaction.externalMemo", "transaction.failedAt", "transaction.note",
-	// "transaction.postedAt", "transaction.reasonForFailure", "transaction.status".
+	// "transaction.postedAt", "transaction.reasonForFailure", "transaction.status",
+	// "checkingAccount.availableBalance", "checkingAccount.currentBalance",
+	// "checkingAccount.inFlightBalance", "savingsAccount.availableBalance",
+	// "savingsAccount.currentBalance", "savingsAccount.inFlightBalance",
+	// "treasuryAccount.availableBalance", "treasuryAccount.currentBalance",
+	// "treasuryAccount.inFlightBalance", "investmentAccount.availableBalance",
+	// "investmentAccount.currentBalance", "investmentAccount.inFlightBalance",
+	// "creditAccount.availableBalance", "creditAccount.currentBalance",
+	// "creditAccount.inFlightBalance".
 	FilterPaths []string `json:"filterPaths,omitzero"`
 	paramObj
 }
@@ -253,7 +269,15 @@ type WebhookUpdateParams struct {
 	// "transaction.customCategory.id", "transaction.customCategory.name",
 	// "transaction.mercuryCategory", "transaction.estimatedDeliveryDate",
 	// "transaction.externalMemo", "transaction.failedAt", "transaction.note",
-	// "transaction.postedAt", "transaction.reasonForFailure", "transaction.status".
+	// "transaction.postedAt", "transaction.reasonForFailure", "transaction.status",
+	// "checkingAccount.availableBalance", "checkingAccount.currentBalance",
+	// "checkingAccount.inFlightBalance", "savingsAccount.availableBalance",
+	// "savingsAccount.currentBalance", "savingsAccount.inFlightBalance",
+	// "treasuryAccount.availableBalance", "treasuryAccount.currentBalance",
+	// "treasuryAccount.inFlightBalance", "investmentAccount.availableBalance",
+	// "investmentAccount.currentBalance", "investmentAccount.inFlightBalance",
+	// "creditAccount.availableBalance", "creditAccount.currentBalance",
+	// "creditAccount.inFlightBalance".
 	FilterPaths []string `json:"filterPaths,omitzero"`
 	// Webhook status. Only 'active' and 'paused' values are allowed. Omit to leave
 	// unchanged.

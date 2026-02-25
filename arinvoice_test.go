@@ -45,12 +45,14 @@ func TestArInvoiceNewWithOptionalParams(t *testing.T) {
 			UnitPrice:    0,
 			SalesTaxRate: mercury.Float(0),
 		}},
-		UseRealAccountNumber: true,
-		InternalNote:         mercury.String("internalNote"),
-		InvoiceNumber:        mercury.String("invoiceNumber"),
-		PayerMemo:            mercury.String("payerMemo"),
-		PoNumber:             mercury.String("poNumber"),
-		SendEmailOption:      mercury.ArInvoiceNewParamsSendEmailOptionDontSend,
+		UseRealAccountNumber:   true,
+		InternalNote:           mercury.String("internalNote"),
+		InvoiceNumber:          mercury.String("invoiceNumber"),
+		PayerMemo:              mercury.String("payerMemo"),
+		PoNumber:               mercury.String("poNumber"),
+		SendEmailOption:        mercury.ArInvoiceNewParamsSendEmailOptionDontSend,
+		ServicePeriodEndDate:   mercury.Time(time.Now()),
+		ServicePeriodStartDate: mercury.Time(time.Now()),
 	})
 	if err != nil {
 		var apierr *mercury.Error
@@ -113,10 +115,12 @@ func TestArInvoiceUpdateWithOptionalParams(t *testing.T) {
 				UnitPrice:    0,
 				SalesTaxRate: mercury.Float(0),
 			}},
-			UseRealAccountNumber: true,
-			InternalNote:         mercury.String("internalNote"),
-			PayerMemo:            mercury.String("payerMemo"),
-			PoNumber:             mercury.String("poNumber"),
+			UseRealAccountNumber:   true,
+			InternalNote:           mercury.String("internalNote"),
+			PayerMemo:              mercury.String("payerMemo"),
+			PoNumber:               mercury.String("poNumber"),
+			ServicePeriodEndDate:   mercury.Time(time.Now()),
+			ServicePeriodStartDate: mercury.Time(time.Now()),
 		},
 	)
 	if err != nil {
