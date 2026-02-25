@@ -329,6 +329,106 @@ func (r *OffsetAccountTransactionsAutoPager[T]) Index() int {
 	return r.run
 }
 
+type CursorTreasuryTransactions[T any] struct {
+	Cursor       int64 `json:"cursor" api:"nullable"`
+	Transactions []T   `json:"transactions"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Cursor       respjson.Field
+		Transactions respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+	cfg *requestconfig.RequestConfig
+	res *http.Response
+}
+
+// Returns the unmodified JSON received from the API
+func (r CursorTreasuryTransactions[T]) RawJSON() string { return r.JSON.raw }
+func (r *CursorTreasuryTransactions[T]) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *CursorTreasuryTransactions[T]) GetNextPage() (res *CursorTreasuryTransactions[T], err error) {
+	if len(r.Transactions) == 0 {
+		return nil, nil
+	}
+	next := r.Cursor
+	if len(next) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	err = cfg.Apply(option.WithQuery("cursor", next))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *CursorTreasuryTransactions[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &CursorTreasuryTransactions[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type CursorTreasuryTransactionsAutoPager[T any] struct {
+	page *CursorTreasuryTransactions[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+	paramObj
+}
+
+func NewCursorTreasuryTransactionsAutoPager[T any](page *CursorTreasuryTransactions[T], err error) *CursorTreasuryTransactionsAutoPager[T] {
+	return &CursorTreasuryTransactionsAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *CursorTreasuryTransactionsAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.Transactions) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.Transactions) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.Transactions) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.Transactions[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *CursorTreasuryTransactionsAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *CursorTreasuryTransactionsAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *CursorTreasuryTransactionsAutoPager[T]) Index() int {
+	return r.run
+}
+
 type CursorIDEvents[T any] struct {
 	Events []T `json:"events"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
