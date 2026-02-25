@@ -14,6 +14,7 @@ import (
 	"github.com/stainless-sdks/mercury-go/internal/apiquery"
 	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
 	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/stainless-sdks/mercury-go/packages/pagination"
 	"github.com/stainless-sdks/mercury-go/packages/param"
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
@@ -51,12 +52,26 @@ func (r *UserService) Get(ctx context.Context, userID string, opts ...option.Req
 }
 
 // Get all users
-func (r *UserService) List(ctx context.Context, query UserListParams, opts ...option.RequestOption) (res *UserListResponse, err error) {
+func (r *UserService) List(ctx context.Context, query UserListParams, opts ...option.RequestOption) (res *pagination.CursorIDUsers[User], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "users"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Get all users
+func (r *UserService) ListAutoPaging(ctx context.Context, query UserListParams, opts ...option.RequestOption) *pagination.CursorIDUsersAutoPager[User] {
+	return pagination.NewCursorIDUsersAutoPager(r.List(ctx, query, opts...))
 }
 
 // Details of a user within an organization.
@@ -101,48 +116,6 @@ const (
 	UserOrganizationRoleCardOnlyUser  UserOrganizationRole = "cardOnlyUser"
 	UserOrganizationRoleEmployee      UserOrganizationRole = "employee"
 )
-
-// Paginated response containing a list of organization users.
-type UserListResponse struct {
-	// Pagination information including cursors for navigating to next/previous pages
-	Page UserListResponsePage `json:"page" api:"required"`
-	// List of users in the current page
-	Users []User `json:"users" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Page        respjson.Field
-		Users       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r UserListResponse) RawJSON() string { return r.JSON.raw }
-func (r *UserListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Pagination information including cursors for navigating to next/previous pages
-type UserListResponsePage struct {
-	// ID for the user
-	NextPage string `json:"nextPage" format:"uuid"`
-	// ID for the user
-	PreviousPage string `json:"previousPage" format:"uuid"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		NextPage     respjson.Field
-		PreviousPage respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r UserListResponsePage) RawJSON() string { return r.JSON.raw }
-func (r *UserListResponsePage) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 type UserListParams struct {
 	// The ID of the user to end the page before (exclusive). When provided, results
