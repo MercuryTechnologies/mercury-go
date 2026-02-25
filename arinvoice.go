@@ -177,30 +177,38 @@ type Invoice struct {
 	PayerMemo string `json:"payerMemo" api:"nullable"`
 	// Purchase order number for the invoice if applicable.
 	PoNumber string `json:"poNumber" api:"nullable"`
+	// The end date for the service period this invoice covers, if applicable.
+	// YYYY-MM-DD
+	ServicePeriodEndDate time.Time `json:"servicePeriodEndDate" api:"nullable" format:"date"`
+	// The start date for the service period this invoice covers, if applicable.
+	// YYYY-MM-DD
+	ServicePeriodStartDate time.Time `json:"servicePeriodStartDate" api:"nullable" format:"date"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID                   respjson.Field
-		ACHDebitEnabled      respjson.Field
-		Amount               respjson.Field
-		CcEmails             respjson.Field
-		CreatedAt            respjson.Field
-		CreditCardEnabled    respjson.Field
-		CustomerID           respjson.Field
-		DestinationAccountID respjson.Field
-		DueDate              respjson.Field
-		InvoiceDate          respjson.Field
-		InvoiceNumber        respjson.Field
-		LineItems            respjson.Field
-		Slug                 respjson.Field
-		Status               respjson.Field
-		UpdatedAt            respjson.Field
-		UseRealAccountNumber respjson.Field
-		CanceledAt           respjson.Field
-		InternalNote         respjson.Field
-		PayerMemo            respjson.Field
-		PoNumber             respjson.Field
-		ExtraFields          map[string]respjson.Field
-		raw                  string
+		ID                     respjson.Field
+		ACHDebitEnabled        respjson.Field
+		Amount                 respjson.Field
+		CcEmails               respjson.Field
+		CreatedAt              respjson.Field
+		CreditCardEnabled      respjson.Field
+		CustomerID             respjson.Field
+		DestinationAccountID   respjson.Field
+		DueDate                respjson.Field
+		InvoiceDate            respjson.Field
+		InvoiceNumber          respjson.Field
+		LineItems              respjson.Field
+		Slug                   respjson.Field
+		Status                 respjson.Field
+		UpdatedAt              respjson.Field
+		UseRealAccountNumber   respjson.Field
+		CanceledAt             respjson.Field
+		InternalNote           respjson.Field
+		PayerMemo              respjson.Field
+		PoNumber               respjson.Field
+		ServicePeriodEndDate   respjson.Field
+		ServicePeriodStartDate respjson.Field
+		ExtraFields            map[string]respjson.Field
+		raw                    string
 	} `json:"-"`
 }
 
@@ -458,6 +466,12 @@ type ArInvoiceNewParams struct {
 	PayerMemo param.Opt[string] `json:"payerMemo,omitzero"`
 	// Purchase order number for the invoice, if applicable.
 	PoNumber param.Opt[string] `json:"poNumber,omitzero"`
+	// The end date for the service period this invoice covers, if applicable.
+	// YYYY-MM-DD
+	ServicePeriodEndDate param.Opt[time.Time] `json:"servicePeriodEndDate,omitzero" format:"date"`
+	// The start date for the service period this invoice covers, if applicable.
+	// YYYY-MM-DD
+	ServicePeriodStartDate param.Opt[time.Time] `json:"servicePeriodStartDate,omitzero" format:"date"`
 	// Rules for emailing the new invoice to payers. Can be "DontSend" to skip sending
 	// or "SendNow" to send immediately. If omitted, defaults to sending immediately.
 	//
@@ -512,6 +526,12 @@ type ArInvoiceUpdateParams struct {
 	PayerMemo param.Opt[string] `json:"payerMemo,omitzero"`
 	// The purchase order number for the invoice if applicable.
 	PoNumber param.Opt[string] `json:"poNumber,omitzero"`
+	// The end date for the service period this invoice covers, if applicable.
+	// YYYY-MM-DD
+	ServicePeriodEndDate param.Opt[time.Time] `json:"servicePeriodEndDate,omitzero" format:"date"`
+	// The start date for the service period this invoice covers, if applicable.
+	// YYYY-MM-DD
+	ServicePeriodStartDate param.Opt[time.Time] `json:"servicePeriodStartDate,omitzero" format:"date"`
 	paramObj
 }
 
