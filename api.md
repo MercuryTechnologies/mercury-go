@@ -52,13 +52,9 @@ Methods:
 
 # Categories
 
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#CategoryListResponse">CategoryListResponse</a>
-
 Methods:
 
-- <code title="get /categories">client.Categories.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#CategoryService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#CategoryListParams">CategoryListParams</a>) (\*<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#CategoryListResponse">CategoryListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /categories">client.Categories.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#CategoryService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#CategoryListParams">CategoryListParams</a>) (\*<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go/packages/pagination#CursorIDCategories">CursorIDCategories</a>[<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#CategoryData">CategoryData</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Credit
 
@@ -75,12 +71,11 @@ Methods:
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#Event">Event</a>
-- <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#EventListResponse">EventListResponse</a>
 
 Methods:
 
 - <code title="get /events/{eventId}">client.Events.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#EventService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, eventID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#Event">Event</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /events">client.Events.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#EventService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#EventListParams">EventListParams</a>) (\*<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#EventListResponse">EventListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /events">client.Events.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#EventService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#EventListParams">EventListParams</a>) (\*<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go/packages/pagination#CursorIDEvents">CursorIDEvents</a>[<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#Event">Event</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Organization
 
