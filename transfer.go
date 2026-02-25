@@ -46,8 +46,8 @@ func (r *TransferService) New(ctx context.Context, body TransferNewParams, opts 
 // Response for POST /api/v1/transfer endpoint. Returns both the credit and debit
 // transactions for the transfer.
 type TransferNewResponse struct {
-	CreditTransaction Transaction `json:"creditTransaction,required"`
-	DebitTransaction  Transaction `json:"debitTransaction,required"`
+	CreditTransaction Transaction `json:"creditTransaction" api:"required"`
+	DebitTransaction  Transaction `json:"debitTransaction" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CreditTransaction respjson.Field
@@ -65,12 +65,12 @@ func (r *TransferNewResponse) UnmarshalJSON(data []byte) error {
 
 type TransferNewParams struct {
 	// A positive dollar amount with at least 1 cent.
-	Amount float64 `json:"amount,required"`
+	Amount float64 `json:"amount" api:"required"`
 	// ID for a Mercury account.
-	DestinationAccountID string `json:"destinationAccountId,required" format:"uuid"`
-	IdempotencyKey       string `json:"idempotencyKey,required"`
+	DestinationAccountID string `json:"destinationAccountId" api:"required" format:"uuid"`
+	IdempotencyKey       string `json:"idempotencyKey" api:"required"`
 	// ID for a Mercury account.
-	SourceAccountID string            `json:"sourceAccountId,required" format:"uuid"`
+	SourceAccountID string            `json:"sourceAccountId" api:"required" format:"uuid"`
 	Note            param.Opt[string] `json:"note,omitzero"`
 	paramObj
 }

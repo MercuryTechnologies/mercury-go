@@ -138,15 +138,15 @@ const (
 
 type AccountTransactionSendParams struct {
 	// A positive dollar amount with at least 1 cent.
-	Amount float64 `json:"amount,required"`
+	Amount float64 `json:"amount" api:"required"`
 	// Unique string identifying the transaction
-	IdempotencyKey string `json:"idempotencyKey,required"`
+	IdempotencyKey string `json:"idempotencyKey" api:"required"`
 	// If domesticWire is used, then the purpose field is required.
 	//
 	// Any of "ach", "domesticWire".
-	PaymentMethod AccountTransactionSendParamsPaymentMethod `json:"paymentMethod,omitzero,required"`
+	PaymentMethod AccountTransactionSendParamsPaymentMethod `json:"paymentMethod,omitzero" api:"required"`
 	// ID for a Mercury account.
-	RecipientID string `json:"recipientId,required" format:"uuid"`
+	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
 	// Optional external memo
 	ExternalMemo param.Opt[string] `json:"externalMemo,omitzero"`
 	// Optional note
@@ -195,7 +195,7 @@ type AccountTransactionSendParamsPurposeSimple struct {
 	// Any of "Employee", "Landlord", "Vendor", "Contractor", "Subsidiary",
 	// "TransferToMyExternalAccount", "FamilyMemberOrFriend", "ForGoodsOrServices",
 	// "AngelInvestment", "SavingsOrInvestments", "Expenses", "Travel", "Other".
-	Category string `json:"category,omitzero,required"`
+	Category string `json:"category,omitzero" api:"required"`
 	// Additional information. Required for: Vendor (vendor name), Contractor
 	// (contractor name), Other (payment description). Optional for Subsidiary
 	// (subsidiary name). Not accepted for any other categories.

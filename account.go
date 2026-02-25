@@ -139,22 +139,22 @@ func (r *AccountService) GetTransaction(ctx context.Context, transactionID strin
 
 type Account struct {
 	// ID for a Mercury account.
-	ID                string  `json:"id,required" format:"uuid"`
-	AccountNumber     string  `json:"accountNumber,required"`
-	AvailableBalance  float64 `json:"availableBalance,required"`
-	CreatedAt         string  `json:"createdAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	CurrentBalance    float64 `json:"currentBalance,required"`
-	DashboardLink     string  `json:"dashboardLink,required"`
-	Kind              string  `json:"kind,required"`
-	LegalBusinessName string  `json:"legalBusinessName,required"`
-	Name              string  `json:"name,required"`
-	RoutingNumber     string  `json:"routingNumber,required"`
+	ID                string  `json:"id" api:"required" format:"uuid"`
+	AccountNumber     string  `json:"accountNumber" api:"required"`
+	AvailableBalance  float64 `json:"availableBalance" api:"required"`
+	CreatedAt         string  `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	CurrentBalance    float64 `json:"currentBalance" api:"required"`
+	DashboardLink     string  `json:"dashboardLink" api:"required"`
+	Kind              string  `json:"kind" api:"required"`
+	LegalBusinessName string  `json:"legalBusinessName" api:"required"`
+	Name              string  `json:"name" api:"required"`
+	RoutingNumber     string  `json:"routingNumber" api:"required"`
 	// Any of "active", "deleted", "pending", "archived".
-	Status AccountStatus `json:"status,required"`
+	Status AccountStatus `json:"status" api:"required"`
 	// Any of "mercury", "external", "recipient".
-	Type                   AccountType `json:"type,required"`
-	CanReceiveTransactions bool        `json:"canReceiveTransactions,nullable"`
-	Nickname               string      `json:"nickname,nullable"`
+	Type                   AccountType `json:"type" api:"required"`
+	CanReceiveTransactions bool        `json:"canReceiveTransactions" api:"nullable"`
+	Nickname               string      `json:"nickname" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                     respjson.Field
@@ -202,9 +202,9 @@ const (
 // Represents an expense category for transaction classification.
 type CategoryData struct {
 	// ID for the category
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// The name of the category
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -267,17 +267,17 @@ const (
 // Extremely close to the internal type, but strips out potentially unwanted fields
 type SendMoneyApproval struct {
 	// ID for a Mercury account.
-	AccountID string `json:"accountId,required" format:"uuid"`
+	AccountID string `json:"accountId" api:"required" format:"uuid"`
 	// A positive dollar amount with at least 1 cent.
-	Amount float64 `json:"amount,required"`
+	Amount float64 `json:"amount" api:"required"`
 	// Any of "ach", "check", "domesticWire", "internationalWire".
-	PaymentMethod SendMoneyPaymentMethod `json:"paymentMethod,required"`
+	PaymentMethod SendMoneyPaymentMethod `json:"paymentMethod" api:"required"`
 	// ID for a Mercury account.
-	RecipientID string `json:"recipientId,required" format:"uuid"`
-	RequestID   string `json:"requestId,required"`
+	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
+	RequestID   string `json:"requestId" api:"required"`
 	// Any of "pendingApproval", "approved", "rejected", "cancelled".
-	Status SendMoneyApprovalStatus `json:"status,required"`
-	Memo   string                  `json:"memo,nullable"`
+	Status SendMoneyApprovalStatus `json:"status" api:"required"`
+	Memo   string                  `json:"memo" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AccountID     respjson.Field
@@ -318,19 +318,19 @@ const (
 
 type Transaction struct {
 	// ID for this transaction
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// ID for a Mercury account.
-	AccountID                  string                  `json:"accountId,required" format:"uuid"`
-	Amount                     float64                 `json:"amount,required"`
-	Attachments                []TransactionAttachment `json:"attachments,required"`
-	CompliantWithReceiptPolicy bool                    `json:"compliantWithReceiptPolicy,required"`
+	AccountID                  string                  `json:"accountId" api:"required" format:"uuid"`
+	Amount                     float64                 `json:"amount" api:"required"`
+	Attachments                []TransactionAttachment `json:"attachments" api:"required"`
+	CompliantWithReceiptPolicy bool                    `json:"compliantWithReceiptPolicy" api:"required"`
 	// ID for a Mercury account.
-	CounterpartyID        string `json:"counterpartyId,required" format:"uuid"`
-	CounterpartyName      string `json:"counterpartyName,required"`
-	CreatedAt             string `json:"createdAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	DashboardLink         string `json:"dashboardLink,required"`
-	EstimatedDeliveryDate string `json:"estimatedDeliveryDate,required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	HasGeneratedReceipt   bool   `json:"hasGeneratedReceipt,required"`
+	CounterpartyID        string `json:"counterpartyId" api:"required" format:"uuid"`
+	CounterpartyName      string `json:"counterpartyName" api:"required"`
+	CreatedAt             string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	DashboardLink         string `json:"dashboardLink" api:"required"`
+	EstimatedDeliveryDate string `json:"estimatedDeliveryDate" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	HasGeneratedReceipt   bool   `json:"hasGeneratedReceipt" api:"required"`
 	// Any of "externalTransfer", "internalTransfer", "outgoingPayment",
 	// "creditCardCredit", "creditCardTransaction", "debitCardCredit",
 	// "debitCardTransaction", "cardInternationalTransactionFee",
@@ -341,33 +341,33 @@ type Transaction struct {
 	// "currencyCloudReturn", "wireFee", "personalBankingSubscriptionFee",
 	// "billingEngineSubscriptionFee", "expenseReimbursement", "exogenousWireDrawdown",
 	// "other".
-	Kind                TransactionKind                 `json:"kind,required"`
-	RelatedTransactions []TransactionRelatedTransaction `json:"relatedTransactions,required"`
+	Kind                TransactionKind                 `json:"kind" api:"required"`
+	RelatedTransactions []TransactionRelatedTransaction `json:"relatedTransactions" api:"required"`
 	// Any of "pending", "sent", "cancelled", "failed", "reversed", "blocked".
-	Status          TransactionStatus `json:"status,required"`
-	BankDescription string            `json:"bankDescription,nullable"`
+	Status          TransactionStatus `json:"status" api:"required"`
+	BankDescription string            `json:"bankDescription" api:"nullable"`
 	// Represents an expense category for transaction classification.
-	CategoryData CategoryData `json:"categoryData,nullable"`
+	CategoryData CategoryData `json:"categoryData" api:"nullable"`
 	// Present for check deposits and mailed checks; Nothing otherwise.
-	CheckNumber          string `json:"checkNumber,nullable"`
-	CounterpartyNickname string `json:"counterpartyNickname,nullable"`
+	CheckNumber          string `json:"checkNumber" api:"nullable"`
+	CounterpartyNickname string `json:"counterpartyNickname" api:"nullable"`
 	// ID for the credit statement period
-	CreditAccountPeriodID string                          `json:"creditAccountPeriodId,nullable" format:"uuid"`
-	CurrencyExchangeInfo  TransactionCurrencyExchangeInfo `json:"currencyExchangeInfo,nullable"`
-	Details               TransactionDetails              `json:"details,nullable"`
-	ExternalMemo          string                          `json:"externalMemo,nullable"`
-	FailedAt              string                          `json:"failedAt,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	CreditAccountPeriodID string                          `json:"creditAccountPeriodId" api:"nullable" format:"uuid"`
+	CurrencyExchangeInfo  TransactionCurrencyExchangeInfo `json:"currencyExchangeInfo" api:"nullable"`
+	Details               TransactionDetails              `json:"details" api:"nullable"`
+	ExternalMemo          string                          `json:"externalMemo" api:"nullable"`
+	FailedAt              string                          `json:"failedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// ID for this transaction
-	FeeID string `json:"feeId,nullable" format:"uuid"`
+	FeeID string `json:"feeId" api:"nullable" format:"uuid"`
 	// The name of the General Ledger (GL) code assigned to this transaction for
 	// accounting categorization. GL codes act as "bins" that organize transactions
 	// into accounting categories. This field is present when the transaction has been
 	// categorized, either manually by a user, via an accounting integration sync, or
 	// through auto-categorization rules. Nothing if the transaction has not been
 	// assigned a GL code.
-	GeneralLedgerCodeName string `json:"generalLedgerCodeName,nullable"`
+	GeneralLedgerCodeName string `json:"generalLedgerCodeName" api:"nullable"`
 	// Merchant information for card transactions
-	Merchant TransactionMerchant `json:"merchant,nullable"`
+	Merchant TransactionMerchant `json:"merchant" api:"nullable"`
 	// Any of "Other", "Advertising", "Airlines", "AlcoholAndBars",
 	// "BooksAndNewspaper", "CarRental", "Charity", "Clothing", "Conferences",
 	// "Education", "Electronics", "Entertainment", "FacilitiesExpenses", "Fees",
@@ -377,14 +377,14 @@ type Transaction struct {
 	// "Political", "ProfessionalServices", "Restaurants", "Retail",
 	// "RideshareAndTaxis", "Shipping", "Software", "Taxes", "Utilities",
 	// "VehicleExpenses".
-	MercuryCategory  MercuryCategory `json:"mercuryCategory,nullable"`
-	Note             string          `json:"note,nullable"`
-	PostedAt         string          `json:"postedAt,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
-	ReasonForFailure string          `json:"reasonForFailure,nullable"`
-	RequestID        string          `json:"requestId,nullable"`
+	MercuryCategory  MercuryCategory `json:"mercuryCategory" api:"nullable"`
+	Note             string          `json:"note" api:"nullable"`
+	PostedAt         string          `json:"postedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	ReasonForFailure string          `json:"reasonForFailure" api:"nullable"`
+	RequestID        string          `json:"requestId" api:"nullable"`
 	// Present for transactions that have tracking numbers (e.g., RTP, ACH, wires);
 	// Nothing otherwise.
-	TrackingNumber string `json:"trackingNumber,nullable"`
+	TrackingNumber string `json:"trackingNumber" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                         respjson.Field
@@ -432,9 +432,9 @@ func (r *Transaction) UnmarshalJSON(data []byte) error {
 
 type TransactionAttachment struct {
 	// Any of "checkImage", "receipt", "other".
-	AttachmentType string `json:"attachmentType,required"`
-	FileName       string `json:"fileName,required"`
-	URL            string `json:"url,required"`
+	AttachmentType string `json:"attachmentType" api:"required"`
+	FileName       string `json:"fileName" api:"required"`
+	URL            string `json:"url" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AttachmentType respjson.Field
@@ -481,10 +481,10 @@ const (
 // A Public API version of RelatedTransactionData.
 type TransactionRelatedTransaction struct {
 	// ID for this transaction
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// ID for a Mercury account.
-	AccountID string  `json:"accountId,required" format:"uuid"`
-	Amount    float64 `json:"amount,required"`
+	AccountID string  `json:"accountId" api:"required" format:"uuid"`
+	Amount    float64 `json:"amount" api:"required"`
 	// Any of "ProvisionalCreditReversalToMerchantRefund",
 	// "MerchantRefundToProvisionalCreditReversal", "MerchantRefundToFraudulentCharge",
 	// "FraudulentChargeToMerchantRefund", "PaymentRefundToFailedPayment",
@@ -499,7 +499,7 @@ type TransactionRelatedTransaction struct {
 	// "AtmReimbursementReversalToAtmTransaction", "ReturnToOriginalTransaction",
 	// "OriginalTransactionToReturn", "ProvisionalCreditToReversal",
 	// "ReversalToProvisionalCredit".
-	RelationKind string `json:"relationKind,required"`
+	RelationKind string `json:"relationKind" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID           respjson.Field
@@ -529,17 +529,17 @@ const (
 )
 
 type TransactionCurrencyExchangeInfo struct {
-	ConvertedFromAmount   float64 `json:"convertedFromAmount,required"`
-	ConvertedFromCurrency string  `json:"convertedFromCurrency,required"`
-	ConvertedToAmount     float64 `json:"convertedToAmount,required"`
-	ConvertedToCurrency   string  `json:"convertedToCurrency,required"`
+	ConvertedFromAmount   float64 `json:"convertedFromAmount" api:"required"`
+	ConvertedFromCurrency string  `json:"convertedFromCurrency" api:"required"`
+	ConvertedToAmount     float64 `json:"convertedToAmount" api:"required"`
+	ConvertedToCurrency   string  `json:"convertedToCurrency" api:"required"`
 	// Exchange rate goes from "from currency" to "to currency" (ie from currency \*
 	// exchange rate = to currency)
-	ExchangeRate  float64 `json:"exchangeRate,required"`
-	FeeAmount     float64 `json:"feeAmount,required"`
-	FeePercentage float64 `json:"feePercentage,required"`
+	ExchangeRate  float64 `json:"exchangeRate" api:"required"`
+	FeeAmount     float64 `json:"feeAmount" api:"required"`
+	FeePercentage float64 `json:"feePercentage" api:"required"`
 	// ID for this transaction
-	FeeTransactionID string `json:"feeTransactionId,nullable" format:"uuid"`
+	FeeTransactionID string `json:"feeTransactionId" api:"nullable" format:"uuid"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ConvertedFromAmount   respjson.Field
@@ -562,12 +562,12 @@ func (r *TransactionCurrencyExchangeInfo) UnmarshalJSON(data []byte) error {
 }
 
 type TransactionDetails struct {
-	Address                      AddressData                      `json:"address,nullable"`
-	CreditCardInfo               TransactionDetailsCreditCardInfo `json:"creditCardInfo,nullable"`
-	DebitCardInfo                TransactionDetailsDebitCardInfo  `json:"debitCardInfo,nullable"`
-	DomesticWireRoutingInfo      DomesticWireRoutingInfo          `json:"domesticWireRoutingInfo,nullable"`
-	ElectronicRoutingInfo        ElectronicRoutingInfo            `json:"electronicRoutingInfo,nullable"`
-	InternationalWireRoutingInfo InternationalWireRoutingInfo     `json:"internationalWireRoutingInfo,nullable"`
+	Address                      AddressData                      `json:"address" api:"nullable"`
+	CreditCardInfo               TransactionDetailsCreditCardInfo `json:"creditCardInfo" api:"nullable"`
+	DebitCardInfo                TransactionDetailsDebitCardInfo  `json:"debitCardInfo" api:"nullable"`
+	DomesticWireRoutingInfo      DomesticWireRoutingInfo          `json:"domesticWireRoutingInfo" api:"nullable"`
+	ElectronicRoutingInfo        ElectronicRoutingInfo            `json:"electronicRoutingInfo" api:"nullable"`
+	InternationalWireRoutingInfo InternationalWireRoutingInfo     `json:"internationalWireRoutingInfo" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Address                      respjson.Field
@@ -588,9 +588,9 @@ func (r *TransactionDetails) UnmarshalJSON(data []byte) error {
 }
 
 type TransactionDetailsCreditCardInfo struct {
-	ID            string `json:"id,required" format:"uuid"`
-	PaymentMethod string `json:"paymentMethod,required"`
-	Email         string `json:"email,nullable"`
+	ID            string `json:"id" api:"required" format:"uuid"`
+	PaymentMethod string `json:"paymentMethod" api:"required"`
+	Email         string `json:"email" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID            respjson.Field
@@ -608,7 +608,7 @@ func (r *TransactionDetailsCreditCardInfo) UnmarshalJSON(data []byte) error {
 }
 
 type TransactionDetailsDebitCardInfo struct {
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -626,7 +626,7 @@ func (r *TransactionDetailsDebitCardInfo) UnmarshalJSON(data []byte) error {
 // Merchant information for card transactions
 type TransactionMerchant struct {
 	// Merchant ID for card transactions
-	ID string `json:"id,nullable"`
+	ID string `json:"id" api:"nullable"`
 	// Mercury category for the merchant (e.g., "Restaurants", "Software")
 	//
 	// Any of "Other", "Advertising", "Airlines", "AlcoholAndBars",
@@ -638,9 +638,9 @@ type TransactionMerchant struct {
 	// "Political", "ProfessionalServices", "Restaurants", "Retail",
 	// "RideshareAndTaxis", "Shipping", "Software", "Taxes", "Utilities",
 	// "VehicleExpenses".
-	Category MercuryCategory `json:"category,nullable"`
+	Category MercuryCategory `json:"category" api:"nullable"`
 	// 4-digit merchant category code (MCC) for card transactions
-	CategoryCode string `json:"categoryCode,nullable"`
+	CategoryCode string `json:"categoryCode" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID           respjson.Field
@@ -658,7 +658,7 @@ func (r *TransactionMerchant) UnmarshalJSON(data []byte) error {
 }
 
 type AccountListCardsResponse struct {
-	Cards []AccountListCardsResponseCard `json:"cards,required"`
+	Cards []AccountListCardsResponseCard `json:"cards" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Cards       respjson.Field
@@ -674,16 +674,16 @@ func (r *AccountListCardsResponse) UnmarshalJSON(data []byte) error {
 }
 
 type AccountListCardsResponseCard struct {
-	CardID         string `json:"cardId,required"`
-	CreatedAt      string `json:"createdAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	LastFourDigits string `json:"lastFourDigits,required"`
-	NameOnCard     string `json:"nameOnCard,required"`
+	CardID         string `json:"cardId" api:"required"`
+	CreatedAt      string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	LastFourDigits string `json:"lastFourDigits" api:"required"`
+	NameOnCard     string `json:"nameOnCard" api:"required"`
 	// Any of "visa", "mastercard".
-	Network string `json:"network,required"`
+	Network string `json:"network" api:"required"`
 	// Any of "active", "frozen", "cancelled", "inactive", "expired", "suspended".
-	Status string `json:"status,required"`
+	Status string `json:"status" api:"required"`
 	// Any of "inactive", "active", "paused".
-	PhysicalCardStatus string `json:"physicalCardStatus,nullable"`
+	PhysicalCardStatus string `json:"physicalCardStatus" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CardID             respjson.Field
@@ -706,8 +706,8 @@ func (r *AccountListCardsResponseCard) UnmarshalJSON(data []byte) error {
 
 // Paginated response for depository account statements (v1 API)
 type AccountListStatementsResponse struct {
-	Page       AccountListStatementsResponsePage        `json:"page,required"`
-	Statements []AccountListStatementsResponseStatement `json:"statements,required"`
+	Page       AccountListStatementsResponsePage        `json:"page" api:"required"`
+	Statements []AccountListStatementsResponseStatement `json:"statements" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Page        respjson.Field
@@ -745,18 +745,18 @@ func (r *AccountListStatementsResponsePage) UnmarshalJSON(data []byte) error {
 
 type AccountListStatementsResponseStatement struct {
 	// ID for the account statement
-	ID                  string  `json:"id,required" format:"uuid"`
-	AccountNumber       string  `json:"accountNumber,required"`
-	CompanyLegalAddress Address `json:"companyLegalAddress,required"`
-	CompanyLegalName    string  `json:"companyLegalName,required"`
-	DownloadURL         string  `json:"downloadUrl,required"`
-	EndDate             string  `json:"endDate,required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	ID                  string  `json:"id" api:"required" format:"uuid"`
+	AccountNumber       string  `json:"accountNumber" api:"required"`
+	CompanyLegalAddress Address `json:"companyLegalAddress" api:"required"`
+	CompanyLegalName    string  `json:"companyLegalName" api:"required"`
+	DownloadURL         string  `json:"downloadUrl" api:"required"`
+	EndDate             string  `json:"endDate" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// A dollar amount
-	EndingBalance float64                                             `json:"endingBalance,required"`
-	RoutingNumber string                                              `json:"routingNumber,required"`
-	StartDate     string                                              `json:"startDate,required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	Transactions  []AccountListStatementsResponseStatementTransaction `json:"transactions,required"`
-	Ein           string                                              `json:"ein,nullable"`
+	EndingBalance float64                                             `json:"endingBalance" api:"required"`
+	RoutingNumber string                                              `json:"routingNumber" api:"required"`
+	StartDate     string                                              `json:"startDate" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	Transactions  []AccountListStatementsResponseStatementTransaction `json:"transactions" api:"required"`
+	Ein           string                                              `json:"ein" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                  respjson.Field
@@ -783,9 +783,9 @@ func (r *AccountListStatementsResponseStatement) UnmarshalJSON(data []byte) erro
 
 type AccountListStatementsResponseStatementTransaction struct {
 	// ID for this transaction
-	ID        string `json:"id,required" format:"uuid"`
-	CreatedAt string `json:"createdAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	PostedAt  string `json:"postedAt,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	ID        string `json:"id" api:"required" format:"uuid"`
+	CreatedAt string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	PostedAt  string `json:"postedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -881,15 +881,15 @@ const (
 
 type AccountRequestSendMoneyParams struct {
 	// A positive dollar amount with at least 1 cent.
-	Amount float64 `json:"amount,required"`
+	Amount float64 `json:"amount" api:"required"`
 	// Unique string identifying the transaction
-	IdempotencyKey string `json:"idempotencyKey,required"`
+	IdempotencyKey string `json:"idempotencyKey" api:"required"`
 	// Payment method to use.
 	//
 	// Any of "ach", "check", "domesticWire", "internationalWire".
-	PaymentMethod SendMoneyPaymentMethod `json:"paymentMethod,omitzero,required"`
+	PaymentMethod SendMoneyPaymentMethod `json:"paymentMethod,omitzero" api:"required"`
 	// ID for a Mercury account.
-	RecipientID string `json:"recipientId,required" format:"uuid"`
+	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
 	// Optional external memo
 	ExternalMemo param.Opt[string] `json:"externalMemo,omitzero"`
 	// Optional note
@@ -907,6 +907,6 @@ func (r *AccountRequestSendMoneyParams) UnmarshalJSON(data []byte) error {
 
 type AccountGetTransactionParams struct {
 	// ID for a Mercury account.
-	AccountID string `path:"accountId,required" format:"uuid" json:"-"`
+	AccountID string `path:"accountId" api:"required" format:"uuid" json:"-"`
 	paramObj
 }

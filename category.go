@@ -50,9 +50,9 @@ func (r *CategoryService) List(ctx context.Context, query CategoryListParams, op
 // information to fetch additional pages of categories.
 type CategoryListResponse struct {
 	// List of categories in the current page
-	Categories []CategoryData `json:"categories,required"`
+	Categories []CategoryData `json:"categories" api:"required"`
 	// Pagination information including cursors for navigating to next/previous pages
-	Page CategoryListResponsePage `json:"page,required"`
+	Page CategoryListResponsePage `json:"page" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Categories  respjson.Field

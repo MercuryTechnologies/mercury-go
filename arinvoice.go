@@ -127,56 +127,56 @@ func (r *ArInvoiceService) ListAttachments(ctx context.Context, invoiceID string
 // The response type for an invoice in the api.
 type Invoice struct {
 	// ID for the invoice.
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// Whether or not the invoice can be paid via ach debit.
-	ACHDebitEnabled bool `json:"achDebitEnabled,required"`
+	ACHDebitEnabled bool `json:"achDebitEnabled" api:"required"`
 	// A positive dollar amount with at least 1 cent.
-	Amount float64 `json:"amount,required"`
+	Amount float64 `json:"amount" api:"required"`
 	// Emails to be CCed on invoice notifications/reminders.
-	CcEmails []string `json:"ccEmails,required"`
+	CcEmails []string `json:"ccEmails" api:"required"`
 	// The timestamp when the invoice was created.
-	CreatedAt string `json:"createdAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	CreatedAt string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// Whether or not the invoice can be paid via credit card. Requires stripe to be
 	// setup for the Mercury account.
-	CreditCardEnabled bool `json:"creditCardEnabled,required"`
+	CreditCardEnabled bool `json:"creditCardEnabled" api:"required"`
 	// The customer who will receive the invoice. Use the /api/v1/ar/customers endpoint
 	// to list your customers and find the corresponding id, or create a new customer
 	// first.
-	CustomerID string `json:"customerId,required" format:"uuid"`
+	CustomerID string `json:"customerId" api:"required" format:"uuid"`
 	// ID for a Mercury account.
-	DestinationAccountID string `json:"destinationAccountId,required" format:"uuid"`
+	DestinationAccountID string `json:"destinationAccountId" api:"required" format:"uuid"`
 	// The due date the invoice should be paid by.
-	DueDate time.Time `json:"dueDate,required" format:"date"`
+	DueDate time.Time `json:"dueDate" api:"required" format:"date"`
 	// The date of the invoice, set by the invoice creator and likely to be context
 	// specific to the type of transaction. i.e. it could be a date a service was
 	// performed, it does not need to be the date the invoice was created.
-	InvoiceDate time.Time `json:"invoiceDate,required" format:"date"`
+	InvoiceDate time.Time `json:"invoiceDate" api:"required" format:"date"`
 	// The payer facing invoice number/identifier.
-	InvoiceNumber string `json:"invoiceNumber,required"`
+	InvoiceNumber string `json:"invoiceNumber" api:"required"`
 	// The line items for the invoice.
-	LineItems []LineItemData `json:"lineItems,required"`
+	LineItems []LineItemData `json:"lineItems" api:"required"`
 	// Public slug for an invoice. Used to construct the pay page URL as well as the
 	// URL to retrieve the PDF of the invoice.
-	Slug string `json:"slug,required"`
+	Slug string `json:"slug" api:"required"`
 	// The status of the invoice.
 	//
 	// Any of "Unpaid", "Paid", "Cancelled", "Processing".
-	Status PaymentLinkStatus `json:"status,required"`
+	Status PaymentLinkStatus `json:"status" api:"required"`
 	// The timestamp when the invoice was updated.
-	UpdatedAt string `json:"updatedAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	UpdatedAt string `json:"updatedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// Whether or not the invoice payment instructions will show the real account and
 	// routing number for the destination account or use virtual account numbers
 	// instead.
-	UseRealAccountNumber bool `json:"useRealAccountNumber,required"`
+	UseRealAccountNumber bool `json:"useRealAccountNumber" api:"required"`
 	// The time when the invoice was canceled.
-	CanceledAt string `json:"canceledAt,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	CanceledAt string `json:"canceledAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// Internal note for the invoice, visible by users in the mercury organization but
 	// not visible to payers.
-	InternalNote string `json:"internalNote,nullable"`
+	InternalNote string `json:"internalNote" api:"nullable"`
 	// Memo for the payer of the invoice.
-	PayerMemo string `json:"payerMemo,nullable"`
+	PayerMemo string `json:"payerMemo" api:"nullable"`
 	// Purchase order number for the invoice if applicable.
-	PoNumber string `json:"poNumber,nullable"`
+	PoNumber string `json:"poNumber" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                   respjson.Field
@@ -213,13 +213,13 @@ func (r *Invoice) UnmarshalJSON(data []byte) error {
 // Data for an invoice line item
 type LineItemData struct {
 	// the name of the line item
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// the quantity of this item
-	Quantity float64 `json:"quantity,required"`
+	Quantity float64 `json:"quantity" api:"required"`
 	// A dollar amount
-	UnitPrice float64 `json:"unitPrice,required"`
+	UnitPrice float64 `json:"unitPrice" api:"required"`
 	// the sales tax applied to this item
-	SalesTaxRate float64 `json:"salesTaxRate,nullable"`
+	SalesTaxRate float64 `json:"salesTaxRate" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Name         respjson.Field
@@ -251,11 +251,11 @@ func (r LineItemData) ToParam() LineItemDataParam {
 // The properties Name, Quantity, UnitPrice are required.
 type LineItemDataParam struct {
 	// the name of the line item
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// the quantity of this item
-	Quantity float64 `json:"quantity,required"`
+	Quantity float64 `json:"quantity" api:"required"`
 	// A dollar amount
-	UnitPrice float64 `json:"unitPrice,required"`
+	UnitPrice float64 `json:"unitPrice" api:"required"`
 	// the sales tax applied to this item
 	SalesTaxRate param.Opt[float64] `json:"salesTaxRate,omitzero"`
 	paramObj
@@ -282,9 +282,9 @@ const (
 // information to fetch additional pages of invoices.
 type ArInvoiceListResponse struct {
 	// List of invoices in the current page
-	Invoices []ArInvoiceListResponseInvoice `json:"invoices,required"`
+	Invoices []ArInvoiceListResponseInvoice `json:"invoices" api:"required"`
 	// Pagination information including cursors for navigating to next/previous pages
-	Page ArInvoiceListResponsePage `json:"page,required"`
+	Page ArInvoiceListResponsePage `json:"page" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Invoices    respjson.Field
@@ -303,55 +303,55 @@ func (r *ArInvoiceListResponse) UnmarshalJSON(data []byte) error {
 // Response data for Accounts Receivable invoices API Endpoint
 type ArInvoiceListResponseInvoice struct {
 	// ID for the invoice.
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// Whether or not the invoice can be paid via ach debit.
-	ACHDebitEnabled bool `json:"achDebitEnabled,required"`
+	ACHDebitEnabled bool `json:"achDebitEnabled" api:"required"`
 	// A positive dollar amount with at least 1 cent.
-	Amount float64 `json:"amount,required"`
+	Amount float64 `json:"amount" api:"required"`
 	// Emails to be CCed on invoice notifications/reminders.
-	CcEmails []string `json:"ccEmails,required"`
+	CcEmails []string `json:"ccEmails" api:"required"`
 	// The timestamp when the invoice was created.
-	CreatedAt string `json:"createdAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	CreatedAt string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// Whether or not the invoice can be paid via credit card. Requires stripe to be
 	// setup for the Mercury account.
-	CreditCardEnabled bool `json:"creditCardEnabled,required"`
+	CreditCardEnabled bool `json:"creditCardEnabled" api:"required"`
 	// The customer who will receive the invoice. Use the /api/v1/ar/customers endpoint
 	// to list your customers and find the corresponding id, or create a new customer
 	// first.
-	CustomerID string `json:"customerId,required" format:"uuid"`
+	CustomerID string `json:"customerId" api:"required" format:"uuid"`
 	// ID for a Mercury account.
-	DestinationAccountID string `json:"destinationAccountId,required" format:"uuid"`
+	DestinationAccountID string `json:"destinationAccountId" api:"required" format:"uuid"`
 	// The due date the invoice should be paid by.
-	DueDate time.Time `json:"dueDate,required" format:"date"`
+	DueDate time.Time `json:"dueDate" api:"required" format:"date"`
 	// The date of the invoice, set by the invoice creator and likely to be context
 	// specific to the type of transaction. i.e. it could be a date a service was
 	// performed, it does not need to be the date the invoice was created.
-	InvoiceDate time.Time `json:"invoiceDate,required" format:"date"`
+	InvoiceDate time.Time `json:"invoiceDate" api:"required" format:"date"`
 	// The payer facing invoice number/identifier.
-	InvoiceNumber string `json:"invoiceNumber,required"`
+	InvoiceNumber string `json:"invoiceNumber" api:"required"`
 	// A unique identifier used to build public URLs for this invoice. Use it to
 	// construct the payment page URL (https://app.mercury.com/pay/{slug}) or fetch the
 	// invoice PDF via /api/v1/ar/invoices/{slug}/pdf.
-	Slug string `json:"slug,required"`
+	Slug string `json:"slug" api:"required"`
 	// The status of the invoice.
 	//
 	// Any of "Unpaid", "Paid", "Cancelled", "Processing".
-	Status PaymentLinkStatus `json:"status,required"`
+	Status PaymentLinkStatus `json:"status" api:"required"`
 	// The timestamp when the invoice was updated.
-	UpdatedAt string `json:"updatedAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	UpdatedAt string `json:"updatedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// Whether or not the invoice payment instructions will show the real account and
 	// routing number for the destination account or use virtual account numbers
 	// instead.
-	UseRealAccountNumber bool `json:"useRealAccountNumber,required"`
+	UseRealAccountNumber bool `json:"useRealAccountNumber" api:"required"`
 	// The time when the invoice was canceled.
-	CanceledAt string `json:"canceledAt,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	CanceledAt string `json:"canceledAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// Internal note for the invoice, visible by users in the mercury organization but
 	// not visible to payers.
-	InternalNote string `json:"internalNote,nullable"`
+	InternalNote string `json:"internalNote" api:"nullable"`
 	// Memo for the payer of the invoice.
-	PayerMemo string `json:"payerMemo,nullable"`
+	PayerMemo string `json:"payerMemo" api:"nullable"`
 	// Purchase order number for the invoice if applicable.
-	PoNumber string `json:"poNumber,nullable"`
+	PoNumber string `json:"poNumber" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                   respjson.Field
@@ -408,7 +408,7 @@ func (r *ArInvoiceListResponsePage) UnmarshalJSON(data []byte) error {
 // The response type for fetching attachments related to an AR Invoice.
 type ArInvoiceListAttachmentsResponse struct {
 	// The list of attachments
-	Attachments []Attachment `json:"attachments,required"`
+	Attachments []Attachment `json:"attachments" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Attachments respjson.Field
@@ -425,30 +425,30 @@ func (r *ArInvoiceListAttachmentsResponse) UnmarshalJSON(data []byte) error {
 
 type ArInvoiceNewParams struct {
 	// Whether or not the invoice can be paid via ACH debit.
-	ACHDebitEnabled bool `json:"achDebitEnabled,required"`
+	ACHDebitEnabled bool `json:"achDebitEnabled" api:"required"`
 	// Emails to be CCed on invoice notifications/reminders.
-	CcEmails []string `json:"ccEmails,omitzero,required"`
+	CcEmails []string `json:"ccEmails,omitzero" api:"required"`
 	// Whether or not the invoice can be paid via credit card. Requires Stripe to be
 	// setup for the Mercury account.
-	CreditCardEnabled bool `json:"creditCardEnabled,required"`
+	CreditCardEnabled bool `json:"creditCardEnabled" api:"required"`
 	// The customer who will receive the invoice. Use the /api/v1/ar/customers endpoint
 	// to list your customers and find the corresponding id, or create a new customer
 	// first.
-	CustomerID string `json:"customerId,required" format:"uuid"`
+	CustomerID string `json:"customerId" api:"required" format:"uuid"`
 	// ID for a Mercury account.
-	DestinationAccountID string `json:"destinationAccountId,required" format:"uuid"`
+	DestinationAccountID string `json:"destinationAccountId" api:"required" format:"uuid"`
 	// The due date the invoice should be paid by. YYYY-MM-DD
-	DueDate time.Time `json:"dueDate,required" format:"date"`
+	DueDate time.Time `json:"dueDate" api:"required" format:"date"`
 	// The date of the invoice, set by the invoice creator and likely to be context
 	// specific to the type of transaction. For example, it could be a date a service
 	// was performed. YYYY-MM-DD
-	InvoiceDate time.Time `json:"invoiceDate,required" format:"date"`
+	InvoiceDate time.Time `json:"invoiceDate" api:"required" format:"date"`
 	// The line items for the invoice
-	LineItems []LineItemDataParam `json:"lineItems,omitzero,required"`
+	LineItems []LineItemDataParam `json:"lineItems,omitzero" api:"required"`
 	// Whether or not the invoice payment instructions will show the real account and
 	// routing number for the destination account or use virtual account numbers
 	// instead. Virtual accounts are safer and are preferred in most cases.
-	UseRealAccountNumber bool `json:"useRealAccountNumber,required"`
+	UseRealAccountNumber bool `json:"useRealAccountNumber" api:"required"`
 	// Internal note for the invoice, visible by users in the organization but not
 	// visible to payers.
 	InternalNote param.Opt[string] `json:"internalNote,omitzero"`
@@ -485,26 +485,26 @@ const (
 
 type ArInvoiceUpdateParams struct {
 	// Whether or not the invoice can be paid via ACH debit.
-	ACHDebitEnabled bool `json:"achDebitEnabled,required"`
+	ACHDebitEnabled bool `json:"achDebitEnabled" api:"required"`
 	// List of emails to be CCed on notifications/reminders.
-	CcEmails []string `json:"ccEmails,omitzero,required"`
+	CcEmails []string `json:"ccEmails,omitzero" api:"required"`
 	// Whether or not the invoice can be paid via credit card. Requires Stripe to be
 	// setup for the Mercury account.
-	CreditCardEnabled bool `json:"creditCardEnabled,required"`
+	CreditCardEnabled bool `json:"creditCardEnabled" api:"required"`
 	// The date the invoice should be paid by. YYYY-MM-DD
-	DueDate time.Time `json:"dueDate,required" format:"date"`
+	DueDate time.Time `json:"dueDate" api:"required" format:"date"`
 	// The date of the invoice, set by the invoice creator. Does not have to be the day
 	// the invoice was created. It can be business specific i.e. service/sale date.
 	// YYYY-MM-DD
-	InvoiceDate time.Time `json:"invoiceDate,required" format:"date"`
+	InvoiceDate time.Time `json:"invoiceDate" api:"required" format:"date"`
 	// The invoice number.
-	InvoiceNumber string `json:"invoiceNumber,required"`
+	InvoiceNumber string `json:"invoiceNumber" api:"required"`
 	// The line items for the invoice
-	LineItems []LineItemDataParam `json:"lineItems,omitzero,required"`
+	LineItems []LineItemDataParam `json:"lineItems,omitzero" api:"required"`
 	// Whether or not the invoice payment instructions will show the real account and
 	// routing number for the destination account or use virtual account numbers
 	// instead.
-	UseRealAccountNumber bool `json:"useRealAccountNumber,required"`
+	UseRealAccountNumber bool `json:"useRealAccountNumber" api:"required"`
 	// Internal note for the invoice, visible by users in the organization but not
 	// visible to payers.
 	InternalNote param.Opt[string] `json:"internalNote,omitzero"`

@@ -45,7 +45,7 @@ func (r *OrganizationService) Get(ctx context.Context, opts ...option.RequestOpt
 // Response containing organization details.
 type OrganizationGetResponse struct {
 	// Organization information
-	Organization OrganizationGetResponseOrganization `json:"organization,required"`
+	Organization OrganizationGetResponseOrganization `json:"organization" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Organization respjson.Field
@@ -63,17 +63,17 @@ func (r *OrganizationGetResponse) UnmarshalJSON(data []byte) error {
 // Organization information
 type OrganizationGetResponseOrganization struct {
 	// Unique identifier for the organization
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// List of DBAs (Doing Business As names) for this organization
-	Dbas []OrganizationGetResponseOrganizationDba `json:"dbas,required"`
+	Dbas []OrganizationGetResponseOrganizationDba `json:"dbas" api:"required"`
 	// Whether this is a personal or business organization
 	//
 	// Any of "personal", "business".
-	Kind string `json:"kind,required"`
+	Kind string `json:"kind" api:"required"`
 	// Legal business name as registered
-	LegalBusinessName string `json:"legalBusinessName,required"`
+	LegalBusinessName string `json:"legalBusinessName" api:"required"`
 	// Employer Identification Number (EIN), if available
-	Ein string `json:"ein,nullable"`
+	Ein string `json:"ein" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                respjson.Field
@@ -95,9 +95,9 @@ func (r *OrganizationGetResponseOrganization) UnmarshalJSON(data []byte) error {
 // DBA (Doing Business As) information
 type OrganizationGetResponseOrganizationDba struct {
 	// Whether this DBA is set as the default for payments
-	DbaIsDefault bool `json:"dbaIsDefault,required"`
+	DbaIsDefault bool `json:"dbaIsDefault" api:"required"`
 	// The DBA name
-	DbaName string `json:"dbaName,required"`
+	DbaName string `json:"dbaName" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		DbaIsDefault respjson.Field

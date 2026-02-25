@@ -56,11 +56,11 @@ func (r *ArService) GetAttachment(ctx context.Context, attachmentID string, opts
 // object.
 type Attachment struct {
 	// ID for the attachment.
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// The filename for the file.
-	FileName string `json:"fileName,required"`
+	FileName string `json:"fileName" api:"required"`
 	// The signed download URL for the file itself.
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
