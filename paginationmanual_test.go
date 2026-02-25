@@ -7,9 +7,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/MercuryTechnologies/mercury-go"
-	"github.com/MercuryTechnologies/mercury-go/internal/testutil"
-	"github.com/MercuryTechnologies/mercury-go/option"
+	"github.com/stainless-sdks/mercury-go"
+	"github.com/stainless-sdks/mercury-go/internal/testutil"
+	"github.com/stainless-sdks/mercury-go/option"
 )
 
 func TestManualPagination(t *testing.T) {
@@ -25,12 +25,12 @@ func TestManualPagination(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	page, err := client.Treasury.List(context.TODO(), mercury.TreasuryListParams{})
+	page, err := client.Ar.Customers.List(context.TODO(), mercury.ArCustomerListParams{})
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	for _, treasury := range page.Accounts {
-		t.Logf("%+v\n", treasury.ID)
+	for _, customer := range page.Customers {
+		t.Logf("%+v\n", customer.ID)
 	}
 	// The mock server isn't going to give us real pagination
 	page, err = page.GetNextPage()
@@ -38,8 +38,8 @@ func TestManualPagination(t *testing.T) {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
 	if page != nil {
-		for _, treasury := range page.Accounts {
-			t.Logf("%+v\n", treasury.ID)
+		for _, customer := range page.Customers {
+			t.Logf("%+v\n", customer.ID)
 		}
 	}
 }
