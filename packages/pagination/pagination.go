@@ -529,6 +529,206 @@ func (r *CursorIDCategoriesAutoPager[T]) Index() int {
 	return r.run
 }
 
+type CursorIDUsers[T any] struct {
+	Users []T `json:"users"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Users       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	cfg *requestconfig.RequestConfig
+	res *http.Response
+}
+
+// Returns the unmodified JSON received from the API
+func (r CursorIDUsers[T]) RawJSON() string { return r.JSON.raw }
+func (r *CursorIDUsers[T]) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *CursorIDUsers[T]) GetNextPage() (res *CursorIDUsers[T], err error) {
+	if len(r.Users) == 0 {
+		return nil, nil
+	}
+	items := r.Users
+	if items == nil || len(items) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	value := reflect.ValueOf(items[len(items)-1])
+	field := value.FieldByName("UserID")
+	err = cfg.Apply(option.WithQuery("start_after", field.Interface().(string)))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *CursorIDUsers[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &CursorIDUsers[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type CursorIDUsersAutoPager[T any] struct {
+	page *CursorIDUsers[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+	paramObj
+}
+
+func NewCursorIDUsersAutoPager[T any](page *CursorIDUsers[T], err error) *CursorIDUsersAutoPager[T] {
+	return &CursorIDUsersAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *CursorIDUsersAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.Users) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.Users) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.Users) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.Users[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *CursorIDUsersAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *CursorIDUsersAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *CursorIDUsersAutoPager[T]) Index() int {
+	return r.run
+}
+
+type CursorIDAccountStatements[T any] struct {
+	Statements []T `json:"statements"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Statements  respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	cfg *requestconfig.RequestConfig
+	res *http.Response
+}
+
+// Returns the unmodified JSON received from the API
+func (r CursorIDAccountStatements[T]) RawJSON() string { return r.JSON.raw }
+func (r *CursorIDAccountStatements[T]) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *CursorIDAccountStatements[T]) GetNextPage() (res *CursorIDAccountStatements[T], err error) {
+	if len(r.Statements) == 0 {
+		return nil, nil
+	}
+	items := r.Statements
+	if items == nil || len(items) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	value := reflect.ValueOf(items[len(items)-1])
+	field := value.FieldByName("ID")
+	err = cfg.Apply(option.WithQuery("start_after", field.Interface().(string)))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *CursorIDAccountStatements[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &CursorIDAccountStatements[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type CursorIDAccountStatementsAutoPager[T any] struct {
+	page *CursorIDAccountStatements[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+	paramObj
+}
+
+func NewCursorIDAccountStatementsAutoPager[T any](page *CursorIDAccountStatements[T], err error) *CursorIDAccountStatementsAutoPager[T] {
+	return &CursorIDAccountStatementsAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *CursorIDAccountStatementsAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.Statements) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.Statements) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.Statements) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.Statements[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *CursorIDAccountStatementsAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *CursorIDAccountStatementsAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *CursorIDAccountStatementsAutoPager[T]) Index() int {
+	return r.run
+}
+
 type CursorIDRecipientAttachments[T any] struct {
 	Attachments []T `json:"attachments"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -726,6 +926,106 @@ func (r *CursorIDRecipientsAutoPager[T]) Err() error {
 }
 
 func (r *CursorIDRecipientsAutoPager[T]) Index() int {
+	return r.run
+}
+
+type CursorIDArInvoices[T any] struct {
+	Invoices []T `json:"invoices"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Invoices    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	cfg *requestconfig.RequestConfig
+	res *http.Response
+}
+
+// Returns the unmodified JSON received from the API
+func (r CursorIDArInvoices[T]) RawJSON() string { return r.JSON.raw }
+func (r *CursorIDArInvoices[T]) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *CursorIDArInvoices[T]) GetNextPage() (res *CursorIDArInvoices[T], err error) {
+	if len(r.Invoices) == 0 {
+		return nil, nil
+	}
+	items := r.Invoices
+	if items == nil || len(items) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	value := reflect.ValueOf(items[len(items)-1])
+	field := value.FieldByName("ID")
+	err = cfg.Apply(option.WithQuery("start_after", field.Interface().(string)))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *CursorIDArInvoices[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &CursorIDArInvoices[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type CursorIDArInvoicesAutoPager[T any] struct {
+	page *CursorIDArInvoices[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+	paramObj
+}
+
+func NewCursorIDArInvoicesAutoPager[T any](page *CursorIDArInvoices[T], err error) *CursorIDArInvoicesAutoPager[T] {
+	return &CursorIDArInvoicesAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *CursorIDArInvoicesAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.Invoices) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.Invoices) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.Invoices) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.Invoices[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *CursorIDArInvoicesAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *CursorIDArInvoicesAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *CursorIDArInvoicesAutoPager[T]) Index() int {
 	return r.run
 }
 
