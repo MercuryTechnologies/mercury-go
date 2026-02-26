@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/mercury-go"
-	"github.com/stainless-sdks/mercury-go/internal"
-	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go"
+	"github.com/MercuryTechnologies/mercury-go/internal"
+	"github.com/MercuryTechnologies/mercury-go/option"
 )
 
 type closureTransport struct {
