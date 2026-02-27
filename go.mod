@@ -1,4 +1,4 @@
-module github.com/MercuryTechnologies/mercury-go
+module github.com/stainless-sdks/mercury-go
 
 go 1.22
 

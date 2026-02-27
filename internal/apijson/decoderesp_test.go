@@ -2,8 +2,8 @@ package apijson_test
 
 import (
 	"encoding/json"
-	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
-	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
+	"github.com/stainless-sdks/mercury-go/internal/apijson"
+	"github.com/stainless-sdks/mercury-go/packages/respjson"
 	"testing"
 )
 

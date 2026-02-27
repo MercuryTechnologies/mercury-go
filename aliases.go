@@ -3,8 +3,8 @@
 package mercury
 
 import (
-	"github.com/MercuryTechnologies/mercury-go/internal/apierror"
-	"github.com/MercuryTechnologies/mercury-go/packages/param"
+	"github.com/stainless-sdks/mercury-go/internal/apierror"
+	"github.com/stainless-sdks/mercury-go/packages/param"
 )
 
 // aliased to make [param.APIUnion] private when embedding
