@@ -1,8 +1,8 @@
 package sentinel_test
 
 import (
-	"github.com/MercuryTechnologies/mercury-go/internal/encoding/json/sentinel"
-	"github.com/MercuryTechnologies/mercury-go/packages/param"
+	"github.com/stainless-sdks/mercury-go/internal/encoding/json/sentinel"
+	"github.com/stainless-sdks/mercury-go/packages/param"
 	"reflect"
 	"slices"
 	"testing"
