@@ -143,7 +143,7 @@ type AccountTransactionSendParams struct {
 	IdempotencyKey string `json:"idempotencyKey" api:"required"`
 	// If domesticWire is used, then the purpose field is required.
 	//
-	// Any of "ach", "domesticWire".
+	// Any of "ach", "check", "domesticWire".
 	PaymentMethod AccountTransactionSendParamsPaymentMethod `json:"paymentMethod,omitzero" api:"required"`
 	// ID for a Mercury account.
 	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
@@ -170,6 +170,7 @@ type AccountTransactionSendParamsPaymentMethod string
 
 const (
 	AccountTransactionSendParamsPaymentMethodACH          AccountTransactionSendParamsPaymentMethod = "ach"
+	AccountTransactionSendParamsPaymentMethodCheck        AccountTransactionSendParamsPaymentMethod = "check"
 	AccountTransactionSendParamsPaymentMethodDomesticWire AccountTransactionSendParamsPaymentMethod = "domesticWire"
 )
 
