@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/mercury-go/packages/param"
+	"github.com/MercuryTechnologies/mercury-go/packages/param"
 )
 
 type Struct struct {
