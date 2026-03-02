@@ -33,8 +33,10 @@ func NewTransferService(opts ...option.RequestOption) (r TransferService) {
 	return
 }
 
-// Transfer funds between two accounts within the same organization. Creates paired
-// debit and credit transactions.
+// Transfer funds between two accounts within the same organization. Supports
+// transfers between depository accounts (checking/savings), from a depository
+// account to a treasury/investment account, and from a treasury/investment account
+// to a depository account. Creates paired debit and credit transactions.
 func (r *TransferService) New(ctx context.Context, body TransferNewParams, opts ...option.RequestOption) (res *TransferNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
@@ -44,7 +46,7 @@ func (r *TransferService) New(ctx context.Context, body TransferNewParams, opts 
 }
 
 // Response for POST /api/v1/transfer endpoint. Returns both the credit and debit
-// transactions for the transfer.
+// transactions for the transfer (depository, treasury, or investment).
 type TransferNewResponse struct {
 	CreditTransaction Transaction `json:"creditTransaction" api:"required"`
 	DebitTransaction  Transaction `json:"debitTransaction" api:"required"`
