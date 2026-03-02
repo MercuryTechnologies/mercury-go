@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	shimjson "github.com/MercuryTechnologies/mercury-go/internal/encoding/json"
+	shimjson "github.com/stainless-sdks/mercury-go/internal/encoding/json"
 
 	"github.com/tidwall/sjson"
 )

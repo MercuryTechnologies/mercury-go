@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/MercuryTechnologies/mercury-go/packages/param"
+	"github.com/stainless-sdks/mercury-go/packages/param"
 )
 
 var encoders sync.Map // map[encoderEntry]encoderFunc

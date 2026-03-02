@@ -2,7 +2,7 @@ package paramutil
 
 import (
 	"fmt"
-	"github.com/MercuryTechnologies/mercury-go/packages/param"
+	"github.com/stainless-sdks/mercury-go/packages/param"
 	"reflect"
 )
 
