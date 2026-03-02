@@ -3,8 +3,8 @@ package apijson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
-	"github.com/MercuryTechnologies/mercury-go/packages/param"
+	"github.com/stainless-sdks/mercury-go/internal/apijson"
+	"github.com/stainless-sdks/mercury-go/packages/param"
 	"reflect"
 	"testing"
 )

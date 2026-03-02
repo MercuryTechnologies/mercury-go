@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"net/http/httputil"
 
-	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
-	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
+	"github.com/stainless-sdks/mercury-go/internal/apijson"
+	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
 
 // Error represents an error that originates from the API, i.e. when a request is
