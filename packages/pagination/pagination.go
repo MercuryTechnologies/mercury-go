@@ -330,8 +330,8 @@ func (r *OffsetAccountTransactionsAutoPager[T]) Index() int {
 }
 
 type CursorTreasuryTransactions[T any] struct {
-	Cursor       int64 `json:"cursor" api:"nullable"`
-	Transactions []T   `json:"transactions"`
+	Cursor       string `json:"cursor" api:"nullable"`
+	Transactions []T    `json:"transactions"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Cursor       respjson.Field
