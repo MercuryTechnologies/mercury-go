@@ -15,31 +15,31 @@ import (
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
 
-// ArService contains methods and other services that help with interacting with
-// the mercury API.
+// AccountsRecievableService contains methods and other services that help with
+// interacting with the mercury API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewArService] method instead.
-type ArService struct {
+// the [NewAccountsRecievableService] method instead.
+type AccountsRecievableService struct {
 	Options   []option.RequestOption
-	Customers ArCustomerService
-	Invoices  ArInvoiceService
+	Customers AccountsRecievableCustomerService
+	Invoices  AccountsRecievableInvoiceService
 }
 
-// NewArService generates a new service that applies the given options to each
-// request. These options are applied after the parent client's options (if there
-// is one), and before any request-specific options.
-func NewArService(opts ...option.RequestOption) (r ArService) {
-	r = ArService{}
+// NewAccountsRecievableService generates a new service that applies the given
+// options to each request. These options are applied after the parent client's
+// options (if there is one), and before any request-specific options.
+func NewAccountsRecievableService(opts ...option.RequestOption) (r AccountsRecievableService) {
+	r = AccountsRecievableService{}
 	r.Options = opts
-	r.Customers = NewArCustomerService(opts...)
-	r.Invoices = NewArInvoiceService(opts...)
+	r.Customers = NewAccountsRecievableCustomerService(opts...)
+	r.Invoices = NewAccountsRecievableInvoiceService(opts...)
 	return
 }
 
 // Retrieve attachment details including download URL
-func (r *ArService) GetAttachment(ctx context.Context, attachmentID string, opts ...option.RequestOption) (res *Attachment, err error) {
+func (r *AccountsRecievableService) GetAttachment(ctx context.Context, attachmentID string, opts ...option.RequestOption) (res *Attachment, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if attachmentID == "" {

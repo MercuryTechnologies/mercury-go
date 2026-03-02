@@ -16,22 +16,22 @@ import (
 // interacting with the mercury API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options          []option.RequestOption
-	Ar               ArService
-	Categories       CategoryService
-	Credit           CreditService
-	Events           EventService
-	Organization     OrganizationService
-	RequestSendMoney RequestSendMoneyService
-	Safes            SafeService
-	Statements       StatementService
-	Transfer         TransferService
-	Treasury         TreasuryService
-	Users            UserService
-	Webhooks         WebhookService
-	Account          AccountService
-	Recipients       RecipientService
-	Transactions     TransactionService
+	Options            []option.RequestOption
+	AccountsRecievable AccountsRecievableService
+	Categories         CategoryService
+	Credit             CreditService
+	Events             EventService
+	Organization       OrganizationService
+	RequestSendMoney   RequestSendMoneyService
+	Safes              SafeService
+	Statements         StatementService
+	Transfer           TransferService
+	Treasury           TreasuryService
+	Users              UserService
+	Webhooks           WebhookService
+	Account            AccountService
+	Recipients         RecipientService
+	Transactions       TransactionService
 }
 
 // DefaultClientOptions read from the environment (MERCURY_API_KEY,
@@ -64,7 +64,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 
 	r = Client{Options: opts}
 
-	r.Ar = NewArService(opts...)
+	r.AccountsRecievable = NewAccountsRecievableService(opts...)
 	r.Categories = NewCategoryService(opts...)
 	r.Credit = NewCreditService(opts...)
 	r.Events = NewEventService(opts...)

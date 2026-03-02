@@ -25,7 +25,7 @@ func TestAutoPagination(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	iter := client.Ar.Customers.ListAutoPaging(context.TODO(), mercury.ArCustomerListParams{})
+	iter := client.AccountsRecievable.Customers.ListAutoPaging(context.TODO(), mercury.AccountsRecievableCustomerListParams{})
 	// The mock server isn't going to give us real pagination
 	for i := 0; i < 3 && iter.Next(); i++ {
 		customer := iter.Current()
