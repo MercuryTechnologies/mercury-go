@@ -278,7 +278,7 @@ This library provides some conveniences for working with paginated list endpoint
 You can use `.ListAutoPaging()` methods to iterate through items across all pages:
 
 ```go
-iter := client.Ar.Customers.ListAutoPaging(context.TODO(), mercury.ArCustomerListParams{})
+iter := client.AccountsRecievable.Customers.ListAutoPaging(context.TODO(), mercury.AccountsRecievableCustomerListParams{})
 // Automatically fetches more pages as needed.
 for iter.Next() {
 	customer := iter.Current()
@@ -293,7 +293,7 @@ Or you can use simple `.List()` methods to fetch a single page and receive a sta
 with additional helper methods like `.GetNextPage()`, e.g.:
 
 ```go
-page, err := client.Ar.Customers.List(context.TODO(), mercury.ArCustomerListParams{})
+page, err := client.AccountsRecievable.Customers.List(context.TODO(), mercury.AccountsRecievableCustomerListParams{})
 for page != nil {
 	for _, customer := range page.Customers {
 		fmt.Printf("%+v\n", customer)

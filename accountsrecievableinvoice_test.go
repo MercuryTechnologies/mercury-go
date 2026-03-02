@@ -18,7 +18,7 @@ import (
 	"github.com/stainless-sdks/mercury-go/option"
 )
 
-func TestArInvoiceNewWithOptionalParams(t *testing.T) {
+func TestAccountsRecievableInvoiceNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -31,7 +31,7 @@ func TestArInvoiceNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Ar.Invoices.New(context.TODO(), mercury.ArInvoiceNewParams{
+	_, err := client.AccountsRecievable.Invoices.New(context.TODO(), mercury.AccountsRecievableInvoiceNewParams{
 		ACHDebitEnabled:      true,
 		CcEmails:             []string{"string"},
 		CreditCardEnabled:    true,
@@ -50,7 +50,7 @@ func TestArInvoiceNewWithOptionalParams(t *testing.T) {
 		InvoiceNumber:          mercury.String("invoiceNumber"),
 		PayerMemo:              mercury.String("payerMemo"),
 		PoNumber:               mercury.String("poNumber"),
-		SendEmailOption:        mercury.ArInvoiceNewParamsSendEmailOptionDontSend,
+		SendEmailOption:        mercury.AccountsRecievableInvoiceNewParamsSendEmailOptionDontSend,
 		ServicePeriodEndDate:   mercury.Time(time.Now()),
 		ServicePeriodStartDate: mercury.Time(time.Now()),
 	})
@@ -63,7 +63,7 @@ func TestArInvoiceNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestArInvoiceGet(t *testing.T) {
+func TestAccountsRecievableInvoiceGet(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -76,7 +76,7 @@ func TestArInvoiceGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Ar.Invoices.Get(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	_, err := client.AccountsRecievable.Invoices.Get(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {
@@ -86,7 +86,7 @@ func TestArInvoiceGet(t *testing.T) {
 	}
 }
 
-func TestArInvoiceUpdateWithOptionalParams(t *testing.T) {
+func TestAccountsRecievableInvoiceUpdateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -99,10 +99,10 @@ func TestArInvoiceUpdateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Ar.Invoices.Update(
+	_, err := client.AccountsRecievable.Invoices.Update(
 		context.TODO(),
 		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-		mercury.ArInvoiceUpdateParams{
+		mercury.AccountsRecievableInvoiceUpdateParams{
 			ACHDebitEnabled:   true,
 			CcEmails:          []string{"string"},
 			CreditCardEnabled: true,
@@ -132,7 +132,7 @@ func TestArInvoiceUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestArInvoiceListWithOptionalParams(t *testing.T) {
+func TestAccountsRecievableInvoiceListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -145,10 +145,10 @@ func TestArInvoiceListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Ar.Invoices.List(context.TODO(), mercury.ArInvoiceListParams{
+	_, err := client.AccountsRecievable.Invoices.List(context.TODO(), mercury.AccountsRecievableInvoiceListParams{
 		EndBefore:  mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Limit:      mercury.Int(1),
-		Order:      mercury.ArInvoiceListParamsOrderAsc,
+		Order:      mercury.AccountsRecievableInvoiceListParamsOrderAsc,
 		StartAfter: mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
@@ -160,7 +160,7 @@ func TestArInvoiceListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestArInvoiceCancel(t *testing.T) {
+func TestAccountsRecievableInvoiceCancel(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -173,7 +173,7 @@ func TestArInvoiceCancel(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	err := client.Ar.Invoices.Cancel(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	err := client.AccountsRecievable.Invoices.Cancel(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {
@@ -183,7 +183,7 @@ func TestArInvoiceCancel(t *testing.T) {
 	}
 }
 
-func TestArInvoiceDownloadPdf(t *testing.T) {
+func TestAccountsRecievableInvoiceDownloadPdf(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
 		w.Write([]byte("abc"))
@@ -194,7 +194,7 @@ func TestArInvoiceDownloadPdf(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	resp, err := client.Ar.Invoices.DownloadPdf(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	resp, err := client.AccountsRecievable.Invoices.DownloadPdf(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {
@@ -217,7 +217,7 @@ func TestArInvoiceDownloadPdf(t *testing.T) {
 	}
 }
 
-func TestArInvoiceListAttachments(t *testing.T) {
+func TestAccountsRecievableInvoiceListAttachments(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -230,7 +230,7 @@ func TestArInvoiceListAttachments(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Ar.Invoices.ListAttachments(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	_, err := client.AccountsRecievable.Invoices.ListAttachments(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {

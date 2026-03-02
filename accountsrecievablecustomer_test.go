@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/mercury-go/option"
 )
 
-func TestArCustomerNewWithOptionalParams(t *testing.T) {
+func TestAccountsRecievableCustomerNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,7 +26,7 @@ func TestArCustomerNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Ar.Customers.New(context.TODO(), mercury.ArCustomerNewParams{
+	_, err := client.AccountsRecievable.Customers.New(context.TODO(), mercury.AccountsRecievableCustomerNewParams{
 		Email: "email",
 		Name:  "name",
 		Address: mercury.AddressInputParam{
@@ -48,7 +48,7 @@ func TestArCustomerNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestArCustomerGet(t *testing.T) {
+func TestAccountsRecievableCustomerGet(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -61,7 +61,7 @@ func TestArCustomerGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Ar.Customers.Get(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	_, err := client.AccountsRecievable.Customers.Get(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {
@@ -71,7 +71,7 @@ func TestArCustomerGet(t *testing.T) {
 	}
 }
 
-func TestArCustomerUpdateWithOptionalParams(t *testing.T) {
+func TestAccountsRecievableCustomerUpdateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -84,10 +84,10 @@ func TestArCustomerUpdateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Ar.Customers.Update(
+	_, err := client.AccountsRecievable.Customers.Update(
 		context.TODO(),
 		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-		mercury.ArCustomerUpdateParams{
+		mercury.AccountsRecievableCustomerUpdateParams{
 			Email:              "email",
 			Name:               "name",
 			ResendOpenInvoices: true,
@@ -111,7 +111,7 @@ func TestArCustomerUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestArCustomerListWithOptionalParams(t *testing.T) {
+func TestAccountsRecievableCustomerListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -124,10 +124,10 @@ func TestArCustomerListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Ar.Customers.List(context.TODO(), mercury.ArCustomerListParams{
+	_, err := client.AccountsRecievable.Customers.List(context.TODO(), mercury.AccountsRecievableCustomerListParams{
 		EndBefore:  mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Limit:      mercury.Int(1),
-		Order:      mercury.ArCustomerListParamsOrderAsc,
+		Order:      mercury.AccountsRecievableCustomerListParamsOrderAsc,
 		StartAfter: mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
@@ -139,7 +139,7 @@ func TestArCustomerListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestArCustomerDelete(t *testing.T) {
+func TestAccountsRecievableCustomerDelete(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -152,7 +152,7 @@ func TestArCustomerDelete(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	err := client.Ar.Customers.Delete(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	err := client.AccountsRecievable.Customers.Delete(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {
