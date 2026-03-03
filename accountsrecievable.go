@@ -41,7 +41,6 @@ func NewAccountsRecievableService(opts ...option.RequestOption) (r AccountsRecie
 // Retrieve attachment details including download URL
 func (r *AccountsRecievableService) GetAttachment(ctx context.Context, attachmentID string, opts ...option.RequestOption) (res *Attachment, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if attachmentID == "" {
 		err = errors.New("missing required attachmentId parameter")
 		return

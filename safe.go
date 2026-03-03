@@ -38,7 +38,6 @@ func NewSafeService(opts ...option.RequestOption) (r SafeService) {
 // Retrieve a specific SAFE request by its ID.
 func (r *SafeService) Get(ctx context.Context, safeRequestID string, opts ...option.RequestOption) (res *SafeRequest, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if safeRequestID == "" {
 		err = errors.New("missing required safeRequestId parameter")
 		return
@@ -52,7 +51,6 @@ func (r *SafeService) Get(ctx context.Context, safeRequestID string, opts ...opt
 // organization.
 func (r *SafeService) List(ctx context.Context, opts ...option.RequestOption) (res *[]SafeRequest, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "safes"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
