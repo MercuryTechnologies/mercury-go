@@ -232,6 +232,73 @@ func (r *CategoryData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type CurrencyExchangeInfo struct {
+	ConvertedFromAmount   float64 `json:"convertedFromAmount" api:"required"`
+	ConvertedFromCurrency string  `json:"convertedFromCurrency" api:"required"`
+	ConvertedToAmount     float64 `json:"convertedToAmount" api:"required"`
+	ConvertedToCurrency   string  `json:"convertedToCurrency" api:"required"`
+	// Exchange rate goes from "from currency" to "to currency" (ie from currency \*
+	// exchange rate = to currency)
+	ExchangeRate  float64 `json:"exchangeRate" api:"required"`
+	FeeAmount     float64 `json:"feeAmount" api:"required"`
+	FeePercentage float64 `json:"feePercentage" api:"required"`
+	// ID for this transaction
+	FeeTransactionID string `json:"feeTransactionId" api:"nullable" format:"uuid"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ConvertedFromAmount   respjson.Field
+		ConvertedFromCurrency respjson.Field
+		ConvertedToAmount     respjson.Field
+		ConvertedToCurrency   respjson.Field
+		ExchangeRate          respjson.Field
+		FeeAmount             respjson.Field
+		FeePercentage         respjson.Field
+		FeeTransactionID      respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CurrencyExchangeInfo) RawJSON() string { return r.JSON.raw }
+func (r *CurrencyExchangeInfo) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Merchant information for card transactions
+type MerchantData struct {
+	// Merchant ID for card transactions
+	ID string `json:"id" api:"nullable"`
+	// Mercury category for the merchant (e.g., "Restaurants", "Software")
+	//
+	// Any of "Other", "Advertising", "Airlines", "AlcoholAndBars",
+	// "BooksAndNewspaper", "CarRental", "Charity", "Clothing", "Conferences",
+	// "Education", "Electronics", "Entertainment", "FacilitiesExpenses", "Fees",
+	// "FoodDelivery", "FuelAndGas", "Gambling", "GovernmentServices", "Grocery",
+	// "GroundTransportation", "Insurance", "InternetAndTelephone", "Legal", "Lodging",
+	// "Medical", "Memberships", "OfficeSupplies", "OtherTravel", "Parking",
+	// "Political", "ProfessionalServices", "Restaurants", "Retail",
+	// "RideshareAndTaxis", "Shipping", "Software", "Taxes", "Utilities",
+	// "VehicleExpenses".
+	Category MercuryCategory `json:"category" api:"nullable"`
+	// 4-digit merchant category code (MCC) for card transactions
+	CategoryCode string `json:"categoryCode" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID           respjson.Field
+		Category     respjson.Field
+		CategoryCode respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MerchantData) RawJSON() string { return r.JSON.raw }
+func (r *MerchantData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type MercuryCategory string
 
 const (
@@ -274,6 +341,76 @@ const (
 	MercuryCategoryTaxes                MercuryCategory = "Taxes"
 	MercuryCategoryUtilities            MercuryCategory = "Utilities"
 	MercuryCategoryVehicleExpenses      MercuryCategory = "VehicleExpenses"
+)
+
+// A Public API version of RelatedTransactionData.
+type RelatedTransactionData struct {
+	// ID for this transaction
+	ID string `json:"id" api:"required" format:"uuid"`
+	// ID for a Mercury account.
+	AccountID string  `json:"accountId" api:"required" format:"uuid"`
+	Amount    float64 `json:"amount" api:"required"`
+	// Any of "ProvisionalCreditReversalToMerchantRefund",
+	// "MerchantRefundToProvisionalCreditReversal", "MerchantRefundToFraudulentCharge",
+	// "FraudulentChargeToMerchantRefund", "PaymentRefundToFailedPayment",
+	// "FailedPaymentToPaymentRefund", "GiftCompensationToOriginalTransaction",
+	// "FeePaymentToOriginalTransaction", "OriginalTransactionToFeePayment",
+	// "FeePaymentToFeeRebate", "FeeRebateToFeePayment", "FeePaymentToFeeReversal",
+	// "FeeReversalToFeePayment", "FeeRebateToFeeRebateReversal",
+	// "FeeRebateReversalToFeeRebate", "TreasurySplitLiquidation",
+	// "ProvisionalCreditToOriginalCharge", "OriginalChargeToProvisionalCredit",
+	// "FeeAtmReimbursementToAtmTransaction", "AtmTransactionToFeeAtmReimbursement",
+	// "AtmTransactionToAtmReimbursementReversal",
+	// "AtmReimbursementReversalToAtmTransaction", "ReturnToOriginalTransaction",
+	// "OriginalTransactionToReturn", "ProvisionalCreditToReversal",
+	// "ReversalToProvisionalCredit".
+	RelationKind RelatedTransactionDataRelationKind `json:"relationKind" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID           respjson.Field
+		AccountID    respjson.Field
+		Amount       respjson.Field
+		RelationKind respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r RelatedTransactionData) RawJSON() string { return r.JSON.raw }
+func (r *RelatedTransactionData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type RelatedTransactionDataRelationKind string
+
+const (
+	RelatedTransactionDataRelationKindProvisionalCreditReversalToMerchantRefund RelatedTransactionDataRelationKind = "ProvisionalCreditReversalToMerchantRefund"
+	RelatedTransactionDataRelationKindMerchantRefundToProvisionalCreditReversal RelatedTransactionDataRelationKind = "MerchantRefundToProvisionalCreditReversal"
+	RelatedTransactionDataRelationKindMerchantRefundToFraudulentCharge          RelatedTransactionDataRelationKind = "MerchantRefundToFraudulentCharge"
+	RelatedTransactionDataRelationKindFraudulentChargeToMerchantRefund          RelatedTransactionDataRelationKind = "FraudulentChargeToMerchantRefund"
+	RelatedTransactionDataRelationKindPaymentRefundToFailedPayment              RelatedTransactionDataRelationKind = "PaymentRefundToFailedPayment"
+	RelatedTransactionDataRelationKindFailedPaymentToPaymentRefund              RelatedTransactionDataRelationKind = "FailedPaymentToPaymentRefund"
+	RelatedTransactionDataRelationKindGiftCompensationToOriginalTransaction     RelatedTransactionDataRelationKind = "GiftCompensationToOriginalTransaction"
+	RelatedTransactionDataRelationKindFeePaymentToOriginalTransaction           RelatedTransactionDataRelationKind = "FeePaymentToOriginalTransaction"
+	RelatedTransactionDataRelationKindOriginalTransactionToFeePayment           RelatedTransactionDataRelationKind = "OriginalTransactionToFeePayment"
+	RelatedTransactionDataRelationKindFeePaymentToFeeRebate                     RelatedTransactionDataRelationKind = "FeePaymentToFeeRebate"
+	RelatedTransactionDataRelationKindFeeRebateToFeePayment                     RelatedTransactionDataRelationKind = "FeeRebateToFeePayment"
+	RelatedTransactionDataRelationKindFeePaymentToFeeReversal                   RelatedTransactionDataRelationKind = "FeePaymentToFeeReversal"
+	RelatedTransactionDataRelationKindFeeReversalToFeePayment                   RelatedTransactionDataRelationKind = "FeeReversalToFeePayment"
+	RelatedTransactionDataRelationKindFeeRebateToFeeRebateReversal              RelatedTransactionDataRelationKind = "FeeRebateToFeeRebateReversal"
+	RelatedTransactionDataRelationKindFeeRebateReversalToFeeRebate              RelatedTransactionDataRelationKind = "FeeRebateReversalToFeeRebate"
+	RelatedTransactionDataRelationKindTreasurySplitLiquidation                  RelatedTransactionDataRelationKind = "TreasurySplitLiquidation"
+	RelatedTransactionDataRelationKindProvisionalCreditToOriginalCharge         RelatedTransactionDataRelationKind = "ProvisionalCreditToOriginalCharge"
+	RelatedTransactionDataRelationKindOriginalChargeToProvisionalCredit         RelatedTransactionDataRelationKind = "OriginalChargeToProvisionalCredit"
+	RelatedTransactionDataRelationKindFeeAtmReimbursementToAtmTransaction       RelatedTransactionDataRelationKind = "FeeAtmReimbursementToAtmTransaction"
+	RelatedTransactionDataRelationKindAtmTransactionToFeeAtmReimbursement       RelatedTransactionDataRelationKind = "AtmTransactionToFeeAtmReimbursement"
+	RelatedTransactionDataRelationKindAtmTransactionToAtmReimbursementReversal  RelatedTransactionDataRelationKind = "AtmTransactionToAtmReimbursementReversal"
+	RelatedTransactionDataRelationKindAtmReimbursementReversalToAtmTransaction  RelatedTransactionDataRelationKind = "AtmReimbursementReversalToAtmTransaction"
+	RelatedTransactionDataRelationKindReturnToOriginalTransaction               RelatedTransactionDataRelationKind = "ReturnToOriginalTransaction"
+	RelatedTransactionDataRelationKindOriginalTransactionToReturn               RelatedTransactionDataRelationKind = "OriginalTransactionToReturn"
+	RelatedTransactionDataRelationKindProvisionalCreditToReversal               RelatedTransactionDataRelationKind = "ProvisionalCreditToReversal"
+	RelatedTransactionDataRelationKindReversalToProvisionalCredit               RelatedTransactionDataRelationKind = "ReversalToProvisionalCredit"
 )
 
 // Extremely close to the internal type, but strips out potentially unwanted fields
@@ -353,8 +490,8 @@ type Transaction struct {
 	// "currencyCloudReturn", "wireFee", "personalBankingSubscriptionFee",
 	// "billingEngineSubscriptionFee", "expenseReimbursement", "exogenousWireDrawdown",
 	// "other".
-	Kind                TransactionKind                 `json:"kind" api:"required"`
-	RelatedTransactions []TransactionRelatedTransaction `json:"relatedTransactions" api:"required"`
+	Kind                TransactionKind          `json:"kind" api:"required"`
+	RelatedTransactions []RelatedTransactionData `json:"relatedTransactions" api:"required"`
 	// Any of "pending", "sent", "cancelled", "failed", "reversed", "blocked".
 	Status          TransactionStatus `json:"status" api:"required"`
 	BankDescription string            `json:"bankDescription" api:"nullable"`
@@ -364,11 +501,11 @@ type Transaction struct {
 	CheckNumber          string `json:"checkNumber" api:"nullable"`
 	CounterpartyNickname string `json:"counterpartyNickname" api:"nullable"`
 	// ID for the credit statement period
-	CreditAccountPeriodID string                          `json:"creditAccountPeriodId" api:"nullable" format:"uuid"`
-	CurrencyExchangeInfo  TransactionCurrencyExchangeInfo `json:"currencyExchangeInfo" api:"nullable"`
-	Details               TransactionDetails              `json:"details" api:"nullable"`
-	ExternalMemo          string                          `json:"externalMemo" api:"nullable"`
-	FailedAt              string                          `json:"failedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	CreditAccountPeriodID string                `json:"creditAccountPeriodId" api:"nullable" format:"uuid"`
+	CurrencyExchangeInfo  CurrencyExchangeInfo  `json:"currencyExchangeInfo" api:"nullable"`
+	Details               TransactionMethodData `json:"details" api:"nullable"`
+	ExternalMemo          string                `json:"externalMemo" api:"nullable"`
+	FailedAt              string                `json:"failedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// ID for this transaction
 	FeeID string `json:"feeId" api:"nullable" format:"uuid"`
 	// The name of the General Ledger (GL) code assigned to this transaction for
@@ -379,7 +516,7 @@ type Transaction struct {
 	// assigned a GL code.
 	GeneralLedgerCodeName string `json:"generalLedgerCodeName" api:"nullable"`
 	// Merchant information for card transactions
-	Merchant TransactionMerchant `json:"merchant" api:"nullable"`
+	Merchant MerchantData `json:"merchant" api:"nullable"`
 	// Any of "Other", "Advertising", "Airlines", "AlcoholAndBars",
 	// "BooksAndNewspaper", "CarRental", "Charity", "Clothing", "Conferences",
 	// "Education", "Electronics", "Entertainment", "FacilitiesExpenses", "Fees",
@@ -442,27 +579,6 @@ func (r *Transaction) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type TransactionAttachment struct {
-	// Any of "checkImage", "receipt", "other".
-	AttachmentType string `json:"attachmentType" api:"required"`
-	FileName       string `json:"fileName" api:"required"`
-	URL            string `json:"url" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		AttachmentType respjson.Field
-		FileName       respjson.Field
-		URL            respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TransactionAttachment) RawJSON() string { return r.JSON.raw }
-func (r *TransactionAttachment) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type TransactionKind string
 
 const (
@@ -490,45 +606,6 @@ const (
 	TransactionKindOther                                         TransactionKind = "other"
 )
 
-// A Public API version of RelatedTransactionData.
-type TransactionRelatedTransaction struct {
-	// ID for this transaction
-	ID string `json:"id" api:"required" format:"uuid"`
-	// ID for a Mercury account.
-	AccountID string  `json:"accountId" api:"required" format:"uuid"`
-	Amount    float64 `json:"amount" api:"required"`
-	// Any of "ProvisionalCreditReversalToMerchantRefund",
-	// "MerchantRefundToProvisionalCreditReversal", "MerchantRefundToFraudulentCharge",
-	// "FraudulentChargeToMerchantRefund", "PaymentRefundToFailedPayment",
-	// "FailedPaymentToPaymentRefund", "GiftCompensationToOriginalTransaction",
-	// "FeePaymentToOriginalTransaction", "OriginalTransactionToFeePayment",
-	// "FeePaymentToFeeRebate", "FeeRebateToFeePayment", "FeePaymentToFeeReversal",
-	// "FeeReversalToFeePayment", "FeeRebateToFeeRebateReversal",
-	// "FeeRebateReversalToFeeRebate", "TreasurySplitLiquidation",
-	// "ProvisionalCreditToOriginalCharge", "OriginalChargeToProvisionalCredit",
-	// "FeeAtmReimbursementToAtmTransaction", "AtmTransactionToFeeAtmReimbursement",
-	// "AtmTransactionToAtmReimbursementReversal",
-	// "AtmReimbursementReversalToAtmTransaction", "ReturnToOriginalTransaction",
-	// "OriginalTransactionToReturn", "ProvisionalCreditToReversal",
-	// "ReversalToProvisionalCredit".
-	RelationKind string `json:"relationKind" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID           respjson.Field
-		AccountID    respjson.Field
-		Amount       respjson.Field
-		RelationKind respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TransactionRelatedTransaction) RawJSON() string { return r.JSON.raw }
-func (r *TransactionRelatedTransaction) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type TransactionStatus string
 
 const (
@@ -540,46 +617,42 @@ const (
 	TransactionStatusBlocked   TransactionStatus = "blocked"
 )
 
-type TransactionCurrencyExchangeInfo struct {
-	ConvertedFromAmount   float64 `json:"convertedFromAmount" api:"required"`
-	ConvertedFromCurrency string  `json:"convertedFromCurrency" api:"required"`
-	ConvertedToAmount     float64 `json:"convertedToAmount" api:"required"`
-	ConvertedToCurrency   string  `json:"convertedToCurrency" api:"required"`
-	// Exchange rate goes from "from currency" to "to currency" (ie from currency \*
-	// exchange rate = to currency)
-	ExchangeRate  float64 `json:"exchangeRate" api:"required"`
-	FeeAmount     float64 `json:"feeAmount" api:"required"`
-	FeePercentage float64 `json:"feePercentage" api:"required"`
-	// ID for this transaction
-	FeeTransactionID string `json:"feeTransactionId" api:"nullable" format:"uuid"`
+type TransactionAttachment struct {
+	// Any of "checkImage", "receipt", "other".
+	AttachmentType TransactionAttachmentAttachmentType `json:"attachmentType" api:"required"`
+	FileName       string                              `json:"fileName" api:"required"`
+	URL            string                              `json:"url" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ConvertedFromAmount   respjson.Field
-		ConvertedFromCurrency respjson.Field
-		ConvertedToAmount     respjson.Field
-		ConvertedToCurrency   respjson.Field
-		ExchangeRate          respjson.Field
-		FeeAmount             respjson.Field
-		FeePercentage         respjson.Field
-		FeeTransactionID      respjson.Field
-		ExtraFields           map[string]respjson.Field
-		raw                   string
+		AttachmentType respjson.Field
+		FileName       respjson.Field
+		URL            respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
-func (r TransactionCurrencyExchangeInfo) RawJSON() string { return r.JSON.raw }
-func (r *TransactionCurrencyExchangeInfo) UnmarshalJSON(data []byte) error {
+func (r TransactionAttachment) RawJSON() string { return r.JSON.raw }
+func (r *TransactionAttachment) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type TransactionDetails struct {
-	Address                      AddressData                      `json:"address" api:"nullable"`
-	CreditCardInfo               TransactionDetailsCreditCardInfo `json:"creditCardInfo" api:"nullable"`
-	DebitCardInfo                TransactionDetailsDebitCardInfo  `json:"debitCardInfo" api:"nullable"`
-	DomesticWireRoutingInfo      DomesticWireRoutingInfo          `json:"domesticWireRoutingInfo" api:"nullable"`
-	ElectronicRoutingInfo        ElectronicRoutingInfo            `json:"electronicRoutingInfo" api:"nullable"`
-	InternationalWireRoutingInfo InternationalWireRoutingInfo     `json:"internationalWireRoutingInfo" api:"nullable"`
+type TransactionAttachmentAttachmentType string
+
+const (
+	TransactionAttachmentAttachmentTypeCheckImage TransactionAttachmentAttachmentType = "checkImage"
+	TransactionAttachmentAttachmentTypeReceipt    TransactionAttachmentAttachmentType = "receipt"
+	TransactionAttachmentAttachmentTypeOther      TransactionAttachmentAttachmentType = "other"
+)
+
+type TransactionMethodData struct {
+	Address                      AddressData                         `json:"address" api:"nullable"`
+	CreditCardInfo               TransactionMethodDataCreditCardInfo `json:"creditCardInfo" api:"nullable"`
+	DebitCardInfo                TransactionMethodDataDebitCardInfo  `json:"debitCardInfo" api:"nullable"`
+	DomesticWireRoutingInfo      DomesticWireRoutingInfo             `json:"domesticWireRoutingInfo" api:"nullable"`
+	ElectronicRoutingInfo        ElectronicRoutingInfo               `json:"electronicRoutingInfo" api:"nullable"`
+	InternationalWireRoutingInfo InternationalWireRoutingInfo        `json:"internationalWireRoutingInfo" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Address                      respjson.Field
@@ -594,12 +667,12 @@ type TransactionDetails struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TransactionDetails) RawJSON() string { return r.JSON.raw }
-func (r *TransactionDetails) UnmarshalJSON(data []byte) error {
+func (r TransactionMethodData) RawJSON() string { return r.JSON.raw }
+func (r *TransactionMethodData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type TransactionDetailsCreditCardInfo struct {
+type TransactionMethodDataCreditCardInfo struct {
 	ID            string `json:"id" api:"required" format:"uuid"`
 	PaymentMethod string `json:"paymentMethod" api:"required"`
 	Email         string `json:"email" api:"nullable"`
@@ -614,12 +687,12 @@ type TransactionDetailsCreditCardInfo struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TransactionDetailsCreditCardInfo) RawJSON() string { return r.JSON.raw }
-func (r *TransactionDetailsCreditCardInfo) UnmarshalJSON(data []byte) error {
+func (r TransactionMethodDataCreditCardInfo) RawJSON() string { return r.JSON.raw }
+func (r *TransactionMethodDataCreditCardInfo) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type TransactionDetailsDebitCardInfo struct {
+type TransactionMethodDataDebitCardInfo struct {
 	ID string `json:"id" api:"required" format:"uuid"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -630,42 +703,8 @@ type TransactionDetailsDebitCardInfo struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TransactionDetailsDebitCardInfo) RawJSON() string { return r.JSON.raw }
-func (r *TransactionDetailsDebitCardInfo) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Merchant information for card transactions
-type TransactionMerchant struct {
-	// Merchant ID for card transactions
-	ID string `json:"id" api:"nullable"`
-	// Mercury category for the merchant (e.g., "Restaurants", "Software")
-	//
-	// Any of "Other", "Advertising", "Airlines", "AlcoholAndBars",
-	// "BooksAndNewspaper", "CarRental", "Charity", "Clothing", "Conferences",
-	// "Education", "Electronics", "Entertainment", "FacilitiesExpenses", "Fees",
-	// "FoodDelivery", "FuelAndGas", "Gambling", "GovernmentServices", "Grocery",
-	// "GroundTransportation", "Insurance", "InternetAndTelephone", "Legal", "Lodging",
-	// "Medical", "Memberships", "OfficeSupplies", "OtherTravel", "Parking",
-	// "Political", "ProfessionalServices", "Restaurants", "Retail",
-	// "RideshareAndTaxis", "Shipping", "Software", "Taxes", "Utilities",
-	// "VehicleExpenses".
-	Category MercuryCategory `json:"category" api:"nullable"`
-	// 4-digit merchant category code (MCC) for card transactions
-	CategoryCode string `json:"categoryCode" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID           respjson.Field
-		Category     respjson.Field
-		CategoryCode respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TransactionMerchant) RawJSON() string { return r.JSON.raw }
-func (r *TransactionMerchant) UnmarshalJSON(data []byte) error {
+func (r TransactionMethodDataDebitCardInfo) RawJSON() string { return r.JSON.raw }
+func (r *TransactionMethodDataDebitCardInfo) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
