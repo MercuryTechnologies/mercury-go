@@ -42,7 +42,7 @@ func NewAccountTransactionService(opts ...option.RequestOption) (r AccountTransa
 func (r *AccountTransactionService) List(ctx context.Context, accountID string, query AccountTransactionListParams, opts ...option.RequestOption) (res *pagination.OffsetAccountTransactions[Transaction], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
 		return
@@ -70,6 +70,7 @@ func (r *AccountTransactionService) ListAutoPaging(ctx context.Context, accountI
 // processed immediately or may require approval.
 func (r *AccountTransactionService) Send(ctx context.Context, accountID string, body AccountTransactionSendParams, opts ...option.RequestOption) (res *Transaction, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
 		return

@@ -46,6 +46,7 @@ func NewRecipientService(opts ...option.RequestOption) (r RecipientService) {
 // Create a new recipient for making payments
 func (r *RecipientService) New(ctx context.Context, body RecipientNewParams, opts ...option.RequestOption) (res *Recipient, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "recipients"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -54,6 +55,7 @@ func (r *RecipientService) New(ctx context.Context, body RecipientNewParams, opt
 // Retrieve details of a specific recipient by ID
 func (r *RecipientService) Get(ctx context.Context, recipientID string, opts ...option.RequestOption) (res *Recipient, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if recipientID == "" {
 		err = errors.New("missing required recipientId parameter")
 		return
@@ -66,6 +68,7 @@ func (r *RecipientService) Get(ctx context.Context, recipientID string, opts ...
 // Update an existing recipient's information
 func (r *RecipientService) Update(ctx context.Context, recipientID string, body RecipientUpdateParams, opts ...option.RequestOption) (res *Recipient, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if recipientID == "" {
 		err = errors.New("missing required recipientId parameter")
 		return
@@ -80,7 +83,7 @@ func (r *RecipientService) Update(ctx context.Context, recipientID string, body 
 func (r *RecipientService) List(ctx context.Context, query RecipientListParams, opts ...option.RequestOption) (res *pagination.CursorIDRecipients[Recipient], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "recipients"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {
@@ -106,7 +109,7 @@ func (r *RecipientService) ListAutoPaging(ctx context.Context, query RecipientLi
 func (r *RecipientService) ListAttachments(ctx context.Context, query RecipientListAttachmentsParams, opts ...option.RequestOption) (res *pagination.CursorIDRecipientAttachments[RecipientListAttachmentsResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "recipients/attachments"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {

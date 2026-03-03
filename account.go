@@ -43,6 +43,7 @@ func NewAccountService(opts ...option.RequestOption) (r AccountService) {
 // Get account by ID
 func (r *AccountService) Get(ctx context.Context, accountID string, opts ...option.RequestOption) (res *Account, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
 		return
@@ -57,7 +58,7 @@ func (r *AccountService) Get(ctx context.Context, accountID string, opts ...opti
 func (r *AccountService) List(ctx context.Context, query AccountListParams, opts ...option.RequestOption) (res *pagination.CursorIDAccounts[Account], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "accounts"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {
@@ -80,6 +81,7 @@ func (r *AccountService) ListAutoPaging(ctx context.Context, query AccountListPa
 // Retrieve all debit and credit cards associated with a specific account.
 func (r *AccountService) ListCards(ctx context.Context, accountID string, opts ...option.RequestOption) (res *AccountListCardsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
 		return
@@ -95,7 +97,7 @@ func (r *AccountService) ListCards(ctx context.Context, accountID string, opts .
 func (r *AccountService) ListStatements(ctx context.Context, accountID string, query AccountListStatementsParams, opts ...option.RequestOption) (res *pagination.CursorIDAccountStatements[AccountListStatementsResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
 		return
@@ -124,6 +126,7 @@ func (r *AccountService) ListStatementsAutoPaging(ctx context.Context, accountID
 // organization's approval policies.
 func (r *AccountService) RequestSendMoney(ctx context.Context, accountID string, body AccountRequestSendMoneyParams, opts ...option.RequestOption) (res *SendMoneyApproval, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
 		return
@@ -136,6 +139,7 @@ func (r *AccountService) RequestSendMoney(ctx context.Context, accountID string,
 // Get transaction by ID
 func (r *AccountService) GetTransaction(ctx context.Context, transactionID string, query AccountGetTransactionParams, opts ...option.RequestOption) (res *Transaction, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if query.AccountID == "" {
 		err = errors.New("missing required accountId parameter")
 		return

@@ -40,7 +40,7 @@ func NewCategoryService(opts ...option.RequestOption) (r CategoryService) {
 func (r *CategoryService) List(ctx context.Context, query CategoryListParams, opts ...option.RequestOption) (res *pagination.CursorIDCategories[CategoryData], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "categories"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {
