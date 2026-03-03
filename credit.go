@@ -35,7 +35,6 @@ func NewCreditService(opts ...option.RequestOption) (r CreditService) {
 // Retrieve a list of all credit accounts for the organization.
 func (r *CreditService) List(ctx context.Context, opts ...option.RequestOption) (res *CreditListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "credit"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return

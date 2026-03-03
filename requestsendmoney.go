@@ -35,7 +35,6 @@ func NewRequestSendMoneyService(opts ...option.RequestOption) (r RequestSendMone
 // Get send money approval request by ID
 func (r *RequestSendMoneyService) Get(ctx context.Context, requestID string, opts ...option.RequestOption) (res *SendMoneyApproval, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if requestID == "" {
 		err = errors.New("missing required requestId parameter")
 		return
