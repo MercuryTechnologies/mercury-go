@@ -41,6 +41,7 @@ func NewAccountsRecievableCustomerService(opts ...option.RequestOption) (r Accou
 // Create a new customer for the organization
 func (r *AccountsRecievableCustomerService) New(ctx context.Context, body AccountsRecievableCustomerNewParams, opts ...option.RequestOption) (res *Customer, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "ar/customers"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -49,6 +50,7 @@ func (r *AccountsRecievableCustomerService) New(ctx context.Context, body Accoun
 // Retrieve details of a specific customer by their ID
 func (r *AccountsRecievableCustomerService) Get(ctx context.Context, customerID string, opts ...option.RequestOption) (res *Customer, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if customerID == "" {
 		err = errors.New("missing required customerId parameter")
 		return
@@ -61,6 +63,7 @@ func (r *AccountsRecievableCustomerService) Get(ctx context.Context, customerID 
 // Update an existing customer
 func (r *AccountsRecievableCustomerService) Update(ctx context.Context, customerID string, body AccountsRecievableCustomerUpdateParams, opts ...option.RequestOption) (res *Customer, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if customerID == "" {
 		err = errors.New("missing required customerId parameter")
 		return
@@ -75,7 +78,7 @@ func (r *AccountsRecievableCustomerService) Update(ctx context.Context, customer
 func (r *AccountsRecievableCustomerService) List(ctx context.Context, query AccountsRecievableCustomerListParams, opts ...option.RequestOption) (res *pagination.CursorIDArCustomers[Customer], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "ar/customers"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {

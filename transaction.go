@@ -45,6 +45,7 @@ func NewTransactionService(opts ...option.RequestOption) (r TransactionService) 
 // including attachments, check images, and related metadata.
 func (r *TransactionService) Get(ctx context.Context, transactionID string, opts ...option.RequestOption) (res *Transaction, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if transactionID == "" {
 		err = errors.New("missing required transactionId parameter")
 		return
@@ -58,6 +59,7 @@ func (r *TransactionService) Get(ctx context.Context, transactionID string, opts
 // clear existing data.
 func (r *TransactionService) Update(ctx context.Context, transactionID string, body TransactionUpdateParams, opts ...option.RequestOption) (res *Transaction, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if transactionID == "" {
 		err = errors.New("missing required transactionId parameter")
 		return
@@ -73,7 +75,7 @@ func (r *TransactionService) Update(ctx context.Context, transactionID string, b
 func (r *TransactionService) List(ctx context.Context, query TransactionListParams, opts ...option.RequestOption) (res *pagination.CursorIDTransactions[Transaction], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "transactions"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {

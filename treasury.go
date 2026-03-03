@@ -45,7 +45,7 @@ func NewTreasuryService(opts ...option.RequestOption) (r TreasuryService) {
 func (r *TreasuryService) List(ctx context.Context, query TreasuryListParams, opts ...option.RequestOption) (res *pagination.CursorIDAccounts[TreasuryListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "treasury"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {
@@ -71,7 +71,7 @@ func (r *TreasuryService) ListAutoPaging(ctx context.Context, query TreasuryList
 func (r *TreasuryService) GetStatements(ctx context.Context, treasuryID string, query TreasuryGetStatementsParams, opts ...option.RequestOption) (res *pagination.CursorIDAccountStatements[TreasuryGetStatementsResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	if treasuryID == "" {
 		err = errors.New("missing required treasuryId parameter")
 		return
@@ -98,6 +98,7 @@ func (r *TreasuryService) GetStatementsAutoPaging(ctx context.Context, treasuryI
 // Retrieve paginated treasury transactions for a specific treasury account.
 func (r *TreasuryService) GetTransactions(ctx context.Context, treasuryID string, query TreasuryGetTransactionsParams, opts ...option.RequestOption) (res *TreasuryGetTransactionsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if treasuryID == "" {
 		err = errors.New("missing required treasuryId parameter")
 		return

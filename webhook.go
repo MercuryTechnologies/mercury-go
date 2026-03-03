@@ -41,6 +41,7 @@ func NewWebhookService(opts ...option.RequestOption) (r WebhookService) {
 // Register a new webhook endpoint to receive event notifications
 func (r *WebhookService) New(ctx context.Context, body WebhookNewParams, opts ...option.RequestOption) (res *Webhook, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "webhooks"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -49,6 +50,7 @@ func (r *WebhookService) New(ctx context.Context, body WebhookNewParams, opts ..
 // Retrieve details of a specific webhook endpoint by ID
 func (r *WebhookService) Get(ctx context.Context, webhookEndpointID string, opts ...option.RequestOption) (res *Webhook, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if webhookEndpointID == "" {
 		err = errors.New("missing required webhookEndpointId parameter")
 		return
@@ -63,6 +65,7 @@ func (r *WebhookService) Get(ctx context.Context, webhookEndpointID string, opts
 // its status to 'active'.
 func (r *WebhookService) Update(ctx context.Context, webhookEndpointID string, body WebhookUpdateParams, opts ...option.RequestOption) (res *Webhook, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if webhookEndpointID == "" {
 		err = errors.New("missing required webhookEndpointId parameter")
 		return
@@ -77,7 +80,7 @@ func (r *WebhookService) Update(ctx context.Context, webhookEndpointID string, b
 func (r *WebhookService) List(ctx context.Context, query WebhookListParams, opts ...option.RequestOption) (res *pagination.CursorIDWebhooks[Webhook], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "webhooks"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {

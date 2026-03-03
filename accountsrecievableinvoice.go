@@ -43,6 +43,7 @@ func NewAccountsRecievableInvoiceService(opts ...option.RequestOption) (r Accoun
 // Create a new invoice for the organization
 func (r *AccountsRecievableInvoiceService) New(ctx context.Context, body AccountsRecievableInvoiceNewParams, opts ...option.RequestOption) (res *Invoice, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "ar/invoices"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -51,6 +52,7 @@ func (r *AccountsRecievableInvoiceService) New(ctx context.Context, body Account
 // Retrieve details of an invoice by its ID
 func (r *AccountsRecievableInvoiceService) Get(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *Invoice, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if invoiceID == "" {
 		err = errors.New("missing required invoiceId parameter")
 		return
@@ -63,6 +65,7 @@ func (r *AccountsRecievableInvoiceService) Get(ctx context.Context, invoiceID st
 // Update an existing invoice
 func (r *AccountsRecievableInvoiceService) Update(ctx context.Context, invoiceID string, body AccountsRecievableInvoiceUpdateParams, opts ...option.RequestOption) (res *Invoice, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if invoiceID == "" {
 		err = errors.New("missing required invoiceId parameter")
 		return
@@ -77,7 +80,7 @@ func (r *AccountsRecievableInvoiceService) Update(ctx context.Context, invoiceID
 func (r *AccountsRecievableInvoiceService) List(ctx context.Context, query AccountsRecievableInvoiceListParams, opts ...option.RequestOption) (res *pagination.CursorIDArInvoices[AccountsRecievableInvoiceListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "ar/invoices"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {
@@ -127,6 +130,7 @@ func (r *AccountsRecievableInvoiceService) DownloadPdf(ctx context.Context, invo
 // Retrieve a list of all attachments for a specific invoice
 func (r *AccountsRecievableInvoiceService) ListAttachments(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *AccountsRecievableInvoiceListAttachmentsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if invoiceID == "" {
 		err = errors.New("missing required invoiceId parameter")
 		return

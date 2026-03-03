@@ -41,6 +41,7 @@ func NewUserService(opts ...option.RequestOption) (r UserService) {
 // Get user by ID
 func (r *UserService) Get(ctx context.Context, userID string, opts ...option.RequestOption) (res *User, err error) {
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if userID == "" {
 		err = errors.New("missing required userId parameter")
 		return
@@ -54,7 +55,7 @@ func (r *UserService) Get(ctx context.Context, userID string, opts ...option.Req
 func (r *UserService) List(ctx context.Context, query UserListParams, opts ...option.RequestOption) (res *pagination.CursorIDUsers[User], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
 	path := "users"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {
