@@ -36,7 +36,6 @@ func NewOrganizationService(opts ...option.RequestOption) (r OrganizationService
 // and DBAs.
 func (r *OrganizationService) Get(ctx context.Context, opts ...option.RequestOption) (res *OrganizationGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "organization"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
