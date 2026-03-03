@@ -284,6 +284,22 @@ func (r *AddressWithoutNameParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type CheckInfo struct {
+	Address AddressWithoutName `json:"address" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Address     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CheckInfo) RawJSON() string { return r.JSON.raw }
+func (r *CheckInfo) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // The property Address is required.
 type CheckInfoRawParam struct {
 	// Mailing address for sending a physical check.
@@ -754,6 +770,28 @@ func (r *InternationalWireRoutingInfoCorrespondentInfo) UnmarshalJSON(data []byt
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type RealTimePaymentRoutingInfo struct {
+	AccountNumber string             `json:"accountNumber" api:"required"`
+	RoutingNumber string             `json:"routingNumber" api:"required"`
+	Address       AddressWithoutName `json:"address" api:"nullable"`
+	BankName      string             `json:"bankName" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AccountNumber respjson.Field
+		RoutingNumber respjson.Field
+		Address       respjson.Field
+		BankName      respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r RealTimePaymentRoutingInfo) RawJSON() string { return r.JSON.raw }
+func (r *RealTimePaymentRoutingInfo) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type Recipient struct {
 	// ID for a Mercury account.
 	ID          string                `json:"id" api:"required" format:"uuid"`
@@ -763,18 +801,18 @@ type Recipient struct {
 	Emails               []string                      `json:"emails" api:"required"`
 	Name                 string                        `json:"name" api:"required"`
 	// Any of "active", "deleted".
-	Status                       RecipientStatus                     `json:"status" api:"required"`
-	Address                      Address                             `json:"address" api:"nullable"`
-	CheckInfo                    RecipientCheckInfo                  `json:"checkInfo" api:"nullable"`
-	ContactEmail                 string                              `json:"contactEmail" api:"nullable"`
-	DateLastPaid                 string                              `json:"dateLastPaid" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
-	DefaultAddress               AddressWithoutName                  `json:"defaultAddress" api:"nullable"`
-	DomesticWireRoutingInfo      DomesticWireRoutingInfo             `json:"domesticWireRoutingInfo" api:"nullable"`
-	ElectronicRoutingInfo        ElectronicRoutingInfo               `json:"electronicRoutingInfo" api:"nullable"`
-	InternationalWireRoutingInfo InternationalWireRoutingInfo        `json:"internationalWireRoutingInfo" api:"nullable"`
-	IsBusiness                   bool                                `json:"isBusiness" api:"nullable"`
-	Nickname                     string                              `json:"nickname" api:"nullable"`
-	RealTimePaymentRoutingInfo   RecipientRealTimePaymentRoutingInfo `json:"realTimePaymentRoutingInfo" api:"nullable"`
+	Status                       RecipientStatus              `json:"status" api:"required"`
+	Address                      Address                      `json:"address" api:"nullable"`
+	CheckInfo                    CheckInfo                    `json:"checkInfo" api:"nullable"`
+	ContactEmail                 string                       `json:"contactEmail" api:"nullable"`
+	DateLastPaid                 string                       `json:"dateLastPaid" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	DefaultAddress               AddressWithoutName           `json:"defaultAddress" api:"nullable"`
+	DomesticWireRoutingInfo      DomesticWireRoutingInfo      `json:"domesticWireRoutingInfo" api:"nullable"`
+	ElectronicRoutingInfo        ElectronicRoutingInfo        `json:"electronicRoutingInfo" api:"nullable"`
+	InternationalWireRoutingInfo InternationalWireRoutingInfo `json:"internationalWireRoutingInfo" api:"nullable"`
+	IsBusiness                   bool                         `json:"isBusiness" api:"nullable"`
+	Nickname                     string                       `json:"nickname" api:"nullable"`
+	RealTimePaymentRoutingInfo   RealTimePaymentRoutingInfo   `json:"realTimePaymentRoutingInfo" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                           respjson.Field
@@ -805,6 +843,23 @@ func (r *Recipient) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type RecipientDefaultPaymentMethod string
+
+const (
+	RecipientDefaultPaymentMethodACH               RecipientDefaultPaymentMethod = "ach"
+	RecipientDefaultPaymentMethodCheck             RecipientDefaultPaymentMethod = "check"
+	RecipientDefaultPaymentMethodDomesticWire      RecipientDefaultPaymentMethod = "domesticWire"
+	RecipientDefaultPaymentMethodInternationalWire RecipientDefaultPaymentMethod = "internationalWire"
+	RecipientDefaultPaymentMethodRealTimePayment   RecipientDefaultPaymentMethod = "realTimePayment"
+)
+
+type RecipientStatus string
+
+const (
+	RecipientStatusActive  RecipientStatus = "active"
+	RecipientStatusDeleted RecipientStatus = "deleted"
+)
+
 type RecipientAttachment struct {
 	// Name of the uploaded file
 	FileName string `json:"fileName" api:"required"`
@@ -831,61 +886,6 @@ type RecipientAttachment struct {
 // Returns the unmodified JSON received from the API
 func (r RecipientAttachment) RawJSON() string { return r.JSON.raw }
 func (r *RecipientAttachment) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type RecipientDefaultPaymentMethod string
-
-const (
-	RecipientDefaultPaymentMethodACH               RecipientDefaultPaymentMethod = "ach"
-	RecipientDefaultPaymentMethodCheck             RecipientDefaultPaymentMethod = "check"
-	RecipientDefaultPaymentMethodDomesticWire      RecipientDefaultPaymentMethod = "domesticWire"
-	RecipientDefaultPaymentMethodInternationalWire RecipientDefaultPaymentMethod = "internationalWire"
-	RecipientDefaultPaymentMethodRealTimePayment   RecipientDefaultPaymentMethod = "realTimePayment"
-)
-
-type RecipientStatus string
-
-const (
-	RecipientStatusActive  RecipientStatus = "active"
-	RecipientStatusDeleted RecipientStatus = "deleted"
-)
-
-type RecipientCheckInfo struct {
-	Address AddressWithoutName `json:"address" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Address     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r RecipientCheckInfo) RawJSON() string { return r.JSON.raw }
-func (r *RecipientCheckInfo) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type RecipientRealTimePaymentRoutingInfo struct {
-	AccountNumber string             `json:"accountNumber" api:"required"`
-	RoutingNumber string             `json:"routingNumber" api:"required"`
-	Address       AddressWithoutName `json:"address" api:"nullable"`
-	BankName      string             `json:"bankName" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		AccountNumber respjson.Field
-		RoutingNumber respjson.Field
-		Address       respjson.Field
-		BankName      respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r RecipientRealTimePaymentRoutingInfo) RawJSON() string { return r.JSON.raw }
-func (r *RecipientRealTimePaymentRoutingInfo) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

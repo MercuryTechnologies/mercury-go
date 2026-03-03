@@ -17,6 +17,7 @@ Params Types:
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#Customer">Customer</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#CustomerAddress">CustomerAddress</a>
 
 Methods:
 
@@ -177,10 +178,15 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#Account">Account</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#AccountStatus">AccountStatus</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#CategoryData">CategoryData</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#CurrencyExchangeInfo">CurrencyExchangeInfo</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#MerchantData">MerchantData</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#MercuryCategory">MercuryCategory</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#RelatedTransactionData">RelatedTransactionData</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#SendMoneyApproval">SendMoneyApproval</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#SendMoneyPaymentMethod">SendMoneyPaymentMethod</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#Transaction">Transaction</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#TransactionAttachment">TransactionAttachment</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#TransactionMethodData">TransactionMethodData</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#AccountListCardsResponse">AccountListCardsResponse</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#AccountListStatementsResponse">AccountListStatementsResponse</a>
 
@@ -216,11 +222,14 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#Address">Address</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#AddressData">AddressData</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#AddressWithoutName">AddressWithoutName</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#CheckInfo">CheckInfo</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#DomesticWireRoutingInfo">DomesticWireRoutingInfo</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#ElectronicAccountType">ElectronicAccountType</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#ElectronicRoutingInfo">ElectronicRoutingInfo</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#InternationalWireRoutingInfo">InternationalWireRoutingInfo</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#RealTimePaymentRoutingInfo">RealTimePaymentRoutingInfo</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#Recipient">Recipient</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#RecipientAttachment">RecipientAttachment</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#SwiftBankAccountType">SwiftBankAccountType</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#TaxFormType">TaxFormType</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/mercury-go#RecipientListAttachmentsResponse">RecipientListAttachmentsResponse</a>
