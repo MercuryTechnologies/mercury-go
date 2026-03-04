@@ -13,6 +13,8 @@ import (
 	"github.com/stainless-sdks/mercury-go/option"
 )
 
+// Download account statements
+//
 // StatementService contains methods and other services that help with interacting
 // with the mercury API.
 //

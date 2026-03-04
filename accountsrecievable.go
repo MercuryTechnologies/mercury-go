@@ -15,6 +15,8 @@ import (
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
 
+// Manage invoices
+//
 // AccountsRecievableService contains methods and other services that help with
 // interacting with the mercury API.
 //
@@ -22,9 +24,11 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewAccountsRecievableService] method instead.
 type AccountsRecievableService struct {
-	Options   []option.RequestOption
+	Options []option.RequestOption
+	// Manage customers
 	Customers AccountsRecievableCustomerService
-	Invoices  AccountsRecievableInvoiceService
+	// Manage invoices
+	Invoices AccountsRecievableInvoiceService
 }
 
 // NewAccountsRecievableService generates a new service that applies the given

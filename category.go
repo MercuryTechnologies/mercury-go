@@ -15,6 +15,8 @@ import (
 	"github.com/stainless-sdks/mercury-go/packages/param"
 )
 
+// Manage expense categories
+//
 // CategoryService contains methods and other services that help with interacting
 // with the mercury API.
 //

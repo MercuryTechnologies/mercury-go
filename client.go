@@ -16,22 +16,37 @@ import (
 // interacting with the mercury API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options            []option.RequestOption
+	Options []option.RequestOption
+	// Manage invoices
 	AccountsRecievable AccountsRecievableService
-	Categories         CategoryService
-	Credit             CreditService
-	Events             EventService
-	Organization       OrganizationService
-	RequestSendMoney   RequestSendMoneyService
-	Safes              SafeService
-	Statements         StatementService
-	Transfer           TransferService
-	Treasury           TreasuryService
-	Users              UserService
-	Webhooks           WebhookService
-	Account            AccountService
-	Recipients         RecipientService
-	Transactions       TransactionService
+	// Manage expense categories
+	Categories CategoryService
+	// Manage credit accounts
+	Credit CreditService
+	// Manage API events
+	Events EventService
+	// Organization information
+	Organization OrganizationService
+	// Manage send money approval requests
+	RequestSendMoney RequestSendMoneyService
+	// Manage SAFE (Simple Agreement for Future Equity) requests
+	Safes SafeService
+	// Download account statements
+	Statements StatementService
+	// Manage bank accounts
+	Transfer TransferService
+	// Manage treasury accounts and transactions
+	Treasury TreasuryService
+	// Manage organization team members
+	Users UserService
+	// Manage webhooks
+	Webhooks WebhookService
+	// Manage bank accounts
+	Account AccountService
+	// Manage payment recipients
+	Recipients RecipientService
+	// Manage transactions
+	Transactions TransactionService
 }
 
 // DefaultClientOptions read from the environment (MERCURY_API_KEY,

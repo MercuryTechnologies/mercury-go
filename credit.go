@@ -13,6 +13,8 @@ import (
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
 
+// Manage credit accounts
+//
 // CreditService contains methods and other services that help with interacting
 // with the mercury API.
 //

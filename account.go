@@ -19,6 +19,8 @@ import (
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
 
+// Manage bank accounts
+//
 // AccountService contains methods and other services that help with interacting
 // with the mercury API.
 //
@@ -26,7 +28,8 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewAccountService] method instead.
 type AccountService struct {
-	Options      []option.RequestOption
+	Options []option.RequestOption
+	// Manage bank accounts
 	Transactions AccountTransactionService
 }
 
