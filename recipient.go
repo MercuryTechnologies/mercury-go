@@ -24,6 +24,8 @@ import (
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
 
+// Manage payment recipients
+//
 // RecipientService contains methods and other services that help with interacting
 // with the mercury API.
 //

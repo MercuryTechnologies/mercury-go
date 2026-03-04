@@ -21,6 +21,8 @@ import (
 	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
 
+// Manage invoices
+//
 // AccountsRecievableInvoiceService contains methods and other services that help
 // with interacting with the mercury API.
 //
