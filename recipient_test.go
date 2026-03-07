@@ -257,7 +257,7 @@ func TestRecipientUploadAttachment(t *testing.T) {
 		context.TODO(),
 		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
 		mercury.RecipientUploadAttachmentParams{
-			File: io.Reader(bytes.NewBuffer([]byte("some file contents"))),
+			File: io.Reader(bytes.NewBuffer([]byte("Example data"))),
 		},
 	)
 	if err != nil {
