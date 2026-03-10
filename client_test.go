@@ -38,7 +38,7 @@ func TestUserAgentHeader(t *testing.T) {
 			},
 		}),
 	)
-	client.Account.Get(context.Background(), "REPLACE_ME")
+	_, _ = client.Account.Get(context.Background(), "REPLACE_ME")
 	if userAgent != fmt.Sprintf("Mercury/Go %s", internal.PackageVersion) {
 		t.Errorf("Expected User-Agent to be correct, but got: %#v", userAgent)
 	}
