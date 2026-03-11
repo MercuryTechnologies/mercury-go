@@ -45,7 +45,7 @@ func (r *AccountsRecievableCustomerService) New(ctx context.Context, body Accoun
 	opts = slices.Concat(r.Options, opts)
 	path := "ar/customers"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve details of a specific customer by their ID
@@ -53,11 +53,11 @@ func (r *AccountsRecievableCustomerService) Get(ctx context.Context, customerID 
 	opts = slices.Concat(r.Options, opts)
 	if customerID == "" {
 		err = errors.New("missing required customerId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("ar/customers/%s", customerID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Update an existing customer
@@ -65,11 +65,11 @@ func (r *AccountsRecievableCustomerService) Update(ctx context.Context, customer
 	opts = slices.Concat(r.Options, opts)
 	if customerID == "" {
 		err = errors.New("missing required customerId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("ar/customers/%s", customerID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve a paginated list of customers. Supports cursor-based pagination with
@@ -103,11 +103,11 @@ func (r *AccountsRecievableCustomerService) Delete(ctx context.Context, customer
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if customerID == "" {
 		err = errors.New("missing required customerId parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("ar/customers/%s", customerID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Address input for creating or updating customers

@@ -76,7 +76,7 @@ func (r *TreasuryService) GetStatements(ctx context.Context, treasuryID string, 
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if treasuryID == "" {
 		err = errors.New("missing required treasuryId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("treasury/%s/statements", treasuryID)
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -102,11 +102,11 @@ func (r *TreasuryService) GetTransactions(ctx context.Context, treasuryID string
 	opts = slices.Concat(r.Options, opts)
 	if treasuryID == "" {
 		err = errors.New("missing required treasuryId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("treasury/%s/transactions", treasuryID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 type TreasuryListResponse struct {

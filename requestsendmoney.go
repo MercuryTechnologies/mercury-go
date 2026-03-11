@@ -39,9 +39,9 @@ func (r *RequestSendMoneyService) Get(ctx context.Context, requestID string, opt
 	opts = slices.Concat(r.Options, opts)
 	if requestID == "" {
 		err = errors.New("missing required requestId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("request-send-money/%s", requestID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }

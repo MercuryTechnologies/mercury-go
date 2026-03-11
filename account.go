@@ -48,11 +48,11 @@ func (r *AccountService) Get(ctx context.Context, accountID string, opts ...opti
 	opts = slices.Concat(r.Options, opts)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("account/%s", accountID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve a paginated list of accounts. Supports cursor-based pagination with
@@ -85,11 +85,11 @@ func (r *AccountService) ListCards(ctx context.Context, accountID string, opts .
 	opts = slices.Concat(r.Options, opts)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("account/%s/cards", accountID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve a paginated list of monthly statements for a specific account. Supports
@@ -101,7 +101,7 @@ func (r *AccountService) ListStatements(ctx context.Context, accountID string, q
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("account/%s/statements", accountID)
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -129,11 +129,11 @@ func (r *AccountService) RequestSendMoney(ctx context.Context, accountID string,
 	opts = slices.Concat(r.Options, opts)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("account/%s/request-send-money", accountID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Get transaction by ID
@@ -141,15 +141,15 @@ func (r *AccountService) GetTransaction(ctx context.Context, transactionID strin
 	opts = slices.Concat(r.Options, opts)
 	if query.AccountID == "" {
 		err = errors.New("missing required accountId parameter")
-		return
+		return nil, err
 	}
 	if transactionID == "" {
 		err = errors.New("missing required transactionId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("account/%s/transaction/%s", query.AccountID, transactionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 type Account struct {

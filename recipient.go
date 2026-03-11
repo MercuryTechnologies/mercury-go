@@ -50,7 +50,7 @@ func (r *RecipientService) New(ctx context.Context, body RecipientNewParams, opt
 	opts = slices.Concat(r.Options, opts)
 	path := "recipients"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve details of a specific recipient by ID
@@ -58,11 +58,11 @@ func (r *RecipientService) Get(ctx context.Context, recipientID string, opts ...
 	opts = slices.Concat(r.Options, opts)
 	if recipientID == "" {
 		err = errors.New("missing required recipientId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("recipient/%s", recipientID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Update an existing recipient's information
@@ -70,11 +70,11 @@ func (r *RecipientService) Update(ctx context.Context, recipientID string, body 
 	opts = slices.Concat(r.Options, opts)
 	if recipientID == "" {
 		err = errors.New("missing required recipientId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("recipient/%s", recipientID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve a paginated list of all recipients. Use cursor parameters (start_after,
@@ -138,11 +138,11 @@ func (r *RecipientService) UploadAttachment(ctx context.Context, recipientID str
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if recipientID == "" {
 		err = errors.New("missing required recipientId parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("recipient/%s/attachments", recipientID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return
+	return err
 }
 
 type Address struct {

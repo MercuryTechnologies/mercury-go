@@ -43,7 +43,7 @@ func (r *TransferService) New(ctx context.Context, body TransferNewParams, opts 
 	opts = slices.Concat(r.Options, opts)
 	path := "transfer"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Response for POST /api/v1/transfer endpoint. Returns both the credit and debit

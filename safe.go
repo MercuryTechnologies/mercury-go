@@ -42,11 +42,11 @@ func (r *SafeService) Get(ctx context.Context, safeRequestID string, opts ...opt
 	opts = slices.Concat(r.Options, opts)
 	if safeRequestID == "" {
 		err = errors.New("missing required safeRequestId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("safes/%s", safeRequestID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve all SAFE (Simple Agreement for Future Equity) requests for your
@@ -55,7 +55,7 @@ func (r *SafeService) List(ctx context.Context, opts ...option.RequestOption) (r
 	opts = slices.Concat(r.Options, opts)
 	path := "safes"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Download the PDF document for a specific SAFE request. Returns binary PDF data
@@ -65,11 +65,11 @@ func (r *SafeService) DownloadDocument(ctx context.Context, safeRequestID string
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/pdf")}, opts...)
 	if safeRequestID == "" {
 		err = errors.New("missing required safeRequestId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("safes/%s/document", safeRequestID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // A summary of a SAFE request.

@@ -47,7 +47,7 @@ func (r *AccountTransactionService) List(ctx context.Context, accountID string, 
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("account/%s/transactions", accountID)
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -74,11 +74,11 @@ func (r *AccountTransactionService) Send(ctx context.Context, accountID string, 
 	opts = slices.Concat(r.Options, opts)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("account/%s/transactions", accountID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type AccountTransactionListParams struct {

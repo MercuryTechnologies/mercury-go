@@ -45,7 +45,7 @@ func (r *WebhookService) New(ctx context.Context, body WebhookNewParams, opts ..
 	opts = slices.Concat(r.Options, opts)
 	path := "webhooks"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve details of a specific webhook endpoint by ID
@@ -53,11 +53,11 @@ func (r *WebhookService) Get(ctx context.Context, webhookEndpointID string, opts
 	opts = slices.Concat(r.Options, opts)
 	if webhookEndpointID == "" {
 		err = errors.New("missing required webhookEndpointId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("webhooks/%s", webhookEndpointID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Update the configuration of an existing webhook endpoint. A webhook that has
@@ -67,11 +67,11 @@ func (r *WebhookService) Update(ctx context.Context, webhookEndpointID string, b
 	opts = slices.Concat(r.Options, opts)
 	if webhookEndpointID == "" {
 		err = errors.New("missing required webhookEndpointId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("webhooks/%s", webhookEndpointID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve a paginated list of all webhook endpoints for your organization.
@@ -105,11 +105,11 @@ func (r *WebhookService) Delete(ctx context.Context, webhookEndpointID string, o
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if webhookEndpointID == "" {
 		err = errors.New("missing required webhookEndpointId parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("webhooks/%s", webhookEndpointID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Send a test event to verify the webhook endpoint is properly configured and
@@ -121,11 +121,11 @@ func (r *WebhookService) Verify(ctx context.Context, webhookEndpointID string, b
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if webhookEndpointID == "" {
 		err = errors.New("missing required webhookEndpointId parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("webhooks/%s/verify", webhookEndpointID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return
+	return err
 }
 
 // Webhook configuration details

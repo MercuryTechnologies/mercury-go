@@ -42,9 +42,9 @@ func (r *StatementService) DownloadPdf(ctx context.Context, statementID string, 
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/pdf")}, opts...)
 	if statementID == "" {
 		err = errors.New("missing required statementId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("statements/%s/pdf", statementID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }

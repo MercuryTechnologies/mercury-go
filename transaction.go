@@ -49,11 +49,11 @@ func (r *TransactionService) Get(ctx context.Context, transactionID string, opts
 	opts = slices.Concat(r.Options, opts)
 	if transactionID == "" {
 		err = errors.New("missing required transactionId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("transaction/%s", transactionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Update the note and/or category of an existing transaction. Use null values to
@@ -62,11 +62,11 @@ func (r *TransactionService) Update(ctx context.Context, transactionID string, b
 	opts = slices.Concat(r.Options, opts)
 	if transactionID == "" {
 		err = errors.New("missing required transactionId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("transaction/%s", transactionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve a paginated list of all transactions across all accounts. Supports
@@ -104,11 +104,11 @@ func (r *TransactionService) UploadAttachment(ctx context.Context, transactionID
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if transactionID == "" {
 		err = errors.New("missing required transactionId parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("transaction/%s/attachments", transactionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return
+	return err
 }
 
 type TransactionUpdateParams struct {

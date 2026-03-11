@@ -45,11 +45,11 @@ func (r *UserService) Get(ctx context.Context, userID string, opts ...option.Req
 	opts = slices.Concat(r.Options, opts)
 	if userID == "" {
 		err = errors.New("missing required userId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("users/%s", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Get all users
