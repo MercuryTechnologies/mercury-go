@@ -47,11 +47,11 @@ func (r *AccountsRecievableService) GetAttachment(ctx context.Context, attachmen
 	opts = slices.Concat(r.Options, opts)
 	if attachmentID == "" {
 		err = errors.New("missing required attachmentId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("ar/attachments/%s", attachmentID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // The object representing a file attachment for an invoice. The file is not a part

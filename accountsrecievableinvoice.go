@@ -47,7 +47,7 @@ func (r *AccountsRecievableInvoiceService) New(ctx context.Context, body Account
 	opts = slices.Concat(r.Options, opts)
 	path := "ar/invoices"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve details of an invoice by its ID
@@ -55,11 +55,11 @@ func (r *AccountsRecievableInvoiceService) Get(ctx context.Context, invoiceID st
 	opts = slices.Concat(r.Options, opts)
 	if invoiceID == "" {
 		err = errors.New("missing required invoiceId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("ar/invoices/%s", invoiceID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Update an existing invoice
@@ -67,11 +67,11 @@ func (r *AccountsRecievableInvoiceService) Update(ctx context.Context, invoiceID
 	opts = slices.Concat(r.Options, opts)
 	if invoiceID == "" {
 		err = errors.New("missing required invoiceId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("ar/invoices/%s", invoiceID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve a paginated list of invoices. Supports cursor-based pagination with
@@ -105,11 +105,11 @@ func (r *AccountsRecievableInvoiceService) Cancel(ctx context.Context, invoiceID
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if invoiceID == "" {
 		err = errors.New("missing required invoiceId parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("ar/invoices/%s/cancel", invoiceID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Downloads a PDF file for the specified invoice. The response includes a
@@ -119,11 +119,11 @@ func (r *AccountsRecievableInvoiceService) DownloadPdf(ctx context.Context, invo
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/pdf")}, opts...)
 	if invoiceID == "" {
 		err = errors.New("missing required invoiceId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("ar/invoices/%s/pdf", invoiceID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve a list of all attachments for a specific invoice
@@ -131,11 +131,11 @@ func (r *AccountsRecievableInvoiceService) ListAttachments(ctx context.Context, 
 	opts = slices.Concat(r.Options, opts)
 	if invoiceID == "" {
 		err = errors.New("missing required invoiceId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("ar/invoices/%s/attachments", invoiceID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // The response type for an invoice in the api.
