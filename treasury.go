@@ -303,7 +303,8 @@ type TreasuryGetTransactionsResponseTransaction struct {
 	// "mercuryCreditFailed", "dividendPosted", "dividendCanceled",
 	// "dividendReinvestmentPosted", "mutualFundTradeFailed", "mutualFundTradePosted",
 	// "sweepInPosted", "sweepOutPosted", "sweepReconcilePosted",
-	// "valuationChangePosted".
+	// "valuationChangePosted", "oemsMutualFundOrderSettled",
+	// "oemsMutualFundOrderCanceled", "oemsMutualFundOrderRejected".
 	Type              string                                            `json:"type" api:"required"`
 	AdditionalDetails string                                            `json:"additionalDetails" api:"nullable"`
 	Details           TreasuryGetTransactionsResponseTransactionDetails `json:"details" api:"nullable"`
