@@ -511,12 +511,12 @@ type Transaction struct {
 	FailedAt              string                `json:"failedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// ID for this transaction
 	FeeID string `json:"feeId" api:"nullable" format:"uuid"`
-	// The name of the General Ledger (GL) code assigned to this transaction for
-	// accounting categorization. GL codes act as "bins" that organize transactions
-	// into accounting categories. This field is present when the transaction has been
-	// categorized, either manually by a user, via an accounting integration sync, or
-	// through auto-categorization rules. Nothing if the transaction has not been
-	// assigned a GL code.
+	// The name of the General Ledger (GL) code from a connected accounting software
+	// integration (e.g. QuickBooks, Xero, NetSuite) assigned to this transaction. GL
+	// codes are defined by the connected integration and act as accounting category
+	// labels. Nothing if no accounting integration is connected or no GL code has been
+	// assigned to this transaction. Note: this is distinct from Mercury custom
+	// categories.
 	GeneralLedgerCodeName string `json:"generalLedgerCodeName" api:"nullable"`
 	// Merchant information for card transactions
 	Merchant MerchantData `json:"merchant" api:"nullable"`
