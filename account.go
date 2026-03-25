@@ -482,7 +482,13 @@ type Transaction struct {
 	CreatedAt             string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	DashboardLink         string `json:"dashboardLink" api:"required"`
 	EstimatedDeliveryDate string `json:"estimatedDeliveryDate" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	HasGeneratedReceipt   bool   `json:"hasGeneratedReceipt" api:"required"`
+	// GL code allocations assigned to this transaction via a connected accounting
+	// software integration (e.g. QuickBooks, Xero, NetSuite). Each allocation has a GL
+	// code name and the amount allocated to it; amounts sum to the transaction total
+	// when the transaction is fully categorized. Empty if no GL codes have been
+	// assigned. Distinct from Mercury custom categories (see transactionCategoryData).
+	GlAllocations       []TransactionGlAllocation `json:"glAllocations" api:"required"`
+	HasGeneratedReceipt bool                      `json:"hasGeneratedReceipt" api:"required"`
 	// Any of "externalTransfer", "internalTransfer", "outgoingPayment",
 	// "creditCardCredit", "creditCardTransaction", "debitCardCredit",
 	// "debitCardTransaction", "cardInternationalTransactionFee",
@@ -511,12 +517,9 @@ type Transaction struct {
 	FailedAt              string                `json:"failedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// ID for this transaction
 	FeeID string `json:"feeId" api:"nullable" format:"uuid"`
-	// The name of the General Ledger (GL) code from a connected accounting software
-	// integration (e.g. QuickBooks, Xero, NetSuite) assigned to this transaction. GL
-	// codes are defined by the connected integration and act as accounting category
-	// labels. Nothing if no accounting integration is connected or no GL code has been
-	// assigned to this transaction. Note: this is distinct from Mercury custom
-	// categories.
+	// Deprecated: use transactionGlAllocations instead. This field does not reflect GL
+	// codes assigned via Mercury auto-categorization rules. Preserved for backwards
+	// compatibility.
 	GeneralLedgerCodeName string `json:"generalLedgerCodeName" api:"nullable"`
 	// Merchant information for card transactions
 	Merchant MerchantData `json:"merchant" api:"nullable"`
@@ -549,6 +552,7 @@ type Transaction struct {
 		CreatedAt                  respjson.Field
 		DashboardLink              respjson.Field
 		EstimatedDeliveryDate      respjson.Field
+		GlAllocations              respjson.Field
 		HasGeneratedReceipt        respjson.Field
 		Kind                       respjson.Field
 		RelatedTransactions        respjson.Field
@@ -579,6 +583,32 @@ type Transaction struct {
 // Returns the unmodified JSON received from the API
 func (r Transaction) RawJSON() string { return r.JSON.raw }
 func (r *Transaction) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A GL code allocation on a transaction — a GL code name paired with the amount
+// allocated to it. When a transaction is fully categorized, the amounts across all
+// allocations sum to the transaction total.
+type TransactionGlAllocation struct {
+	// The amount allocated to this GL code
+	Amount float64 `json:"amount" api:"required"`
+	// The name of the GL code from the connected accounting integration
+	GlCodeName string `json:"glCodeName" api:"required"`
+	// Optional user-provided description for this allocation
+	Description string `json:"description" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		GlCodeName  respjson.Field
+		Description respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TransactionGlAllocation) RawJSON() string { return r.JSON.raw }
+func (r *TransactionGlAllocation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
