@@ -131,7 +131,7 @@ func (r *TransactionUpdateParams) UnmarshalJSON(data []byte) error {
 type TransactionListParams struct {
 	// UUID of a custom category. Can be returned from /categories endpoint.
 	CategoryID param.Opt[string] `query:"categoryId,omitzero" json:"-"`
-	// Latest createdAt date to filter for. If it's not provided, it defaults to
+	// Latest createdAt date to filter for. If it’s not provided, it defaults to
 	// current day. Format: YYYY-MM-DD or an ISO 8601 string. Please note that your
 	// Mercury transactions on your Dashboard might have their postedAt date displayed,
 	// as opposed to createdAt
