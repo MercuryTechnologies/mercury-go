@@ -2,7 +2,7 @@ package param
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/mercury-go/internal/encoding/json/sentinel"
+	"github.com/MercuryTechnologies/mercury-go/internal/encoding/json/sentinel"
 	"reflect"
 )
 
