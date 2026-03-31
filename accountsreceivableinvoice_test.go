@@ -18,7 +18,7 @@ import (
 	"github.com/MercuryTechnologies/mercury-go/option"
 )
 
-func TestAccountsRecievableInvoiceNewWithOptionalParams(t *testing.T) {
+func TestAccountsReceivableInvoiceNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -31,7 +31,7 @@ func TestAccountsRecievableInvoiceNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.AccountsRecievable.Invoices.New(context.TODO(), mercury.AccountsRecievableInvoiceNewParams{
+	_, err := client.AccountsReceivable.Invoices.New(context.TODO(), mercury.AccountsReceivableInvoiceNewParams{
 		ACHDebitEnabled:      true,
 		CcEmails:             []string{"string"},
 		CreditCardEnabled:    true,
@@ -50,7 +50,7 @@ func TestAccountsRecievableInvoiceNewWithOptionalParams(t *testing.T) {
 		InvoiceNumber:          mercury.String("invoiceNumber"),
 		PayerMemo:              mercury.String("payerMemo"),
 		PoNumber:               mercury.String("poNumber"),
-		SendEmailOption:        mercury.AccountsRecievableInvoiceNewParamsSendEmailOptionDontSend,
+		SendEmailOption:        mercury.AccountsReceivableInvoiceNewParamsSendEmailOptionDontSend,
 		ServicePeriodEndDate:   mercury.Time(time.Now()),
 		ServicePeriodStartDate: mercury.Time(time.Now()),
 	})
@@ -63,7 +63,7 @@ func TestAccountsRecievableInvoiceNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAccountsRecievableInvoiceGet(t *testing.T) {
+func TestAccountsReceivableInvoiceGet(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -76,7 +76,7 @@ func TestAccountsRecievableInvoiceGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.AccountsRecievable.Invoices.Get(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	_, err := client.AccountsReceivable.Invoices.Get(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {
@@ -86,7 +86,7 @@ func TestAccountsRecievableInvoiceGet(t *testing.T) {
 	}
 }
 
-func TestAccountsRecievableInvoiceUpdateWithOptionalParams(t *testing.T) {
+func TestAccountsReceivableInvoiceUpdateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -99,10 +99,10 @@ func TestAccountsRecievableInvoiceUpdateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.AccountsRecievable.Invoices.Update(
+	_, err := client.AccountsReceivable.Invoices.Update(
 		context.TODO(),
 		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-		mercury.AccountsRecievableInvoiceUpdateParams{
+		mercury.AccountsReceivableInvoiceUpdateParams{
 			ACHDebitEnabled:   true,
 			CcEmails:          []string{"string"},
 			CreditCardEnabled: true,
@@ -132,7 +132,7 @@ func TestAccountsRecievableInvoiceUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAccountsRecievableInvoiceListWithOptionalParams(t *testing.T) {
+func TestAccountsReceivableInvoiceListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -145,10 +145,10 @@ func TestAccountsRecievableInvoiceListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.AccountsRecievable.Invoices.List(context.TODO(), mercury.AccountsRecievableInvoiceListParams{
+	_, err := client.AccountsReceivable.Invoices.List(context.TODO(), mercury.AccountsReceivableInvoiceListParams{
 		EndBefore:  mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Limit:      mercury.Int(1),
-		Order:      mercury.AccountsRecievableInvoiceListParamsOrderAsc,
+		Order:      mercury.AccountsReceivableInvoiceListParamsOrderAsc,
 		StartAfter: mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
@@ -160,7 +160,7 @@ func TestAccountsRecievableInvoiceListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAccountsRecievableInvoiceCancel(t *testing.T) {
+func TestAccountsReceivableInvoiceCancel(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -173,7 +173,7 @@ func TestAccountsRecievableInvoiceCancel(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	err := client.AccountsRecievable.Invoices.Cancel(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	err := client.AccountsReceivable.Invoices.Cancel(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {
@@ -183,7 +183,7 @@ func TestAccountsRecievableInvoiceCancel(t *testing.T) {
 	}
 }
 
-func TestAccountsRecievableInvoiceDownloadPdf(t *testing.T) {
+func TestAccountsReceivableInvoiceDownloadPdf(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
 		w.Write([]byte("abc"))
@@ -194,7 +194,7 @@ func TestAccountsRecievableInvoiceDownloadPdf(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	resp, err := client.AccountsRecievable.Invoices.DownloadPdf(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	resp, err := client.AccountsReceivable.Invoices.DownloadPdf(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {
@@ -217,7 +217,7 @@ func TestAccountsRecievableInvoiceDownloadPdf(t *testing.T) {
 	}
 }
 
-func TestAccountsRecievableInvoiceListAttachments(t *testing.T) {
+func TestAccountsReceivableInvoiceListAttachments(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -230,7 +230,7 @@ func TestAccountsRecievableInvoiceListAttachments(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.AccountsRecievable.Invoices.ListAttachments(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	_, err := client.AccountsReceivable.Invoices.ListAttachments(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {

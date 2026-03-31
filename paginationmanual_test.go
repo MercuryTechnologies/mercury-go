@@ -25,7 +25,7 @@ func TestManualPagination(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	page, err := client.AccountsRecievable.Customers.List(context.TODO(), mercury.AccountsRecievableCustomerListParams{})
+	page, err := client.AccountsReceivable.Customers.List(context.TODO(), mercury.AccountsReceivableCustomerListParams{})
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}

@@ -21,27 +21,27 @@ import (
 
 // Manage customers
 //
-// AccountsRecievableCustomerService contains methods and other services that help
+// AccountsReceivableCustomerService contains methods and other services that help
 // with interacting with the mercury API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewAccountsRecievableCustomerService] method instead.
-type AccountsRecievableCustomerService struct {
+// the [NewAccountsReceivableCustomerService] method instead.
+type AccountsReceivableCustomerService struct {
 	Options []option.RequestOption
 }
 
-// NewAccountsRecievableCustomerService generates a new service that applies the
+// NewAccountsReceivableCustomerService generates a new service that applies the
 // given options to each request. These options are applied after the parent
 // client's options (if there is one), and before any request-specific options.
-func NewAccountsRecievableCustomerService(opts ...option.RequestOption) (r AccountsRecievableCustomerService) {
-	r = AccountsRecievableCustomerService{}
+func NewAccountsReceivableCustomerService(opts ...option.RequestOption) (r AccountsReceivableCustomerService) {
+	r = AccountsReceivableCustomerService{}
 	r.Options = opts
 	return
 }
 
 // Create a new customer for the organization
-func (r *AccountsRecievableCustomerService) New(ctx context.Context, body AccountsRecievableCustomerNewParams, opts ...option.RequestOption) (res *Customer, err error) {
+func (r *AccountsReceivableCustomerService) New(ctx context.Context, body AccountsReceivableCustomerNewParams, opts ...option.RequestOption) (res *Customer, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "ar/customers"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -49,7 +49,7 @@ func (r *AccountsRecievableCustomerService) New(ctx context.Context, body Accoun
 }
 
 // Retrieve details of a specific customer by their ID
-func (r *AccountsRecievableCustomerService) Get(ctx context.Context, customerID string, opts ...option.RequestOption) (res *Customer, err error) {
+func (r *AccountsReceivableCustomerService) Get(ctx context.Context, customerID string, opts ...option.RequestOption) (res *Customer, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if customerID == "" {
 		err = errors.New("missing required customerId parameter")
@@ -61,7 +61,7 @@ func (r *AccountsRecievableCustomerService) Get(ctx context.Context, customerID 
 }
 
 // Update an existing customer
-func (r *AccountsRecievableCustomerService) Update(ctx context.Context, customerID string, body AccountsRecievableCustomerUpdateParams, opts ...option.RequestOption) (res *Customer, err error) {
+func (r *AccountsReceivableCustomerService) Update(ctx context.Context, customerID string, body AccountsReceivableCustomerUpdateParams, opts ...option.RequestOption) (res *Customer, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if customerID == "" {
 		err = errors.New("missing required customerId parameter")
@@ -74,7 +74,7 @@ func (r *AccountsRecievableCustomerService) Update(ctx context.Context, customer
 
 // Retrieve a paginated list of customers. Supports cursor-based pagination with
 // limit, order, start_after, and end_before query parameters.
-func (r *AccountsRecievableCustomerService) List(ctx context.Context, query AccountsRecievableCustomerListParams, opts ...option.RequestOption) (res *pagination.CursorIDArCustomers[Customer], err error) {
+func (r *AccountsReceivableCustomerService) List(ctx context.Context, query AccountsReceivableCustomerListParams, opts ...option.RequestOption) (res *pagination.CursorIDArCustomers[Customer], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -93,12 +93,12 @@ func (r *AccountsRecievableCustomerService) List(ctx context.Context, query Acco
 
 // Retrieve a paginated list of customers. Supports cursor-based pagination with
 // limit, order, start_after, and end_before query parameters.
-func (r *AccountsRecievableCustomerService) ListAutoPaging(ctx context.Context, query AccountsRecievableCustomerListParams, opts ...option.RequestOption) *pagination.CursorIDArCustomersAutoPager[Customer] {
+func (r *AccountsReceivableCustomerService) ListAutoPaging(ctx context.Context, query AccountsReceivableCustomerListParams, opts ...option.RequestOption) *pagination.CursorIDArCustomersAutoPager[Customer] {
 	return pagination.NewCursorIDArCustomersAutoPager(r.List(ctx, query, opts...))
 }
 
 // Delete a customer. This action cannot be undone.
-func (r *AccountsRecievableCustomerService) Delete(ctx context.Context, customerID string, opts ...option.RequestOption) (err error) {
+func (r *AccountsReceivableCustomerService) Delete(ctx context.Context, customerID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if customerID == "" {
@@ -205,7 +205,7 @@ func (r *CustomerAddress) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type AccountsRecievableCustomerNewParams struct {
+type AccountsReceivableCustomerNewParams struct {
 	// The email address for the customer.
 	Email string `json:"email" api:"required"`
 	// The name of the customer.
@@ -215,15 +215,15 @@ type AccountsRecievableCustomerNewParams struct {
 	paramObj
 }
 
-func (r AccountsRecievableCustomerNewParams) MarshalJSON() (data []byte, err error) {
-	type shadow AccountsRecievableCustomerNewParams
+func (r AccountsReceivableCustomerNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow AccountsReceivableCustomerNewParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *AccountsRecievableCustomerNewParams) UnmarshalJSON(data []byte) error {
+func (r *AccountsReceivableCustomerNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type AccountsRecievableCustomerUpdateParams struct {
+type AccountsReceivableCustomerUpdateParams struct {
 	// The email address for the customer.
 	Email string `json:"email" api:"required"`
 	// The name of the customer.
@@ -236,15 +236,15 @@ type AccountsRecievableCustomerUpdateParams struct {
 	paramObj
 }
 
-func (r AccountsRecievableCustomerUpdateParams) MarshalJSON() (data []byte, err error) {
-	type shadow AccountsRecievableCustomerUpdateParams
+func (r AccountsReceivableCustomerUpdateParams) MarshalJSON() (data []byte, err error) {
+	type shadow AccountsReceivableCustomerUpdateParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *AccountsRecievableCustomerUpdateParams) UnmarshalJSON(data []byte) error {
+func (r *AccountsReceivableCustomerUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type AccountsRecievableCustomerListParams struct {
+type AccountsReceivableCustomerListParams struct {
 	// The ID of the customer to end the page before (exclusive). When provided,
 	// results will end just before this ID and work backwards. Use this for reverse
 	// pagination or to retrieve previous pages. Cannot be combined with start_after.
@@ -259,13 +259,13 @@ type AccountsRecievableCustomerListParams struct {
 	// Sort order. Can be 'asc' or 'desc'. Defaults to 'asc'
 	//
 	// Any of "asc", "desc".
-	Order AccountsRecievableCustomerListParamsOrder `query:"order,omitzero" json:"-"`
+	Order AccountsReceivableCustomerListParamsOrder `query:"order,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [AccountsRecievableCustomerListParams]'s query parameters as
+// URLQuery serializes [AccountsReceivableCustomerListParams]'s query parameters as
 // `url.Values`.
-func (r AccountsRecievableCustomerListParams) URLQuery() (v url.Values, err error) {
+func (r AccountsReceivableCustomerListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
@@ -273,9 +273,9 @@ func (r AccountsRecievableCustomerListParams) URLQuery() (v url.Values, err erro
 }
 
 // Sort order. Can be 'asc' or 'desc'. Defaults to 'asc'
-type AccountsRecievableCustomerListParamsOrder string
+type AccountsReceivableCustomerListParamsOrder string
 
 const (
-	AccountsRecievableCustomerListParamsOrderAsc  AccountsRecievableCustomerListParamsOrder = "asc"
-	AccountsRecievableCustomerListParamsOrderDesc AccountsRecievableCustomerListParamsOrder = "desc"
+	AccountsReceivableCustomerListParamsOrderAsc  AccountsReceivableCustomerListParamsOrder = "asc"
+	AccountsReceivableCustomerListParamsOrderDesc AccountsReceivableCustomerListParamsOrder = "desc"
 )

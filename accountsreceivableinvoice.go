@@ -23,27 +23,27 @@ import (
 
 // Manage invoices
 //
-// AccountsRecievableInvoiceService contains methods and other services that help
+// AccountsReceivableInvoiceService contains methods and other services that help
 // with interacting with the mercury API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewAccountsRecievableInvoiceService] method instead.
-type AccountsRecievableInvoiceService struct {
+// the [NewAccountsReceivableInvoiceService] method instead.
+type AccountsReceivableInvoiceService struct {
 	Options []option.RequestOption
 }
 
-// NewAccountsRecievableInvoiceService generates a new service that applies the
+// NewAccountsReceivableInvoiceService generates a new service that applies the
 // given options to each request. These options are applied after the parent
 // client's options (if there is one), and before any request-specific options.
-func NewAccountsRecievableInvoiceService(opts ...option.RequestOption) (r AccountsRecievableInvoiceService) {
-	r = AccountsRecievableInvoiceService{}
+func NewAccountsReceivableInvoiceService(opts ...option.RequestOption) (r AccountsReceivableInvoiceService) {
+	r = AccountsReceivableInvoiceService{}
 	r.Options = opts
 	return
 }
 
 // Create a new invoice for the organization
-func (r *AccountsRecievableInvoiceService) New(ctx context.Context, body AccountsRecievableInvoiceNewParams, opts ...option.RequestOption) (res *Invoice, err error) {
+func (r *AccountsReceivableInvoiceService) New(ctx context.Context, body AccountsReceivableInvoiceNewParams, opts ...option.RequestOption) (res *Invoice, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "ar/invoices"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -51,7 +51,7 @@ func (r *AccountsRecievableInvoiceService) New(ctx context.Context, body Account
 }
 
 // Retrieve details of an invoice by its ID
-func (r *AccountsRecievableInvoiceService) Get(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *Invoice, err error) {
+func (r *AccountsReceivableInvoiceService) Get(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *Invoice, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if invoiceID == "" {
 		err = errors.New("missing required invoiceId parameter")
@@ -63,7 +63,7 @@ func (r *AccountsRecievableInvoiceService) Get(ctx context.Context, invoiceID st
 }
 
 // Update an existing invoice
-func (r *AccountsRecievableInvoiceService) Update(ctx context.Context, invoiceID string, body AccountsRecievableInvoiceUpdateParams, opts ...option.RequestOption) (res *Invoice, err error) {
+func (r *AccountsReceivableInvoiceService) Update(ctx context.Context, invoiceID string, body AccountsReceivableInvoiceUpdateParams, opts ...option.RequestOption) (res *Invoice, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if invoiceID == "" {
 		err = errors.New("missing required invoiceId parameter")
@@ -76,7 +76,7 @@ func (r *AccountsRecievableInvoiceService) Update(ctx context.Context, invoiceID
 
 // Retrieve a paginated list of invoices. Supports cursor-based pagination with
 // limit, order, start_after, and end_before query parameters.
-func (r *AccountsRecievableInvoiceService) List(ctx context.Context, query AccountsRecievableInvoiceListParams, opts ...option.RequestOption) (res *pagination.CursorIDArInvoices[AccountsRecievableInvoiceListResponse], err error) {
+func (r *AccountsReceivableInvoiceService) List(ctx context.Context, query AccountsReceivableInvoiceListParams, opts ...option.RequestOption) (res *pagination.CursorIDArInvoices[AccountsReceivableInvoiceListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -95,12 +95,12 @@ func (r *AccountsRecievableInvoiceService) List(ctx context.Context, query Accou
 
 // Retrieve a paginated list of invoices. Supports cursor-based pagination with
 // limit, order, start_after, and end_before query parameters.
-func (r *AccountsRecievableInvoiceService) ListAutoPaging(ctx context.Context, query AccountsRecievableInvoiceListParams, opts ...option.RequestOption) *pagination.CursorIDArInvoicesAutoPager[AccountsRecievableInvoiceListResponse] {
+func (r *AccountsReceivableInvoiceService) ListAutoPaging(ctx context.Context, query AccountsReceivableInvoiceListParams, opts ...option.RequestOption) *pagination.CursorIDArInvoicesAutoPager[AccountsReceivableInvoiceListResponse] {
 	return pagination.NewCursorIDArInvoicesAutoPager(r.List(ctx, query, opts...))
 }
 
 // Cancel an invoice. This action cannot be undone.
-func (r *AccountsRecievableInvoiceService) Cancel(ctx context.Context, invoiceID string, opts ...option.RequestOption) (err error) {
+func (r *AccountsReceivableInvoiceService) Cancel(ctx context.Context, invoiceID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if invoiceID == "" {
@@ -114,7 +114,7 @@ func (r *AccountsRecievableInvoiceService) Cancel(ctx context.Context, invoiceID
 
 // Downloads a PDF file for the specified invoice. The response includes a
 // Content-Disposition header set to 'attachment' with the filename.
-func (r *AccountsRecievableInvoiceService) DownloadPdf(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *http.Response, err error) {
+func (r *AccountsReceivableInvoiceService) DownloadPdf(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *http.Response, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/pdf")}, opts...)
 	if invoiceID == "" {
@@ -127,7 +127,7 @@ func (r *AccountsRecievableInvoiceService) DownloadPdf(ctx context.Context, invo
 }
 
 // Retrieve a list of all attachments for a specific invoice
-func (r *AccountsRecievableInvoiceService) ListAttachments(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *AccountsRecievableInvoiceListAttachmentsResponse, err error) {
+func (r *AccountsReceivableInvoiceService) ListAttachments(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *AccountsReceivableInvoiceListAttachmentsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if invoiceID == "" {
 		err = errors.New("missing required invoiceId parameter")
@@ -301,7 +301,7 @@ const (
 )
 
 // Response data for Accounts Receivable invoices API Endpoint
-type AccountsRecievableInvoiceListResponse struct {
+type AccountsReceivableInvoiceListResponse struct {
 	// ID for the invoice.
 	ID string `json:"id" api:"required" format:"uuid"`
 	// Whether or not the invoice can be paid via ach debit.
@@ -379,13 +379,13 @@ type AccountsRecievableInvoiceListResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r AccountsRecievableInvoiceListResponse) RawJSON() string { return r.JSON.raw }
-func (r *AccountsRecievableInvoiceListResponse) UnmarshalJSON(data []byte) error {
+func (r AccountsReceivableInvoiceListResponse) RawJSON() string { return r.JSON.raw }
+func (r *AccountsReceivableInvoiceListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The response type for fetching attachments related to an AR Invoice.
-type AccountsRecievableInvoiceListAttachmentsResponse struct {
+type AccountsReceivableInvoiceListAttachmentsResponse struct {
 	// The list of attachments
 	Attachments []Attachment `json:"attachments" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -397,12 +397,12 @@ type AccountsRecievableInvoiceListAttachmentsResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r AccountsRecievableInvoiceListAttachmentsResponse) RawJSON() string { return r.JSON.raw }
-func (r *AccountsRecievableInvoiceListAttachmentsResponse) UnmarshalJSON(data []byte) error {
+func (r AccountsReceivableInvoiceListAttachmentsResponse) RawJSON() string { return r.JSON.raw }
+func (r *AccountsReceivableInvoiceListAttachmentsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type AccountsRecievableInvoiceNewParams struct {
+type AccountsReceivableInvoiceNewParams struct {
 	// Whether or not the invoice can be paid via ACH debit.
 	ACHDebitEnabled bool `json:"achDebitEnabled" api:"required"`
 	// Emails to be CCed on invoice notifications/reminders.
@@ -447,28 +447,28 @@ type AccountsRecievableInvoiceNewParams struct {
 	// or "SendNow" to send immediately. If omitted, defaults to sending immediately.
 	//
 	// Any of "DontSend", "SendNow".
-	SendEmailOption AccountsRecievableInvoiceNewParamsSendEmailOption `json:"sendEmailOption,omitzero"`
+	SendEmailOption AccountsReceivableInvoiceNewParamsSendEmailOption `json:"sendEmailOption,omitzero"`
 	paramObj
 }
 
-func (r AccountsRecievableInvoiceNewParams) MarshalJSON() (data []byte, err error) {
-	type shadow AccountsRecievableInvoiceNewParams
+func (r AccountsReceivableInvoiceNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow AccountsReceivableInvoiceNewParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *AccountsRecievableInvoiceNewParams) UnmarshalJSON(data []byte) error {
+func (r *AccountsReceivableInvoiceNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Rules for emailing the new invoice to payers. Can be "DontSend" to skip sending
 // or "SendNow" to send immediately. If omitted, defaults to sending immediately.
-type AccountsRecievableInvoiceNewParamsSendEmailOption string
+type AccountsReceivableInvoiceNewParamsSendEmailOption string
 
 const (
-	AccountsRecievableInvoiceNewParamsSendEmailOptionDontSend AccountsRecievableInvoiceNewParamsSendEmailOption = "DontSend"
-	AccountsRecievableInvoiceNewParamsSendEmailOptionSendNow  AccountsRecievableInvoiceNewParamsSendEmailOption = "SendNow"
+	AccountsReceivableInvoiceNewParamsSendEmailOptionDontSend AccountsReceivableInvoiceNewParamsSendEmailOption = "DontSend"
+	AccountsReceivableInvoiceNewParamsSendEmailOptionSendNow  AccountsReceivableInvoiceNewParamsSendEmailOption = "SendNow"
 )
 
-type AccountsRecievableInvoiceUpdateParams struct {
+type AccountsReceivableInvoiceUpdateParams struct {
 	// Whether or not the invoice can be paid via ACH debit.
 	ACHDebitEnabled bool `json:"achDebitEnabled" api:"required"`
 	// List of emails to be CCed on notifications/reminders.
@@ -506,15 +506,15 @@ type AccountsRecievableInvoiceUpdateParams struct {
 	paramObj
 }
 
-func (r AccountsRecievableInvoiceUpdateParams) MarshalJSON() (data []byte, err error) {
-	type shadow AccountsRecievableInvoiceUpdateParams
+func (r AccountsReceivableInvoiceUpdateParams) MarshalJSON() (data []byte, err error) {
+	type shadow AccountsReceivableInvoiceUpdateParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *AccountsRecievableInvoiceUpdateParams) UnmarshalJSON(data []byte) error {
+func (r *AccountsReceivableInvoiceUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type AccountsRecievableInvoiceListParams struct {
+type AccountsReceivableInvoiceListParams struct {
 	// The ID of the invoice to end the page before (exclusive). When provided, results
 	// will end just before this ID and work backwards. Use this for reverse pagination
 	// or to retrieve previous pages. Cannot be combined with start_after.
@@ -529,13 +529,13 @@ type AccountsRecievableInvoiceListParams struct {
 	// Sort order. Can be 'asc' or 'desc'. Defaults to 'asc'
 	//
 	// Any of "asc", "desc".
-	Order AccountsRecievableInvoiceListParamsOrder `query:"order,omitzero" json:"-"`
+	Order AccountsReceivableInvoiceListParamsOrder `query:"order,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [AccountsRecievableInvoiceListParams]'s query parameters as
+// URLQuery serializes [AccountsReceivableInvoiceListParams]'s query parameters as
 // `url.Values`.
-func (r AccountsRecievableInvoiceListParams) URLQuery() (v url.Values, err error) {
+func (r AccountsReceivableInvoiceListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
@@ -543,9 +543,9 @@ func (r AccountsRecievableInvoiceListParams) URLQuery() (v url.Values, err error
 }
 
 // Sort order. Can be 'asc' or 'desc'. Defaults to 'asc'
-type AccountsRecievableInvoiceListParamsOrder string
+type AccountsReceivableInvoiceListParamsOrder string
 
 const (
-	AccountsRecievableInvoiceListParamsOrderAsc  AccountsRecievableInvoiceListParamsOrder = "asc"
-	AccountsRecievableInvoiceListParamsOrderDesc AccountsRecievableInvoiceListParamsOrder = "desc"
+	AccountsReceivableInvoiceListParamsOrderAsc  AccountsReceivableInvoiceListParamsOrder = "asc"
+	AccountsReceivableInvoiceListParamsOrderDesc AccountsReceivableInvoiceListParamsOrder = "desc"
 )
