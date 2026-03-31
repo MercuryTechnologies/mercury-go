@@ -7,9 +7,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/MercuryTechnologies/mercury-go"
-	"github.com/MercuryTechnologies/mercury-go/internal/testutil"
-	"github.com/MercuryTechnologies/mercury-go/option"
+	"github.com/stainless-sdks/mercury-go"
+	"github.com/stainless-sdks/mercury-go/internal/testutil"
+	"github.com/stainless-sdks/mercury-go/option"
 )
 
 func TestManualPagination(t *testing.T) {
