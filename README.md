@@ -37,7 +37,7 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/MercuryTechnologies/mercury-go@v0.1.0'
+go get -u 'github.com/MercuryTechnologies/mercury-go@v0.2.0'
 ```
 
 <!-- x-release-please-end -->
@@ -66,7 +66,7 @@ func main() {
 		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("MERCURY_API_KEY")
 		option.WithEnvironmentSandbox(), // defaults to option.WithEnvironmentProduction()
 	)
-	account, err := client.Account.Get(context.TODO(), "REPLACE_ME")
+	account, err := client.Accounts.Get(context.TODO(), "REPLACE_ME")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -276,7 +276,7 @@ client := mercury.NewClient(
 	option.WithHeader("X-Some-Header", "custom_header_info"),
 )
 
-client.Account.Get(context.TODO(), ...,
+client.Accounts.Get(context.TODO(), ...,
 	// Override the header
 	option.WithHeader("X-Some-Header", "some_other_custom_header_info"),
 	// Add an undocumented field to the request body, using sjson syntax
@@ -332,7 +332,7 @@ When the API returns a non-success status code, we return an error with type
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.Account.Get(context.TODO(), "REPLACE_ME")
+_, err := client.Accounts.Get(context.TODO(), "REPLACE_ME")
 if err != nil {
 	var apierr *mercury.Error
 	if errors.As(err, &apierr) {
@@ -357,7 +357,7 @@ To set a per-retry timeout, use `option.WithRequestTimeout()`.
 // This sets the timeout for the request, including all the retries.
 ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 defer cancel()
-client.Account.Get(
+client.Accounts.Get(
 	ctx,
 	"REPLACE_ME",
 	// This sets the per-retry timeout
@@ -411,7 +411,7 @@ client := mercury.NewClient(
 )
 
 // Override per-request:
-client.Account.Get(
+client.Accounts.Get(
 	context.TODO(),
 	"REPLACE_ME",
 	option.WithMaxRetries(5),
@@ -426,7 +426,7 @@ you need to examine response headers, status codes, or other details.
 ```go
 // Create a variable to store the HTTP response
 var response *http.Response
-account, err := client.Account.Get(
+account, err := client.Accounts.Get(
 	context.TODO(),
 	"REPLACE_ME",
 	option.WithResponseInto(&response),
