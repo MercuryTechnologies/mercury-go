@@ -13,15 +13,17 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/stainless-sdks/mercury-go/internal/apiform"
-	"github.com/stainless-sdks/mercury-go/internal/apijson"
-	"github.com/stainless-sdks/mercury-go/internal/apiquery"
-	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
-	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/pagination"
-	"github.com/stainless-sdks/mercury-go/packages/param"
+	"github.com/MercuryTechnologies/mercury-go/internal/apiform"
+	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
+	"github.com/MercuryTechnologies/mercury-go/internal/apiquery"
+	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
+	"github.com/MercuryTechnologies/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go/packages/pagination"
+	"github.com/MercuryTechnologies/mercury-go/packages/param"
 )
 
+// Manage transactions
+//
 // TransactionService contains methods and other services that help with
 // interacting with the mercury API.
 //
@@ -45,28 +47,26 @@ func NewTransactionService(opts ...option.RequestOption) (r TransactionService) 
 // including attachments, check images, and related metadata.
 func (r *TransactionService) Get(ctx context.Context, transactionID string, opts ...option.RequestOption) (res *Transaction, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if transactionID == "" {
 		err = errors.New("missing required transactionId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("transaction/%s", transactionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Update the note and/or category of an existing transaction. Use null values to
 // clear existing data.
 func (r *TransactionService) Update(ctx context.Context, transactionID string, body TransactionUpdateParams, opts ...option.RequestOption) (res *Transaction, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if transactionID == "" {
 		err = errors.New("missing required transactionId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("transaction/%s", transactionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve a paginated list of all transactions across all accounts. Supports
@@ -75,7 +75,7 @@ func (r *TransactionService) Update(ctx context.Context, transactionID string, b
 func (r *TransactionService) List(ctx context.Context, query TransactionListParams, opts ...option.RequestOption) (res *pagination.CursorIDTransactions[Transaction], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "transactions"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {
@@ -104,19 +104,19 @@ func (r *TransactionService) UploadAttachment(ctx context.Context, transactionID
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if transactionID == "" {
 		err = errors.New("missing required transactionId parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("transaction/%s/attachments", transactionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return
+	return err
 }
 
 type TransactionUpdateParams struct {
 	// Note update action. Omit field to keep current note, send null or empty string
 	// to clear note, send text to set note.
-	Note param.Opt[string] `json:"note,omitzero,required"`
+	Note param.Opt[string] `json:"note,omitzero" api:"required"`
 	// ID for the category
-	CategoryID string `json:"categoryId,required" format:"uuid"`
+	CategoryID string `json:"categoryId" api:"required" format:"uuid"`
 	paramObj
 }
 
@@ -131,7 +131,7 @@ func (r *TransactionUpdateParams) UnmarshalJSON(data []byte) error {
 type TransactionListParams struct {
 	// UUID of a custom category. Can be returned from /categories endpoint.
 	CategoryID param.Opt[string] `query:"categoryId,omitzero" json:"-"`
-	// Latest createdAt date to filter for. If it's not provided, it defaults to
+	// Latest createdAt date to filter for. If it’s not provided, it defaults to
 	// current day. Format: YYYY-MM-DD or an ISO 8601 string. Please note that your
 	// Mercury transactions on your Dashboard might have their postedAt date displayed,
 	// as opposed to createdAt
@@ -193,7 +193,7 @@ const (
 
 type TransactionUploadAttachmentParams struct {
 	// The file to upload
-	File io.Reader `json:"file,omitzero,required" format:"binary"`
+	File io.Reader `json:"file,omitzero" api:"required" format:"binary"`
 	// Type of attachment: 'receipt', 'bill', or 'other'. Defaults to 'other'.
 	//
 	// Any of "receipt", "bill", "other".

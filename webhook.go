@@ -10,15 +10,17 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/stainless-sdks/mercury-go/internal/apijson"
-	"github.com/stainless-sdks/mercury-go/internal/apiquery"
-	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
-	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/pagination"
-	"github.com/stainless-sdks/mercury-go/packages/param"
-	"github.com/stainless-sdks/mercury-go/packages/respjson"
+	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
+	"github.com/MercuryTechnologies/mercury-go/internal/apiquery"
+	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
+	"github.com/MercuryTechnologies/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go/packages/pagination"
+	"github.com/MercuryTechnologies/mercury-go/packages/param"
+	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
 )
 
+// Manage webhooks
+//
 // WebhookService contains methods and other services that help with interacting
 // with the mercury API.
 //
@@ -41,23 +43,21 @@ func NewWebhookService(opts ...option.RequestOption) (r WebhookService) {
 // Register a new webhook endpoint to receive event notifications
 func (r *WebhookService) New(ctx context.Context, body WebhookNewParams, opts ...option.RequestOption) (res *Webhook, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "webhooks"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve details of a specific webhook endpoint by ID
 func (r *WebhookService) Get(ctx context.Context, webhookEndpointID string, opts ...option.RequestOption) (res *Webhook, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if webhookEndpointID == "" {
 		err = errors.New("missing required webhookEndpointId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("webhooks/%s", webhookEndpointID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Update the configuration of an existing webhook endpoint. A webhook that has
@@ -65,14 +65,13 @@ func (r *WebhookService) Get(ctx context.Context, webhookEndpointID string, opts
 // its status to 'active'.
 func (r *WebhookService) Update(ctx context.Context, webhookEndpointID string, body WebhookUpdateParams, opts ...option.RequestOption) (res *Webhook, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if webhookEndpointID == "" {
 		err = errors.New("missing required webhookEndpointId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("webhooks/%s", webhookEndpointID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve a paginated list of all webhook endpoints for your organization.
@@ -80,7 +79,7 @@ func (r *WebhookService) Update(ctx context.Context, webhookEndpointID string, b
 func (r *WebhookService) List(ctx context.Context, query WebhookListParams, opts ...option.RequestOption) (res *pagination.CursorIDWebhooks[Webhook], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "webhooks"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {
@@ -106,11 +105,11 @@ func (r *WebhookService) Delete(ctx context.Context, webhookEndpointID string, o
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if webhookEndpointID == "" {
 		err = errors.New("missing required webhookEndpointId parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("webhooks/%s", webhookEndpointID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Send a test event to verify the webhook endpoint is properly configured and
@@ -122,30 +121,30 @@ func (r *WebhookService) Verify(ctx context.Context, webhookEndpointID string, b
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if webhookEndpointID == "" {
 		err = errors.New("missing required webhookEndpointId parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("webhooks/%s/verify", webhookEndpointID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return
+	return err
 }
 
 // Webhook configuration details
 type Webhook struct {
 	// ID for the webhook
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// When the webhook was created
-	CreatedAt string `json:"createdAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	CreatedAt string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// The status of the webhook endpoint. 'active': delivering events normally.
 	// 'paused': paused by the user. 'disabled': automatically disabled by the system
 	// due to consecutive delivery failures. A disabled webhook can be reactivated by
 	// updating its status to 'active'.
 	//
 	// Any of "active", "paused", "disabled".
-	Status WebhookStatus `json:"status,required"`
+	Status WebhookStatus `json:"status" api:"required"`
 	// When the webhook was last updated
-	UpdatedAt string `json:"updatedAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	UpdatedAt string `json:"updatedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// The URL that will receive webhook POST requests
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// Optional array of event types this webhook is subscribed to. Nothing means all
 	// events.
 	//
@@ -153,7 +152,7 @@ type Webhook struct {
 	// "checkingAccount.balance.updated", "savingsAccount.balance.updated",
 	// "treasuryAccount.balance.updated", "investmentAccount.balance.updated",
 	// "creditAccount.balance.updated".
-	EventTypes []string `json:"eventTypes,nullable"`
+	EventTypes []string `json:"eventTypes" api:"nullable"`
 	// Optional array of resource field paths to filter events by. Nothing means no
 	// filtering.
 	//
@@ -162,11 +161,19 @@ type Webhook struct {
 	// "transaction.customCategory.id", "transaction.customCategory.name",
 	// "transaction.mercuryCategory", "transaction.estimatedDeliveryDate",
 	// "transaction.externalMemo", "transaction.failedAt", "transaction.note",
-	// "transaction.postedAt", "transaction.reasonForFailure", "transaction.status".
-	FilterPaths []string `json:"filterPaths,nullable"`
+	// "transaction.postedAt", "transaction.reasonForFailure", "transaction.status",
+	// "checkingAccount.availableBalance", "checkingAccount.currentBalance",
+	// "checkingAccount.inFlightBalance", "savingsAccount.availableBalance",
+	// "savingsAccount.currentBalance", "savingsAccount.inFlightBalance",
+	// "treasuryAccount.availableBalance", "treasuryAccount.currentBalance",
+	// "treasuryAccount.inFlightBalance", "investmentAccount.availableBalance",
+	// "investmentAccount.currentBalance", "investmentAccount.inFlightBalance",
+	// "creditAccount.availableBalance", "creditAccount.currentBalance",
+	// "creditAccount.inFlightBalance".
+	FilterPaths []string `json:"filterPaths" api:"nullable"`
 	// Webhook signing secret. Only returned on creation (POST), not on GET or UPDATE
 	// operations.
-	Secret string `json:"secret,nullable"`
+	Secret string `json:"secret" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -202,7 +209,7 @@ const (
 
 type WebhookNewParams struct {
 	// The URL to which webhook events will be delivered
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// Optional array of event types to subscribe to. Nothing means subscribe to all
 	// event types.
 	//
@@ -220,7 +227,15 @@ type WebhookNewParams struct {
 	// "transaction.customCategory.id", "transaction.customCategory.name",
 	// "transaction.mercuryCategory", "transaction.estimatedDeliveryDate",
 	// "transaction.externalMemo", "transaction.failedAt", "transaction.note",
-	// "transaction.postedAt", "transaction.reasonForFailure", "transaction.status".
+	// "transaction.postedAt", "transaction.reasonForFailure", "transaction.status",
+	// "checkingAccount.availableBalance", "checkingAccount.currentBalance",
+	// "checkingAccount.inFlightBalance", "savingsAccount.availableBalance",
+	// "savingsAccount.currentBalance", "savingsAccount.inFlightBalance",
+	// "treasuryAccount.availableBalance", "treasuryAccount.currentBalance",
+	// "treasuryAccount.inFlightBalance", "investmentAccount.availableBalance",
+	// "investmentAccount.currentBalance", "investmentAccount.inFlightBalance",
+	// "creditAccount.availableBalance", "creditAccount.currentBalance",
+	// "creditAccount.inFlightBalance".
 	FilterPaths []string `json:"filterPaths,omitzero"`
 	paramObj
 }
@@ -253,7 +268,15 @@ type WebhookUpdateParams struct {
 	// "transaction.customCategory.id", "transaction.customCategory.name",
 	// "transaction.mercuryCategory", "transaction.estimatedDeliveryDate",
 	// "transaction.externalMemo", "transaction.failedAt", "transaction.note",
-	// "transaction.postedAt", "transaction.reasonForFailure", "transaction.status".
+	// "transaction.postedAt", "transaction.reasonForFailure", "transaction.status",
+	// "checkingAccount.availableBalance", "checkingAccount.currentBalance",
+	// "checkingAccount.inFlightBalance", "savingsAccount.availableBalance",
+	// "savingsAccount.currentBalance", "savingsAccount.inFlightBalance",
+	// "treasuryAccount.availableBalance", "treasuryAccount.currentBalance",
+	// "treasuryAccount.inFlightBalance", "investmentAccount.availableBalance",
+	// "investmentAccount.currentBalance", "investmentAccount.inFlightBalance",
+	// "creditAccount.availableBalance", "creditAccount.currentBalance",
+	// "creditAccount.inFlightBalance".
 	FilterPaths []string `json:"filterPaths,omitzero"`
 	// Webhook status. Only 'active' and 'paused' values are allowed. Omit to leave
 	// unchanged.

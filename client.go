@@ -8,30 +8,45 @@ import (
 	"os"
 	"slices"
 
-	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
-	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
+	"github.com/MercuryTechnologies/mercury-go/option"
 )
 
 // Client creates a struct with services and top level methods that help with
 // interacting with the mercury API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options          []option.RequestOption
-	Ar               ArService
-	Categories       CategoryService
-	Credit           CreditService
-	Events           EventService
-	Organization     OrganizationService
+	Options []option.RequestOption
+	// Manage invoices
+	AccountsReceivable AccountsReceivableService
+	// Manage expense categories
+	Categories CategoryService
+	// Manage credit accounts
+	Credit CreditService
+	// Manage API events
+	Events EventService
+	// Organization information
+	Organization OrganizationService
+	// Manage send money approval requests
 	RequestSendMoney RequestSendMoneyService
-	Safes            SafeService
-	Statements       StatementService
-	Transfer         TransferService
-	Treasury         TreasuryService
-	Users            UserService
-	Webhooks         WebhookService
-	Account          AccountService
-	Recipients       RecipientService
-	Transactions     TransactionService
+	// Manage SAFE (Simple Agreement for Future Equity) requests
+	Safes SafeService
+	// Download account statements
+	Statements StatementService
+	// Manage bank accounts
+	Transfer TransferService
+	// Manage treasury accounts and transactions
+	Treasury TreasuryService
+	// Manage organization team members
+	Users UserService
+	// Manage webhooks
+	Webhooks WebhookService
+	// Manage bank accounts
+	Account AccountService
+	// Manage payment recipients
+	Recipients RecipientService
+	// Manage transactions
+	Transactions TransactionService
 }
 
 // DefaultClientOptions read from the environment (MERCURY_API_KEY,
@@ -64,7 +79,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 
 	r = Client{Options: opts}
 
-	r.Ar = NewArService(opts...)
+	r.AccountsReceivable = NewAccountsReceivableService(opts...)
 	r.Categories = NewCategoryService(opts...)
 	r.Credit = NewCreditService(opts...)
 	r.Events = NewEventService(opts...)

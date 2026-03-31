@@ -10,14 +10,17 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/stainless-sdks/mercury-go/internal/apijson"
-	"github.com/stainless-sdks/mercury-go/internal/apiquery"
-	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
-	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/param"
-	"github.com/stainless-sdks/mercury-go/packages/respjson"
+	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
+	"github.com/MercuryTechnologies/mercury-go/internal/apiquery"
+	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
+	"github.com/MercuryTechnologies/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go/packages/pagination"
+	"github.com/MercuryTechnologies/mercury-go/packages/param"
+	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
 )
 
+// Manage organization team members
+//
 // UserService contains methods and other services that help with interacting with
 // the mercury API.
 //
@@ -40,39 +43,52 @@ func NewUserService(opts ...option.RequestOption) (r UserService) {
 // Get user by ID
 func (r *UserService) Get(ctx context.Context, userID string, opts ...option.RequestOption) (res *User, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if userID == "" {
 		err = errors.New("missing required userId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("users/%s", userID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Get all users
-func (r *UserService) List(ctx context.Context, query UserListParams, opts ...option.RequestOption) (res *UserListResponse, err error) {
+func (r *UserService) List(ctx context.Context, query UserListParams, opts ...option.RequestOption) (res *pagination.CursorIDUsers[User], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "users"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Get all users
+func (r *UserService) ListAutoPaging(ctx context.Context, query UserListParams, opts ...option.RequestOption) *pagination.CursorIDUsersAutoPager[User] {
+	return pagination.NewCursorIDUsersAutoPager(r.List(ctx, query, opts...))
 }
 
 // Details of a user within an organization.
 type User struct {
 	// User's email address
-	Email string `json:"email,required"`
+	Email string `json:"email" api:"required"`
 	// User's first name
-	FirstName string `json:"firstName,required"`
+	FirstName string `json:"firstName" api:"required"`
 	// User's last name
-	LastName string `json:"lastName,required"`
+	LastName string `json:"lastName" api:"required"`
 	// User's role within the organization
 	//
 	// Any of "administrator", "bookkeeper", "customUser", "cardOnlyUser", "employee".
-	OrganizationRole UserOrganizationRole `json:"organizationRole,required"`
+	OrganizationRole UserOrganizationRole `json:"organizationRole" api:"required"`
 	// ID for the user
-	UserID string `json:"userId,required" format:"uuid"`
+	UserID string `json:"userId" api:"required" format:"uuid"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Email            respjson.Field
@@ -101,48 +117,6 @@ const (
 	UserOrganizationRoleCardOnlyUser  UserOrganizationRole = "cardOnlyUser"
 	UserOrganizationRoleEmployee      UserOrganizationRole = "employee"
 )
-
-// Paginated response containing a list of organization users.
-type UserListResponse struct {
-	// Pagination information including cursors for navigating to next/previous pages
-	Page UserListResponsePage `json:"page,required"`
-	// List of users in the current page
-	Users []User `json:"users,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Page        respjson.Field
-		Users       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r UserListResponse) RawJSON() string { return r.JSON.raw }
-func (r *UserListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Pagination information including cursors for navigating to next/previous pages
-type UserListResponsePage struct {
-	// ID for the user
-	NextPage string `json:"nextPage" format:"uuid"`
-	// ID for the user
-	PreviousPage string `json:"previousPage" format:"uuid"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		NextPage     respjson.Field
-		PreviousPage respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r UserListResponsePage) RawJSON() string { return r.JSON.raw }
-func (r *UserListResponsePage) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 type UserListParams struct {
 	// The ID of the user to end the page before (exclusive). When provided, results

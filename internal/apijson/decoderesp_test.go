@@ -2,13 +2,13 @@ package apijson_test
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/mercury-go/internal/apijson"
-	"github.com/stainless-sdks/mercury-go/packages/respjson"
+	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
+	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
 	"testing"
 )
 
 type StructWithNullExtraField struct {
-	Results []string `json:"results,required"`
+	Results []string `json:"results" api:"required"`
 	JSON    struct {
 		Results     respjson.Field
 		ExtraFields map[string]respjson.Field

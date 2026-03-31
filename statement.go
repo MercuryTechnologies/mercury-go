@@ -9,10 +9,12 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
-	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
+	"github.com/MercuryTechnologies/mercury-go/option"
 )
 
+// Download account statements
+//
 // StatementService contains methods and other services that help with interacting
 // with the mercury API.
 //
@@ -40,9 +42,9 @@ func (r *StatementService) DownloadPdf(ctx context.Context, statementID string, 
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/pdf")}, opts...)
 	if statementID == "" {
 		err = errors.New("missing required statementId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("statements/%s/pdf", statementID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }

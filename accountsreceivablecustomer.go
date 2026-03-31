@@ -10,89 +10,104 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/stainless-sdks/mercury-go/internal/apijson"
-	"github.com/stainless-sdks/mercury-go/internal/apiquery"
-	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
-	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/param"
-	"github.com/stainless-sdks/mercury-go/packages/respjson"
+	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
+	"github.com/MercuryTechnologies/mercury-go/internal/apiquery"
+	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
+	"github.com/MercuryTechnologies/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go/packages/pagination"
+	"github.com/MercuryTechnologies/mercury-go/packages/param"
+	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
 )
 
-// ArCustomerService contains methods and other services that help with interacting
-// with the mercury API.
+// Manage customers
+//
+// AccountsReceivableCustomerService contains methods and other services that help
+// with interacting with the mercury API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewArCustomerService] method instead.
-type ArCustomerService struct {
+// the [NewAccountsReceivableCustomerService] method instead.
+type AccountsReceivableCustomerService struct {
 	Options []option.RequestOption
 }
 
-// NewArCustomerService generates a new service that applies the given options to
-// each request. These options are applied after the parent client's options (if
-// there is one), and before any request-specific options.
-func NewArCustomerService(opts ...option.RequestOption) (r ArCustomerService) {
-	r = ArCustomerService{}
+// NewAccountsReceivableCustomerService generates a new service that applies the
+// given options to each request. These options are applied after the parent
+// client's options (if there is one), and before any request-specific options.
+func NewAccountsReceivableCustomerService(opts ...option.RequestOption) (r AccountsReceivableCustomerService) {
+	r = AccountsReceivableCustomerService{}
 	r.Options = opts
 	return
 }
 
 // Create a new customer for the organization
-func (r *ArCustomerService) New(ctx context.Context, body ArCustomerNewParams, opts ...option.RequestOption) (res *Customer, err error) {
+func (r *AccountsReceivableCustomerService) New(ctx context.Context, body AccountsReceivableCustomerNewParams, opts ...option.RequestOption) (res *Customer, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "ar/customers"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve details of a specific customer by their ID
-func (r *ArCustomerService) Get(ctx context.Context, customerID string, opts ...option.RequestOption) (res *Customer, err error) {
+func (r *AccountsReceivableCustomerService) Get(ctx context.Context, customerID string, opts ...option.RequestOption) (res *Customer, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if customerID == "" {
 		err = errors.New("missing required customerId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("ar/customers/%s", customerID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Update an existing customer
-func (r *ArCustomerService) Update(ctx context.Context, customerID string, body ArCustomerUpdateParams, opts ...option.RequestOption) (res *Customer, err error) {
+func (r *AccountsReceivableCustomerService) Update(ctx context.Context, customerID string, body AccountsReceivableCustomerUpdateParams, opts ...option.RequestOption) (res *Customer, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if customerID == "" {
 		err = errors.New("missing required customerId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("ar/customers/%s", customerID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve a paginated list of customers. Supports cursor-based pagination with
 // limit, order, start_after, and end_before query parameters.
-func (r *ArCustomerService) List(ctx context.Context, query ArCustomerListParams, opts ...option.RequestOption) (res *ArCustomerListResponse, err error) {
+func (r *AccountsReceivableCustomerService) List(ctx context.Context, query AccountsReceivableCustomerListParams, opts ...option.RequestOption) (res *pagination.CursorIDArCustomers[Customer], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "ar/customers"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieve a paginated list of customers. Supports cursor-based pagination with
+// limit, order, start_after, and end_before query parameters.
+func (r *AccountsReceivableCustomerService) ListAutoPaging(ctx context.Context, query AccountsReceivableCustomerListParams, opts ...option.RequestOption) *pagination.CursorIDArCustomersAutoPager[Customer] {
+	return pagination.NewCursorIDArCustomersAutoPager(r.List(ctx, query, opts...))
 }
 
 // Delete a customer. This action cannot be undone.
-func (r *ArCustomerService) Delete(ctx context.Context, customerID string, opts ...option.RequestOption) (err error) {
+func (r *AccountsReceivableCustomerService) Delete(ctx context.Context, customerID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if customerID == "" {
 		err = errors.New("missing required customerId parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("ar/customers/%s", customerID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Address input for creating or updating customers
@@ -100,18 +115,18 @@ func (r *ArCustomerService) Delete(ctx context.Context, customerID string, opts 
 // The properties Address1, City, Country, Name, PostalCode, Region are required.
 type AddressInputParam struct {
 	// Primary street address line.
-	Address1 string `json:"address1,required"`
+	Address1 string `json:"address1" api:"required"`
 	// City name.
-	City string `json:"city,required"`
+	City string `json:"city" api:"required"`
 	// Two-letter country code (ISO 3166-1 alpha-2).
-	Country string `json:"country,required"`
+	Country string `json:"country" api:"required"`
 	// The mailing name of the address.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Postal or ZIP code.
-	PostalCode string `json:"postalCode,required"`
+	PostalCode string `json:"postalCode" api:"required"`
 	// Either a two-letter US state code i.e. "CA" for California or a free-form
 	// identification of a particular region worldwide.
-	Region string `json:"region,required"`
+	Region string `json:"region" api:"required"`
 	// Secondary street address line (optional).
 	Address2 param.Opt[string] `json:"address2,omitzero"`
 	paramObj
@@ -130,15 +145,15 @@ type Customer struct {
 	// The customer who will receive the invoice. Use the /api/v1/ar/customers endpoint
 	// to list your customers and find the corresponding id, or create a new customer
 	// first.
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// Email of customer.
-	Email string `json:"email,required"`
+	Email string `json:"email" api:"required"`
 	// Name of customer.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Customer address information for Accounts Receivable API
-	Address CustomerAddress `json:"address,nullable"`
+	Address CustomerAddress `json:"address" api:"nullable"`
 	// The time the customer was deleted, if it was deleted.
-	DeletedAt string `json:"deletedAt,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	DeletedAt string `json:"deletedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -160,17 +175,17 @@ func (r *Customer) UnmarshalJSON(data []byte) error {
 // Customer address information for Accounts Receivable API
 type CustomerAddress struct {
 	// Primary street address line.
-	Address1 string `json:"address1,required"`
+	Address1 string `json:"address1" api:"required"`
 	// City name.
-	City string `json:"city,required"`
+	City string `json:"city" api:"required"`
 	// Two-letter country code (ISO 3166-1 alpha-2).
-	Country string `json:"country,required"`
+	Country string `json:"country" api:"required"`
 	// Postal or ZIP code
-	PostalCode string `json:"postalCode,required"`
+	PostalCode string `json:"postalCode" api:"required"`
 	// State, province, or region.
-	Region string `json:"region,required"`
+	Region string `json:"region" api:"required"`
 	// Secondary street address line (optional).
-	Address2 string `json:"address2,nullable"`
+	Address2 string `json:"address2" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Address1    respjson.Field
@@ -190,92 +205,46 @@ func (r *CustomerAddress) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Paginated response data for Accounts Receivable customers API endpoint
-type ArCustomerListResponse struct {
-	// The list of customers for this page
-	Customers []Customer `json:"customers,required"`
-	// Pagination cursors for navigating to next/previous pages
-	Page ArCustomerListResponsePage `json:"page,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Customers   respjson.Field
-		Page        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ArCustomerListResponse) RawJSON() string { return r.JSON.raw }
-func (r *ArCustomerListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Pagination cursors for navigating to next/previous pages
-type ArCustomerListResponsePage struct {
-	// The customer who will receive the invoice. Use the /api/v1/ar/customers endpoint
-	// to list your customers and find the corresponding id, or create a new customer
-	// first.
-	NextPage string `json:"nextPage" format:"uuid"`
-	// The customer who will receive the invoice. Use the /api/v1/ar/customers endpoint
-	// to list your customers and find the corresponding id, or create a new customer
-	// first.
-	PreviousPage string `json:"previousPage" format:"uuid"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		NextPage     respjson.Field
-		PreviousPage respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ArCustomerListResponsePage) RawJSON() string { return r.JSON.raw }
-func (r *ArCustomerListResponsePage) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ArCustomerNewParams struct {
+type AccountsReceivableCustomerNewParams struct {
 	// The email address for the customer.
-	Email string `json:"email,required"`
+	Email string `json:"email" api:"required"`
 	// The name of the customer.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Address input for creating or updating customers
 	Address AddressInputParam `json:"address,omitzero"`
 	paramObj
 }
 
-func (r ArCustomerNewParams) MarshalJSON() (data []byte, err error) {
-	type shadow ArCustomerNewParams
+func (r AccountsReceivableCustomerNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow AccountsReceivableCustomerNewParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ArCustomerNewParams) UnmarshalJSON(data []byte) error {
+func (r *AccountsReceivableCustomerNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ArCustomerUpdateParams struct {
+type AccountsReceivableCustomerUpdateParams struct {
 	// The email address for the customer.
-	Email string `json:"email,required"`
+	Email string `json:"email" api:"required"`
 	// The name of the customer.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Open invoices for the customer will be resent with updated data when this is
 	// true.
-	ResendOpenInvoices bool `json:"resendOpenInvoices,required"`
+	ResendOpenInvoices bool `json:"resendOpenInvoices" api:"required"`
 	// Address input for creating or updating customers
 	Address AddressInputParam `json:"address,omitzero"`
 	paramObj
 }
 
-func (r ArCustomerUpdateParams) MarshalJSON() (data []byte, err error) {
-	type shadow ArCustomerUpdateParams
+func (r AccountsReceivableCustomerUpdateParams) MarshalJSON() (data []byte, err error) {
+	type shadow AccountsReceivableCustomerUpdateParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ArCustomerUpdateParams) UnmarshalJSON(data []byte) error {
+func (r *AccountsReceivableCustomerUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ArCustomerListParams struct {
+type AccountsReceivableCustomerListParams struct {
 	// The ID of the customer to end the page before (exclusive). When provided,
 	// results will end just before this ID and work backwards. Use this for reverse
 	// pagination or to retrieve previous pages. Cannot be combined with start_after.
@@ -290,12 +259,13 @@ type ArCustomerListParams struct {
 	// Sort order. Can be 'asc' or 'desc'. Defaults to 'asc'
 	//
 	// Any of "asc", "desc".
-	Order ArCustomerListParamsOrder `query:"order,omitzero" json:"-"`
+	Order AccountsReceivableCustomerListParamsOrder `query:"order,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [ArCustomerListParams]'s query parameters as `url.Values`.
-func (r ArCustomerListParams) URLQuery() (v url.Values, err error) {
+// URLQuery serializes [AccountsReceivableCustomerListParams]'s query parameters as
+// `url.Values`.
+func (r AccountsReceivableCustomerListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
@@ -303,9 +273,9 @@ func (r ArCustomerListParams) URLQuery() (v url.Values, err error) {
 }
 
 // Sort order. Can be 'asc' or 'desc'. Defaults to 'asc'
-type ArCustomerListParamsOrder string
+type AccountsReceivableCustomerListParamsOrder string
 
 const (
-	ArCustomerListParamsOrderAsc  ArCustomerListParamsOrder = "asc"
-	ArCustomerListParamsOrderDesc ArCustomerListParamsOrder = "desc"
+	AccountsReceivableCustomerListParamsOrderAsc  AccountsReceivableCustomerListParamsOrder = "asc"
+	AccountsReceivableCustomerListParamsOrderDesc AccountsReceivableCustomerListParamsOrder = "desc"
 )

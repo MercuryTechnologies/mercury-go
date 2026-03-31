@@ -7,9 +7,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/mercury-go"
-	"github.com/stainless-sdks/mercury-go/internal/testutil"
-	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go"
+	"github.com/MercuryTechnologies/mercury-go/internal/testutil"
+	"github.com/MercuryTechnologies/mercury-go/option"
 )
 
 func TestAutoPagination(t *testing.T) {
@@ -25,11 +25,11 @@ func TestAutoPagination(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	iter := client.Treasury.ListAutoPaging(context.TODO(), mercury.TreasuryListParams{})
+	iter := client.AccountsReceivable.Customers.ListAutoPaging(context.TODO(), mercury.AccountsReceivableCustomerListParams{})
 	// The mock server isn't going to give us real pagination
 	for i := 0; i < 3 && iter.Next(); i++ {
-		treasury := iter.Current()
-		t.Logf("%+v\n", treasury.ID)
+		customer := iter.Current()
+		t.Logf("%+v\n", customer.ID)
 	}
 	if err := iter.Err(); err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())

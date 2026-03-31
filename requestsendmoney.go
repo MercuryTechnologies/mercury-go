@@ -9,10 +9,12 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
-	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
+	"github.com/MercuryTechnologies/mercury-go/option"
 )
 
+// Manage send money approval requests
+//
 // RequestSendMoneyService contains methods and other services that help with
 // interacting with the mercury API.
 //
@@ -35,12 +37,11 @@ func NewRequestSendMoneyService(opts ...option.RequestOption) (r RequestSendMone
 // Get send money approval request by ID
 func (r *RequestSendMoneyService) Get(ctx context.Context, requestID string, opts ...option.RequestOption) (res *SendMoneyApproval, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if requestID == "" {
 		err = errors.New("missing required requestId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("request-send-money/%s", requestID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }

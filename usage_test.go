@@ -7,12 +7,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/mercury-go"
-	"github.com/stainless-sdks/mercury-go/internal/testutil"
-	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go"
+	"github.com/MercuryTechnologies/mercury-go/internal/testutil"
+	"github.com/MercuryTechnologies/mercury-go/option"
 )
 
 func TestUsage(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,7 +25,6 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	t.Skip("Mock server tests are disabled")
 	account, err := client.Account.Get(context.TODO(), "REPLACE_ME")
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())

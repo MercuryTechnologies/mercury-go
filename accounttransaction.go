@@ -10,14 +10,16 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/stainless-sdks/mercury-go/internal/apijson"
-	"github.com/stainless-sdks/mercury-go/internal/apiquery"
-	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
-	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/pagination"
-	"github.com/stainless-sdks/mercury-go/packages/param"
+	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
+	"github.com/MercuryTechnologies/mercury-go/internal/apiquery"
+	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
+	"github.com/MercuryTechnologies/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go/packages/pagination"
+	"github.com/MercuryTechnologies/mercury-go/packages/param"
 )
 
+// Manage bank accounts
+//
 // AccountTransactionService contains methods and other services that help with
 // interacting with the mercury API.
 //
@@ -42,10 +44,10 @@ func NewAccountTransactionService(opts ...option.RequestOption) (r AccountTransa
 func (r *AccountTransactionService) List(ctx context.Context, accountID string, query AccountTransactionListParams, opts ...option.RequestOption) (res *pagination.OffsetAccountTransactions[Transaction], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8"), option.WithResponseInto(&raw)}, opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("account/%s/transactions", accountID)
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -70,14 +72,13 @@ func (r *AccountTransactionService) ListAutoPaging(ctx context.Context, accountI
 // processed immediately or may require approval.
 func (r *AccountTransactionService) Send(ctx context.Context, accountID string, body AccountTransactionSendParams, opts ...option.RequestOption) (res *Transaction, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("account/%s/transactions", accountID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type AccountTransactionListParams struct {
@@ -138,15 +139,15 @@ const (
 
 type AccountTransactionSendParams struct {
 	// A positive dollar amount with at least 1 cent.
-	Amount float64 `json:"amount,required"`
+	Amount float64 `json:"amount" api:"required"`
 	// Unique string identifying the transaction
-	IdempotencyKey string `json:"idempotencyKey,required"`
+	IdempotencyKey string `json:"idempotencyKey" api:"required"`
 	// If domesticWire is used, then the purpose field is required.
 	//
-	// Any of "ach", "domesticWire".
-	PaymentMethod AccountTransactionSendParamsPaymentMethod `json:"paymentMethod,omitzero,required"`
+	// Any of "ach", "check", "domesticWire".
+	PaymentMethod AccountTransactionSendParamsPaymentMethod `json:"paymentMethod,omitzero" api:"required"`
 	// ID for a Mercury account.
-	RecipientID string `json:"recipientId,required" format:"uuid"`
+	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
 	// Optional external memo
 	ExternalMemo param.Opt[string] `json:"externalMemo,omitzero"`
 	// Optional note
@@ -170,6 +171,7 @@ type AccountTransactionSendParamsPaymentMethod string
 
 const (
 	AccountTransactionSendParamsPaymentMethodACH          AccountTransactionSendParamsPaymentMethod = "ach"
+	AccountTransactionSendParamsPaymentMethodCheck        AccountTransactionSendParamsPaymentMethod = "check"
 	AccountTransactionSendParamsPaymentMethodDomesticWire AccountTransactionSendParamsPaymentMethod = "domesticWire"
 )
 
@@ -195,7 +197,7 @@ type AccountTransactionSendParamsPurposeSimple struct {
 	// Any of "Employee", "Landlord", "Vendor", "Contractor", "Subsidiary",
 	// "TransferToMyExternalAccount", "FamilyMemberOrFriend", "ForGoodsOrServices",
 	// "AngelInvestment", "SavingsOrInvestments", "Expenses", "Travel", "Other".
-	Category string `json:"category,omitzero,required"`
+	Category string `json:"category,omitzero" api:"required"`
 	// Additional information. Required for: Vendor (vendor name), Contractor
 	// (contractor name), Other (payment description). Optional for Subsidiary
 	// (subsidiary name). Not accepted for any other categories.

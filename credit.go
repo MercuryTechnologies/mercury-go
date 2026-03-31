@@ -7,12 +7,14 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/stainless-sdks/mercury-go/internal/apijson"
-	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
-	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/respjson"
+	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
+	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
+	"github.com/MercuryTechnologies/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
 )
 
+// Manage credit accounts
+//
 // CreditService contains methods and other services that help with interacting
 // with the mercury API.
 //
@@ -35,14 +37,13 @@ func NewCreditService(opts ...option.RequestOption) (r CreditService) {
 // Retrieve a list of all credit accounts for the organization.
 func (r *CreditService) List(ctx context.Context, opts ...option.RequestOption) (res *CreditListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "credit"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 type CreditListResponse struct {
-	Accounts []CreditListResponseAccount `json:"accounts,required"`
+	Accounts []CreditListResponseAccount `json:"accounts" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Accounts    respjson.Field
@@ -59,12 +60,12 @@ func (r *CreditListResponse) UnmarshalJSON(data []byte) error {
 
 type CreditListResponseAccount struct {
 	// ID for a Mercury account.
-	ID               string  `json:"id,required" format:"uuid"`
-	AvailableBalance float64 `json:"availableBalance,required"`
-	CreatedAt        string  `json:"createdAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	CurrentBalance   float64 `json:"currentBalance,required"`
+	ID               string  `json:"id" api:"required" format:"uuid"`
+	AvailableBalance float64 `json:"availableBalance" api:"required"`
+	CreatedAt        string  `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	CurrentBalance   float64 `json:"currentBalance" api:"required"`
 	// Any of "active", "deleted", "pending", "archived".
-	Status AccountStatus `json:"status,required"`
+	Status AccountStatus `json:"status" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field

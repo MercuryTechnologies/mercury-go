@@ -10,12 +10,14 @@ import (
 	"slices"
 	"time"
 
-	"github.com/stainless-sdks/mercury-go/internal/apijson"
-	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
-	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/respjson"
+	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
+	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
+	"github.com/MercuryTechnologies/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
 )
 
+// Manage SAFE (Simple Agreement for Future Equity) requests
+//
 // SafeService contains methods and other services that help with interacting with
 // the mercury API.
 //
@@ -38,24 +40,22 @@ func NewSafeService(opts ...option.RequestOption) (r SafeService) {
 // Retrieve a specific SAFE request by its ID.
 func (r *SafeService) Get(ctx context.Context, safeRequestID string, opts ...option.RequestOption) (res *SafeRequest, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	if safeRequestID == "" {
 		err = errors.New("missing required safeRequestId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("safes/%s", safeRequestID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve all SAFE (Simple Agreement for Future Equity) requests for your
 // organization.
 func (r *SafeService) List(ctx context.Context, opts ...option.RequestOption) (res *[]SafeRequest, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "safes"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Download the PDF document for a specific SAFE request. Returns binary PDF data
@@ -65,42 +65,42 @@ func (r *SafeService) DownloadDocument(ctx context.Context, safeRequestID string
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/pdf")}, opts...)
 	if safeRequestID == "" {
 		err = errors.New("missing required safeRequestId parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("safes/%s/document", safeRequestID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // A summary of a SAFE request.
 type SafeRequest struct {
 	// ID for the SAFE request
-	ID                              string `json:"id,required" format:"uuid"`
-	DocumentURL                     string `json:"documentUrl,required"`
-	ExpiresAt                       string `json:"expiresAt,required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	IncludesMostFavoredNationClause bool   `json:"includesMostFavoredNationClause,required"`
-	IncludesProRataRightsLetter     bool   `json:"includesProRataRightsLetter,required"`
+	ID                              string `json:"id" api:"required" format:"uuid"`
+	DocumentURL                     string `json:"documentUrl" api:"required"`
+	ExpiresAt                       string `json:"expiresAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	IncludesMostFavoredNationClause bool   `json:"includesMostFavoredNationClause" api:"required"`
+	IncludesProRataRightsLetter     bool   `json:"includesProRataRightsLetter" api:"required"`
 	// A positive dollar amount with at least 1 cent.
-	InvestmentAmount float64   `json:"investmentAmount,required"`
-	InvestmentDate   time.Time `json:"investmentDate,required" format:"date"`
+	InvestmentAmount float64   `json:"investmentAmount" api:"required"`
+	InvestmentDate   time.Time `json:"investmentDate" api:"required" format:"date"`
 	// Details about the investor buying the equity.
-	Investor SafeRequestInvestor `json:"investor,required"`
+	Investor SafeRequestInvestor `json:"investor" api:"required"`
 	// Details about the organization selling the equity
-	Organization SafeRequestOrganization `json:"organization,required"`
+	Organization SafeRequestOrganization `json:"organization" api:"required"`
 	// Any of "PreMoney", "PostMoney", "NoValuation".
-	ValuationType SafeRequestValuationType `json:"valuationType,required"`
-	CanceledAt    string                   `json:"canceledAt,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
-	DiscountRate  float64                  `json:"discountRate,nullable"`
+	ValuationType SafeRequestValuationType `json:"valuationType" api:"required"`
+	CanceledAt    string                   `json:"canceledAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	DiscountRate  float64                  `json:"discountRate" api:"nullable"`
 	// Any of "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI",
 	// "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS",
 	// "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR",
 	// "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY".
-	GoverningState     UsState `json:"governingState,nullable"`
-	PaidAt             string  `json:"paidAt,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
-	SignedByInvestorAt string  `json:"signedByInvestorAt,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
-	SignedByOwnerAt    string  `json:"signedByOwnerAt,nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	GoverningState     UsState `json:"governingState" api:"nullable"`
+	PaidAt             string  `json:"paidAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	SignedByInvestorAt string  `json:"signedByInvestorAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	SignedByOwnerAt    string  `json:"signedByOwnerAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// A positive dollar amount with at least 1 cent.
-	ValuationCap float64 `json:"valuationCap,nullable"`
+	ValuationCap float64 `json:"valuationCap" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                              respjson.Field
@@ -135,13 +135,13 @@ func (r *SafeRequest) UnmarshalJSON(data []byte) error {
 type SafeRequestInvestor struct {
 	// Any of "SafeRequestInvestorTypeIndividual",
 	// "SafeRequestInvestorTypeVentureFund", "SafeRequestInvestorTypeOther".
-	InvestorType      string `json:"investorType,required"`
-	LegalEntityName   string `json:"legalEntityName,required"`
-	SignatoryEmail    string `json:"signatoryEmail,required"`
-	SignatoryName     string `json:"signatoryName,required"`
-	AdditionalBylines string `json:"additionalBylines,nullable"`
-	Address           string `json:"address,nullable"`
-	SignatoryTitle    string `json:"signatoryTitle,nullable"`
+	InvestorType      string `json:"investorType" api:"required"`
+	LegalEntityName   string `json:"legalEntityName" api:"required"`
+	SignatoryEmail    string `json:"signatoryEmail" api:"required"`
+	SignatoryName     string `json:"signatoryName" api:"required"`
+	AdditionalBylines string `json:"additionalBylines" api:"nullable"`
+	Address           string `json:"address" api:"nullable"`
+	SignatoryTitle    string `json:"signatoryTitle" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InvestorType      respjson.Field
@@ -164,10 +164,10 @@ func (r *SafeRequestInvestor) UnmarshalJSON(data []byte) error {
 
 // Details about the organization selling the equity
 type SafeRequestOrganization struct {
-	LegalEntityName string `json:"legalEntityName,required"`
-	SignatoryEmail  string `json:"signatoryEmail,required"`
-	SignatoryName   string `json:"signatoryName,required"`
-	SignatoryTitle  string `json:"signatoryTitle,required"`
+	LegalEntityName string `json:"legalEntityName" api:"required"`
+	SignatoryEmail  string `json:"signatoryEmail" api:"required"`
+	SignatoryName   string `json:"signatoryName" api:"required"`
+	SignatoryTitle  string `json:"signatoryTitle" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		LegalEntityName respjson.Field

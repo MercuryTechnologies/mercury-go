@@ -7,13 +7,15 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/stainless-sdks/mercury-go/internal/apijson"
-	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
-	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/param"
-	"github.com/stainless-sdks/mercury-go/packages/respjson"
+	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
+	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
+	"github.com/MercuryTechnologies/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go/packages/param"
+	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
 )
 
+// Manage bank accounts
+//
 // TransferService contains methods and other services that help with interacting
 // with the mercury API.
 //
@@ -33,21 +35,22 @@ func NewTransferService(opts ...option.RequestOption) (r TransferService) {
 	return
 }
 
-// Transfer funds between two accounts within the same organization. Creates paired
-// debit and credit transactions.
+// Transfer funds between two accounts within the same organization. Supports
+// transfers between depository accounts (checking/savings), from a depository
+// account to a treasury/investment account, and from a treasury/investment account
+// to a depository account. Creates paired debit and credit transactions.
 func (r *TransferService) New(ctx context.Context, body TransferNewParams, opts ...option.RequestOption) (res *TransferNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/json;charset=utf-8")}, opts...)
 	path := "transfer"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Response for POST /api/v1/transfer endpoint. Returns both the credit and debit
-// transactions for the transfer.
+// transactions for the transfer (depository, treasury, or investment).
 type TransferNewResponse struct {
-	CreditTransaction Transaction `json:"creditTransaction,required"`
-	DebitTransaction  Transaction `json:"debitTransaction,required"`
+	CreditTransaction Transaction `json:"creditTransaction" api:"required"`
+	DebitTransaction  Transaction `json:"debitTransaction" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CreditTransaction respjson.Field
@@ -65,12 +68,12 @@ func (r *TransferNewResponse) UnmarshalJSON(data []byte) error {
 
 type TransferNewParams struct {
 	// A positive dollar amount with at least 1 cent.
-	Amount float64 `json:"amount,required"`
+	Amount float64 `json:"amount" api:"required"`
 	// ID for a Mercury account.
-	DestinationAccountID string `json:"destinationAccountId,required" format:"uuid"`
-	IdempotencyKey       string `json:"idempotencyKey,required"`
+	DestinationAccountID string `json:"destinationAccountId" api:"required" format:"uuid"`
+	IdempotencyKey       string `json:"idempotencyKey" api:"required"`
 	// ID for a Mercury account.
-	SourceAccountID string            `json:"sourceAccountId,required" format:"uuid"`
+	SourceAccountID string            `json:"sourceAccountId" api:"required" format:"uuid"`
 	Note            param.Opt[string] `json:"note,omitzero"`
 	paramObj
 }
