@@ -13,7 +13,7 @@ import (
 	"github.com/MercuryTechnologies/mercury-go/option"
 )
 
-func TestAccountsRecievableCustomerNewWithOptionalParams(t *testing.T) {
+func TestAccountsReceivableCustomerNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,7 +26,7 @@ func TestAccountsRecievableCustomerNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.AccountsRecievable.Customers.New(context.TODO(), mercury.AccountsRecievableCustomerNewParams{
+	_, err := client.AccountsReceivable.Customers.New(context.TODO(), mercury.AccountsReceivableCustomerNewParams{
 		Email: "email",
 		Name:  "name",
 		Address: mercury.AddressInputParam{
@@ -48,7 +48,7 @@ func TestAccountsRecievableCustomerNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAccountsRecievableCustomerGet(t *testing.T) {
+func TestAccountsReceivableCustomerGet(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -61,7 +61,7 @@ func TestAccountsRecievableCustomerGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.AccountsRecievable.Customers.Get(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	_, err := client.AccountsReceivable.Customers.Get(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {
@@ -71,7 +71,7 @@ func TestAccountsRecievableCustomerGet(t *testing.T) {
 	}
 }
 
-func TestAccountsRecievableCustomerUpdateWithOptionalParams(t *testing.T) {
+func TestAccountsReceivableCustomerUpdateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -84,10 +84,10 @@ func TestAccountsRecievableCustomerUpdateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.AccountsRecievable.Customers.Update(
+	_, err := client.AccountsReceivable.Customers.Update(
 		context.TODO(),
 		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-		mercury.AccountsRecievableCustomerUpdateParams{
+		mercury.AccountsReceivableCustomerUpdateParams{
 			Email:              "email",
 			Name:               "name",
 			ResendOpenInvoices: true,
@@ -111,7 +111,7 @@ func TestAccountsRecievableCustomerUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAccountsRecievableCustomerListWithOptionalParams(t *testing.T) {
+func TestAccountsReceivableCustomerListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -124,10 +124,10 @@ func TestAccountsRecievableCustomerListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.AccountsRecievable.Customers.List(context.TODO(), mercury.AccountsRecievableCustomerListParams{
+	_, err := client.AccountsReceivable.Customers.List(context.TODO(), mercury.AccountsReceivableCustomerListParams{
 		EndBefore:  mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Limit:      mercury.Int(1),
-		Order:      mercury.AccountsRecievableCustomerListParamsOrderAsc,
+		Order:      mercury.AccountsReceivableCustomerListParamsOrderAsc,
 		StartAfter: mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
@@ -139,7 +139,7 @@ func TestAccountsRecievableCustomerListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAccountsRecievableCustomerDelete(t *testing.T) {
+func TestAccountsReceivableCustomerDelete(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -152,7 +152,7 @@ func TestAccountsRecievableCustomerDelete(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	err := client.AccountsRecievable.Customers.Delete(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	err := client.AccountsReceivable.Customers.Delete(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {
