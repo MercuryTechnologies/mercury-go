@@ -29,8 +29,6 @@ import (
 // the [NewAccountService] method instead.
 type AccountService struct {
 	Options []option.RequestOption
-	// Manage bank accounts
-	Transactions AccountTransactionService
 }
 
 // NewAccountService generates a new service that applies the given options to each
@@ -39,7 +37,6 @@ type AccountService struct {
 func NewAccountService(opts ...option.RequestOption) (r AccountService) {
 	r = AccountService{}
 	r.Options = opts
-	r.Transactions = NewAccountTransactionService(opts...)
 	return
 }
 
@@ -78,6 +75,19 @@ func (r *AccountService) List(ctx context.Context, query AccountListParams, opts
 // limit, order, start_after, and end_before query parameters.
 func (r *AccountService) ListAutoPaging(ctx context.Context, query AccountListParams, opts ...option.RequestOption) *pagination.CursorIDAccountsAutoPager[Account] {
 	return pagination.NewCursorIDAccountsAutoPager(r.List(ctx, query, opts...))
+}
+
+// Send money from an account to a recipient. Creates a transaction that will be
+// processed immediately or may require approval.
+func (r *AccountService) NewTransaction(ctx context.Context, accountID string, body AccountNewTransactionParams, opts ...option.RequestOption) (res *Transaction, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if accountID == "" {
+		err = errors.New("missing required accountId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("account/%s/transactions", accountID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return res, err
 }
 
 // Retrieve all debit and credit cards associated with a specific account.
@@ -121,6 +131,35 @@ func (r *AccountService) ListStatements(ctx context.Context, accountID string, q
 // parameters, as well as date range filtering with start and end parameters.
 func (r *AccountService) ListStatementsAutoPaging(ctx context.Context, accountID string, query AccountListStatementsParams, opts ...option.RequestOption) *pagination.CursorIDAccountStatementsAutoPager[AccountListStatementsResponse] {
 	return pagination.NewCursorIDAccountStatementsAutoPager(r.ListStatements(ctx, accountID, query, opts...))
+}
+
+// Retrieve a paginated list of transactions for a specific account. Supports
+// filtering by date range, status, and search terms.
+func (r *AccountService) ListTransactions(ctx context.Context, accountID string, query AccountListTransactionsParams, opts ...option.RequestOption) (res *pagination.OffsetAccountTransactions[Transaction], err error) {
+	var raw *http.Response
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	if accountID == "" {
+		err = errors.New("missing required accountId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("account/%s/transactions", accountID)
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieve a paginated list of transactions for a specific account. Supports
+// filtering by date range, status, and search terms.
+func (r *AccountService) ListTransactionsAutoPaging(ctx context.Context, accountID string, query AccountListTransactionsParams, opts ...option.RequestOption) *pagination.OffsetAccountTransactionsAutoPager[Transaction] {
+	return pagination.NewOffsetAccountTransactionsAutoPager(r.ListTransactions(ctx, accountID, query, opts...))
 }
 
 // Create a "request to send money" that will require approval based on your
@@ -882,6 +921,88 @@ const (
 	AccountListParamsOrderDesc AccountListParamsOrder = "desc"
 )
 
+type AccountNewTransactionParams struct {
+	// A positive dollar amount with at least 1 cent.
+	Amount float64 `json:"amount" api:"required"`
+	// Unique string identifying the transaction
+	IdempotencyKey string `json:"idempotencyKey" api:"required"`
+	// If domesticWire is used, then the purpose field is required.
+	//
+	// Any of "ach", "check", "domesticWire".
+	PaymentMethod AccountNewTransactionParamsPaymentMethod `json:"paymentMethod,omitzero" api:"required"`
+	// ID for a Mercury account.
+	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
+	// Optional external memo
+	ExternalMemo param.Opt[string] `json:"externalMemo,omitzero"`
+	// Optional note
+	Note param.Opt[string] `json:"note,omitzero"`
+	// External API representation of SendMoneyPurpose. Only exposes the 'simple' field
+	// to decouple internal implementation from external API.
+	Purpose AccountNewTransactionParamsPurpose `json:"purpose,omitzero"`
+	paramObj
+}
+
+func (r AccountNewTransactionParams) MarshalJSON() (data []byte, err error) {
+	type shadow AccountNewTransactionParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *AccountNewTransactionParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// If domesticWire is used, then the purpose field is required.
+type AccountNewTransactionParamsPaymentMethod string
+
+const (
+	AccountNewTransactionParamsPaymentMethodACH          AccountNewTransactionParamsPaymentMethod = "ach"
+	AccountNewTransactionParamsPaymentMethodCheck        AccountNewTransactionParamsPaymentMethod = "check"
+	AccountNewTransactionParamsPaymentMethodDomesticWire AccountNewTransactionParamsPaymentMethod = "domesticWire"
+)
+
+// External API representation of SendMoneyPurpose. Only exposes the 'simple' field
+// to decouple internal implementation from external API.
+type AccountNewTransactionParamsPurpose struct {
+	Simple AccountNewTransactionParamsPurposeSimple `json:"simple,omitzero"`
+	paramObj
+}
+
+func (r AccountNewTransactionParamsPurpose) MarshalJSON() (data []byte, err error) {
+	type shadow AccountNewTransactionParamsPurpose
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *AccountNewTransactionParamsPurpose) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Category is required.
+type AccountNewTransactionParamsPurposeSimple struct {
+	// Payment category.
+	//
+	// Any of "Employee", "Landlord", "Vendor", "Contractor", "Subsidiary",
+	// "TransferToMyExternalAccount", "FamilyMemberOrFriend", "ForGoodsOrServices",
+	// "AngelInvestment", "SavingsOrInvestments", "Expenses", "Travel", "Other".
+	Category string `json:"category,omitzero" api:"required"`
+	// Additional information. Required for: Vendor (vendor name), Contractor
+	// (contractor name), Other (payment description). Optional for Subsidiary
+	// (subsidiary name). Not accepted for any other categories.
+	AdditionalInfo param.Opt[string] `json:"additionalInfo,omitzero"`
+	paramObj
+}
+
+func (r AccountNewTransactionParamsPurposeSimple) MarshalJSON() (data []byte, err error) {
+	type shadow AccountNewTransactionParamsPurposeSimple
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *AccountNewTransactionParamsPurposeSimple) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[AccountNewTransactionParamsPurposeSimple](
+		"category", "Employee", "Landlord", "Vendor", "Contractor", "Subsidiary", "TransferToMyExternalAccount", "FamilyMemberOrFriend", "ForGoodsOrServices", "AngelInvestment", "SavingsOrInvestments", "Expenses", "Travel", "Other",
+	)
+}
+
 type AccountListStatementsParams struct {
 	// Filter statements where the period start date is on or before this date. If the
 	// date is in the future, defaults to the current date. Format: YYYY-MM-DD
@@ -922,6 +1043,62 @@ type AccountListStatementsParamsOrder string
 const (
 	AccountListStatementsParamsOrderAsc  AccountListStatementsParamsOrder = "asc"
 	AccountListStatementsParamsOrderDesc AccountListStatementsParamsOrder = "desc"
+)
+
+type AccountListTransactionsParams struct {
+	// UUID of a custom category. Can be returned from /categories endpoint.
+	CategoryID param.Opt[string] `query:"categoryId,omitzero" format:"uuid" json:"-"`
+	// Latest date to filter transactions. If not provided, defaults to the current
+	// date. Format: YYYY-MM-DD or ISO 8601 string
+	End param.Opt[string] `query:"end,omitzero" json:"-"`
+	// Maximum number of results to return. Allowed range: 1 to 1000. Defaults to 1000
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Name of mercuryCategory you want to filter on. Merchant Type in the UI.
+	MercuryCategory param.Opt[string] `query:"mercuryCategory,omitzero" json:"-"`
+	// Number of results to skip for pagination
+	Offset param.Opt[int64] `query:"offset,omitzero" json:"-"`
+	// ID returned from /account/:id/request-send-money
+	RequestID param.Opt[string] `query:"requestId,omitzero" format:"uuid" json:"-"`
+	// Search term to filter transactions by description or counterparty name
+	Search param.Opt[string] `query:"search,omitzero" json:"-"`
+	// Earliest date to filter transactions. If not provided, defaults to 30 days
+	// before the current date. Format: YYYY-MM-DD or ISO 8601 string
+	Start param.Opt[string] `query:"start,omitzero" json:"-"`
+	// Sort order. Can be 'asc' or 'desc'. Defaults to 'desc'
+	//
+	// Any of "asc", "desc".
+	Order AccountListTransactionsParamsOrder `query:"order,omitzero" json:"-"`
+	// Any of "pending", "sent", "cancelled", "failed", "reversed", "blocked".
+	Status AccountListTransactionsParamsStatus `query:"status,omitzero" json:"-"`
+	paramObj
+}
+
+// URLQuery serializes [AccountListTransactionsParams]'s query parameters as
+// `url.Values`.
+func (r AccountListTransactionsParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Sort order. Can be 'asc' or 'desc'. Defaults to 'desc'
+type AccountListTransactionsParamsOrder string
+
+const (
+	AccountListTransactionsParamsOrderAsc  AccountListTransactionsParamsOrder = "asc"
+	AccountListTransactionsParamsOrderDesc AccountListTransactionsParamsOrder = "desc"
+)
+
+type AccountListTransactionsParamsStatus string
+
+const (
+	AccountListTransactionsParamsStatusPending   AccountListTransactionsParamsStatus = "pending"
+	AccountListTransactionsParamsStatusSent      AccountListTransactionsParamsStatus = "sent"
+	AccountListTransactionsParamsStatusCancelled AccountListTransactionsParamsStatus = "cancelled"
+	AccountListTransactionsParamsStatusFailed    AccountListTransactionsParamsStatus = "failed"
+	AccountListTransactionsParamsStatusReversed  AccountListTransactionsParamsStatus = "reversed"
+	AccountListTransactionsParamsStatusBlocked   AccountListTransactionsParamsStatus = "blocked"
 )
 
 type AccountRequestSendMoneyParams struct {

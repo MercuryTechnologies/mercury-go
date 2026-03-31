@@ -16,8 +16,7 @@ import (
 // interacting with the mercury API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options []option.RequestOption
-	// Manage invoices
+	Options            []option.RequestOption
 	AccountsReceivable AccountsReceivableService
 	// Manage expense categories
 	Categories CategoryService
@@ -42,7 +41,7 @@ type Client struct {
 	// Manage webhooks
 	Webhooks WebhookService
 	// Manage bank accounts
-	Account AccountService
+	Accounts AccountService
 	// Manage payment recipients
 	Recipients RecipientService
 	// Manage transactions
@@ -91,7 +90,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Treasury = NewTreasuryService(opts...)
 	r.Users = NewUserService(opts...)
 	r.Webhooks = NewWebhookService(opts...)
-	r.Account = NewAccountService(opts...)
+	r.Accounts = NewAccountService(opts...)
 	r.Recipients = NewRecipientService(opts...)
 	r.Transactions = NewTransactionService(opts...)
 

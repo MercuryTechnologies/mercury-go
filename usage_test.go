@@ -25,7 +25,7 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	account, err := client.Account.Get(context.TODO(), "REPLACE_ME")
+	account, err := client.Accounts.Get(context.TODO(), "REPLACE_ME")
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
