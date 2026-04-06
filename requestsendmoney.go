@@ -10,11 +10,11 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/stainless-sdks/mercury-go/internal/apiquery"
-	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
-	"github.com/stainless-sdks/mercury-go/option"
-	"github.com/stainless-sdks/mercury-go/packages/pagination"
-	"github.com/stainless-sdks/mercury-go/packages/param"
+	"github.com/MercuryTechnologies/mercury-go/internal/apiquery"
+	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
+	"github.com/MercuryTechnologies/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go/packages/pagination"
+	"github.com/MercuryTechnologies/mercury-go/packages/param"
 )
 
 // Manage send money approval requests

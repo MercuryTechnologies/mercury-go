@@ -18,10 +18,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stainless-sdks/mercury-go/internal"
-	"github.com/stainless-sdks/mercury-go/internal/apierror"
-	"github.com/stainless-sdks/mercury-go/internal/apiform"
-	"github.com/stainless-sdks/mercury-go/internal/apiquery"
+	"github.com/MercuryTechnologies/mercury-go/internal"
+	"github.com/MercuryTechnologies/mercury-go/internal/apierror"
+	"github.com/MercuryTechnologies/mercury-go/internal/apiform"
+	"github.com/MercuryTechnologies/mercury-go/internal/apiquery"
 )
 
 func getDefaultHeaders() map[string]string {

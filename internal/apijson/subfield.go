@@ -1,7 +1,7 @@
 package apijson
 
 import (
-	"github.com/stainless-sdks/mercury-go/packages/respjson"
+	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
 	"reflect"
 )
 
