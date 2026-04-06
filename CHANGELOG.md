@@ -1,13 +1,5 @@
 # Changelog
 
-## 0.2.0 (2026-03-31)
-
-Full Changelog: [v0.1.0...v0.2.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.1.0...v0.2.0)
-
-### Features
-
-* **api:** manual updates ([7574da1](https://github.com/MercuryTechnologies/mercury-go/commit/7574da1862b3e0d83de7396b3e76193043618aae))
-
 ## 0.1.0 (2026-03-31)
 
 Full Changelog: [v0.0.1...v0.1.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.0.1...v0.1.0)

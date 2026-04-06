@@ -2,7 +2,7 @@ package apijson
 
 import (
 	"errors"
-	"github.com/MercuryTechnologies/mercury-go/packages/param"
+	"github.com/stainless-sdks/mercury-go/packages/param"
 	"reflect"
 
 	"github.com/tidwall/gjson"

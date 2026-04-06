@@ -1,8 +1,8 @@
 package paramutil
 
 import (
-	"github.com/MercuryTechnologies/mercury-go/packages/param"
-	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
+	"github.com/stainless-sdks/mercury-go/packages/param"
+	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
 
 func AddrIfPresent[T comparable](v param.Opt[T]) *T {

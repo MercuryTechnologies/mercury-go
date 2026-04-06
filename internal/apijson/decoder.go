@@ -7,7 +7,7 @@ package apijson
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/MercuryTechnologies/mercury-go/packages/param"
+	"github.com/stainless-sdks/mercury-go/packages/param"
 	"reflect"
 	"strconv"
 	"sync"

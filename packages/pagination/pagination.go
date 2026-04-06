@@ -7,11 +7,11 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
-	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
-	"github.com/MercuryTechnologies/mercury-go/option"
-	"github.com/MercuryTechnologies/mercury-go/packages/param"
-	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
+	"github.com/stainless-sdks/mercury-go/internal/apijson"
+	"github.com/stainless-sdks/mercury-go/internal/requestconfig"
+	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/stainless-sdks/mercury-go/packages/param"
+	"github.com/stainless-sdks/mercury-go/packages/respjson"
 )
 
 // aliased to make [param.APIUnion] private when embedding
@@ -526,6 +526,106 @@ func (r *CursorIDEventsAutoPager[T]) Err() error {
 }
 
 func (r *CursorIDEventsAutoPager[T]) Index() int {
+	return r.run
+}
+
+type CursorIDRequestSendMoney[T any] struct {
+	Requests []T `json:"requests"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Requests    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	cfg *requestconfig.RequestConfig
+	res *http.Response
+}
+
+// Returns the unmodified JSON received from the API
+func (r CursorIDRequestSendMoney[T]) RawJSON() string { return r.JSON.raw }
+func (r *CursorIDRequestSendMoney[T]) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *CursorIDRequestSendMoney[T]) GetNextPage() (res *CursorIDRequestSendMoney[T], err error) {
+	if len(r.Requests) == 0 {
+		return nil, nil
+	}
+	items := r.Requests
+	if items == nil || len(items) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	value := reflect.ValueOf(items[len(items)-1])
+	field := value.FieldByName("ID")
+	err = cfg.Apply(option.WithQuery("start_after", field.Interface().(string)))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *CursorIDRequestSendMoney[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &CursorIDRequestSendMoney[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type CursorIDRequestSendMoneyAutoPager[T any] struct {
+	page *CursorIDRequestSendMoney[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+	paramObj
+}
+
+func NewCursorIDRequestSendMoneyAutoPager[T any](page *CursorIDRequestSendMoney[T], err error) *CursorIDRequestSendMoneyAutoPager[T] {
+	return &CursorIDRequestSendMoneyAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *CursorIDRequestSendMoneyAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.Requests) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.Requests) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.Requests) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.Requests[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *CursorIDRequestSendMoneyAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *CursorIDRequestSendMoneyAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *CursorIDRequestSendMoneyAutoPager[T]) Index() int {
 	return r.run
 }
 
