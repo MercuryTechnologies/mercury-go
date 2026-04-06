@@ -36,7 +36,7 @@ func TestRequestSendMoneyGet(t *testing.T) {
 	}
 }
 
-func TestRequestSendMoneyListSendMoneyRequestsWithOptionalParams(t *testing.T) {
+func TestRequestSendMoneyListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -49,12 +49,12 @@ func TestRequestSendMoneyListSendMoneyRequestsWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.RequestSendMoney.ListSendMoneyRequests(context.TODO(), mercury.RequestSendMoneyListSendMoneyRequestsParams{
+	_, err := client.RequestSendMoney.List(context.TODO(), mercury.RequestSendMoneyListParams{
 		AccountID:  mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		EndBefore:  mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Limit:      mercury.Int(1),
 		StartAfter: mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Status:     mercury.RequestSendMoneyListSendMoneyRequestsParamsStatusPendingApproval,
+		Status:     mercury.RequestSendMoneyListParamsStatusPendingApproval,
 	})
 	if err != nil {
 		var apierr *mercury.Error

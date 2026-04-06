@@ -52,7 +52,7 @@ func (r *RequestSendMoneyService) Get(ctx context.Context, requestID string, opt
 
 // Retrieve a paginated list of send money approval requests for the authenticated
 // organization. Supports filtering by account and status.
-func (r *RequestSendMoneyService) ListSendMoneyRequests(ctx context.Context, query RequestSendMoneyListSendMoneyRequestsParams, opts ...option.RequestOption) (res *pagination.CursorIDRequestSendMoney[SendMoneyApproval], err error) {
+func (r *RequestSendMoneyService) List(ctx context.Context, query RequestSendMoneyListParams, opts ...option.RequestOption) (res *pagination.CursorIDRequestSendMoney[SendMoneyApproval], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -71,11 +71,11 @@ func (r *RequestSendMoneyService) ListSendMoneyRequests(ctx context.Context, que
 
 // Retrieve a paginated list of send money approval requests for the authenticated
 // organization. Supports filtering by account and status.
-func (r *RequestSendMoneyService) ListSendMoneyRequestsAutoPaging(ctx context.Context, query RequestSendMoneyListSendMoneyRequestsParams, opts ...option.RequestOption) *pagination.CursorIDRequestSendMoneyAutoPager[SendMoneyApproval] {
-	return pagination.NewCursorIDRequestSendMoneyAutoPager(r.ListSendMoneyRequests(ctx, query, opts...))
+func (r *RequestSendMoneyService) ListAutoPaging(ctx context.Context, query RequestSendMoneyListParams, opts ...option.RequestOption) *pagination.CursorIDRequestSendMoneyAutoPager[SendMoneyApproval] {
+	return pagination.NewCursorIDRequestSendMoneyAutoPager(r.List(ctx, query, opts...))
 }
 
-type RequestSendMoneyListSendMoneyRequestsParams struct {
+type RequestSendMoneyListParams struct {
 	// ID for a Mercury account.
 	AccountID param.Opt[string] `query:"accountId,omitzero" format:"uuid" json:"-"`
 	// The ID of the send money approval request to end the page before (exclusive).
@@ -91,24 +91,24 @@ type RequestSendMoneyListSendMoneyRequestsParams struct {
 	// the next page of results. Cannot be combined with end_before.
 	StartAfter param.Opt[string] `query:"start_after,omitzero" format:"uuid" json:"-"`
 	// Any of "pendingApproval", "approved", "rejected", "cancelled".
-	Status RequestSendMoneyListSendMoneyRequestsParamsStatus `query:"status,omitzero" json:"-"`
+	Status RequestSendMoneyListParamsStatus `query:"status,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [RequestSendMoneyListSendMoneyRequestsParams]'s query
-// parameters as `url.Values`.
-func (r RequestSendMoneyListSendMoneyRequestsParams) URLQuery() (v url.Values, err error) {
+// URLQuery serializes [RequestSendMoneyListParams]'s query parameters as
+// `url.Values`.
+func (r RequestSendMoneyListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
 
-type RequestSendMoneyListSendMoneyRequestsParamsStatus string
+type RequestSendMoneyListParamsStatus string
 
 const (
-	RequestSendMoneyListSendMoneyRequestsParamsStatusPendingApproval RequestSendMoneyListSendMoneyRequestsParamsStatus = "pendingApproval"
-	RequestSendMoneyListSendMoneyRequestsParamsStatusApproved        RequestSendMoneyListSendMoneyRequestsParamsStatus = "approved"
-	RequestSendMoneyListSendMoneyRequestsParamsStatusRejected        RequestSendMoneyListSendMoneyRequestsParamsStatus = "rejected"
-	RequestSendMoneyListSendMoneyRequestsParamsStatusCancelled       RequestSendMoneyListSendMoneyRequestsParamsStatus = "cancelled"
+	RequestSendMoneyListParamsStatusPendingApproval RequestSendMoneyListParamsStatus = "pendingApproval"
+	RequestSendMoneyListParamsStatusApproved        RequestSendMoneyListParamsStatus = "approved"
+	RequestSendMoneyListParamsStatusRejected        RequestSendMoneyListParamsStatus = "rejected"
+	RequestSendMoneyListParamsStatusCancelled       RequestSendMoneyListParamsStatus = "cancelled"
 )
