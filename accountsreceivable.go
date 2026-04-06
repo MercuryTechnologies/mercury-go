@@ -3,7 +3,7 @@
 package mercury
 
 import (
-	"github.com/stainless-sdks/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go/option"
 )
 
 // AccountsReceivableService contains methods and other services that help with
