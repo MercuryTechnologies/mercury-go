@@ -4,7 +4,6 @@ package option
 
 import (
 	"bytes"
-	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
@@ -278,7 +277,7 @@ func WithEnvironmentSandbox() RequestOption {
 func WithUsername(value string) RequestOption {
 	return requestconfig.RequestOptionFunc(func(r *requestconfig.RequestConfig) error {
 		r.Username = value
-		return r.Apply(WithHeader("authorization", fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(r.Username+":"+r.Password)))))
+		return nil
 	})
 }
 
@@ -286,7 +285,7 @@ func WithUsername(value string) RequestOption {
 func WithPassword(value string) RequestOption {
 	return requestconfig.RequestOptionFunc(func(r *requestconfig.RequestConfig) error {
 		r.Password = value
-		return r.Apply(WithHeader("authorization", fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(r.Username+":"+r.Password)))))
+		return nil
 	})
 }
 
