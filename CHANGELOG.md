@@ -1,12 +1,24 @@
 # Changelog
 
-## 0.2.0 (2026-03-31)
+## 0.3.0 (2026-04-08)
 
-Full Changelog: [v0.1.0...v0.2.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.1.0...v0.2.0)
+Full Changelog: [v0.2.0...v0.3.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.2.0...v0.3.0)
 
 ### Features
 
-* **api:** manual updates ([7574da1](https://github.com/MercuryTechnologies/mercury-go/commit/7574da1862b3e0d83de7396b3e76193043618aae))
+* **api:** fix sendmoneyrequest id pagination ([414fa28](https://github.com/MercuryTechnologies/mercury-go/commit/414fa289589ebde3cf62df258a4fc8b8966747b6))
+* **api:** remove mcp generation ([6967067](https://github.com/MercuryTechnologies/mercury-go/commit/6967067b18c650c093b11b6ae675be8a14f88709))
+
+
+### Bug Fixes
+
+* force v0.2.0 to unblock build ([d5e6300](https://github.com/MercuryTechnologies/mercury-go/commit/d5e6300384076708b31a2f0ec7df96520cffde16))
+
+
+### Chores
+
+* sync repo ([29345c3](https://github.com/MercuryTechnologies/mercury-go/commit/29345c33ccb31f1d1df430e76a7a5f3561e8071f))
+* update SDK settings ([d554657](https://github.com/MercuryTechnologies/mercury-go/commit/d55465749dcca49f95845bc9bc89e5b156983ec7))
 
 ## 0.1.0 (2026-03-31)
 
