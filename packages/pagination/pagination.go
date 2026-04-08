@@ -560,7 +560,7 @@ func (r *CursorIDRequestSendMoney[T]) GetNextPage() (res *CursorIDRequestSendMon
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
 	value := reflect.ValueOf(items[len(items)-1])
-	field := value.FieldByName("ID")
+	field := value.FieldByName("RequestID")
 	err = cfg.Apply(option.WithQuery("start_after", field.Interface().(string)))
 	if err != nil {
 		return nil, err
