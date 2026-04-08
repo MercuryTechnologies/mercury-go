@@ -28,7 +28,7 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/MercuryTechnologies/mercury-go@v0.1.0'
+go get -u 'github.com/MercuryTechnologies/mercury-go@v0.3.0'
 ```
 
 <!-- x-release-please-end -->
