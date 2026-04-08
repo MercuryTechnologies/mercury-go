@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.2 (2026-04-08)
+
+Full Changelog: [v0.3.1...v0.3.2](https://github.com/MercuryTechnologies/mercury-go/compare/v0.3.1...v0.3.2)
+
+### Bug Fixes
+
+* remove basicAuth ([392d103](https://github.com/MercuryTechnologies/mercury-go/commit/392d103349474bbf77f7592f490c371e55768f84))
+
 ## 0.3.1 (2026-04-08)
 
 Full Changelog: [v0.3.0...v0.3.1](https://github.com/MercuryTechnologies/mercury-go/compare/v0.3.0...v0.3.1)
