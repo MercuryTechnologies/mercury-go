@@ -273,22 +273,6 @@ func WithEnvironmentSandbox() RequestOption {
 	return requestconfig.WithDefaultBaseURL("https://api-sandbox.mercury.com/api/v1/")
 }
 
-// WithUsername returns a RequestOption that sets the client setting "username".
-func WithUsername(value string) RequestOption {
-	return requestconfig.RequestOptionFunc(func(r *requestconfig.RequestConfig) error {
-		r.Username = value
-		return nil
-	})
-}
-
-// WithPassword returns a RequestOption that sets the client setting "password".
-func WithPassword(value string) RequestOption {
-	return requestconfig.RequestOptionFunc(func(r *requestconfig.RequestConfig) error {
-		r.Password = value
-		return nil
-	})
-}
-
 // WithAPIKey returns a RequestOption that sets the client setting "api_key".
 func WithAPIKey(value string) RequestOption {
 	return requestconfig.RequestOptionFunc(func(r *requestconfig.RequestConfig) error {
