@@ -16,8 +16,6 @@ type AccountsReceivableService struct {
 	Options []option.RequestOption
 	// Manage invoices
 	Attachments AccountsReceivableAttachmentService
-	// Manage customers
-	Customers AccountsReceivableCustomerService
 }
 
 // NewAccountsReceivableService generates a new service that applies the given
@@ -27,6 +25,5 @@ func NewAccountsReceivableService(opts ...option.RequestOption) (r AccountsRecei
 	r = AccountsReceivableService{}
 	r.Options = opts
 	r.Attachments = NewAccountsReceivableAttachmentService(opts...)
-	r.Customers = NewAccountsReceivableCustomerService(opts...)
 	return
 }
