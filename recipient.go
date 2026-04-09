@@ -53,18 +53,6 @@ func (r *RecipientService) New(ctx context.Context, body RecipientNewParams, opt
 	return res, err
 }
 
-// Retrieve details of a specific recipient by ID
-func (r *RecipientService) Get(ctx context.Context, recipientID string, opts ...option.RequestOption) (res *Recipient, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if recipientID == "" {
-		err = errors.New("missing required recipientId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("recipient/%s", recipientID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return res, err
-}
-
 // Update an existing recipient's information
 func (r *RecipientService) Update(ctx context.Context, recipientID string, body RecipientUpdateParams, opts ...option.RequestOption) (res *Recipient, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -100,6 +88,18 @@ func (r *RecipientService) List(ctx context.Context, query RecipientListParams, 
 // end_before) for pagination.
 func (r *RecipientService) ListAutoPaging(ctx context.Context, query RecipientListParams, opts ...option.RequestOption) *pagination.CursorIDRecipientsAutoPager[Recipient] {
 	return pagination.NewCursorIDRecipientsAutoPager(r.List(ctx, query, opts...))
+}
+
+// Retrieve details of a specific recipient by ID
+func (r *RecipientService) Get(ctx context.Context, recipientID string, opts ...option.RequestOption) (res *Recipient, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if recipientID == "" {
+		err = errors.New("missing required recipientId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("recipient/%s", recipientID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
 }
 
 // Retrieve a paginated list of all recipient tax form attachments across all

@@ -40,18 +40,6 @@ func NewUserService(opts ...option.RequestOption) (r UserService) {
 	return
 }
 
-// Get user by ID
-func (r *UserService) Get(ctx context.Context, userID string, opts ...option.RequestOption) (res *User, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if userID == "" {
-		err = errors.New("missing required userId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("users/%s", userID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return res, err
-}
-
 // Get all users
 func (r *UserService) List(ctx context.Context, query UserListParams, opts ...option.RequestOption) (res *pagination.CursorIDUsers[User], err error) {
 	var raw *http.Response
@@ -73,6 +61,18 @@ func (r *UserService) List(ctx context.Context, query UserListParams, opts ...op
 // Get all users
 func (r *UserService) ListAutoPaging(ctx context.Context, query UserListParams, opts ...option.RequestOption) *pagination.CursorIDUsersAutoPager[User] {
 	return pagination.NewCursorIDUsersAutoPager(r.List(ctx, query, opts...))
+}
+
+// Get user by ID
+func (r *UserService) Get(ctx context.Context, userID string, opts ...option.RequestOption) (res *User, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if userID == "" {
+		err = errors.New("missing required userId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("users/%s", userID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
 }
 
 // Details of a user within an organization.
