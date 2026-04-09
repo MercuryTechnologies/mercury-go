@@ -90,22 +90,6 @@ func (r *AccountService) Get(ctx context.Context, accountID string, opts ...opti
 	return res, err
 }
 
-// Get transaction by ID
-func (r *AccountService) GetTransaction(ctx context.Context, transactionID string, query AccountGetTransactionParams, opts ...option.RequestOption) (res *Transaction, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if query.AccountID == "" {
-		err = errors.New("missing required accountId parameter")
-		return nil, err
-	}
-	if transactionID == "" {
-		err = errors.New("missing required transactionId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("account/%s/transaction/%s", query.AccountID, transactionID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return res, err
-}
-
 // Retrieve a paginated list of monthly statements for a specific account. Supports
 // cursor-based pagination with limit, order, start_after, and end_before query
 // parameters, as well as date range filtering with start and end parameters.
@@ -942,12 +926,6 @@ func init() {
 	apijson.RegisterFieldValidator[AccountNewTransactionParamsPurposeSimple](
 		"category", "Employee", "Landlord", "Vendor", "Contractor", "Subsidiary", "TransferToMyExternalAccount", "FamilyMemberOrFriend", "ForGoodsOrServices", "AngelInvestment", "SavingsOrInvestments", "Expenses", "Travel", "Other",
 	)
-}
-
-type AccountGetTransactionParams struct {
-	// ID for a Mercury account.
-	AccountID string `path:"accountId" api:"required" format:"uuid" json:"-"`
-	paramObj
 }
 
 type AccountListStatementsParams struct {
