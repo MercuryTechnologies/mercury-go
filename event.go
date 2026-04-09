@@ -64,7 +64,7 @@ func (r *EventService) ListAutoPaging(ctx context.Context, query EventListParams
 }
 
 // Get event by ID
-func (r *EventService) Gaet(ctx context.Context, eventID string, opts ...option.RequestOption) (res *Event, err error) {
+func (r *EventService) Get(ctx context.Context, eventID string, opts ...option.RequestOption) (res *Event, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if eventID == "" {
 		err = errors.New("missing required eventId parameter")
