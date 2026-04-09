@@ -48,18 +48,6 @@ func (r *WebhookService) New(ctx context.Context, body WebhookNewParams, opts ..
 	return res, err
 }
 
-// Retrieve details of a specific webhook endpoint by ID
-func (r *WebhookService) Get(ctx context.Context, webhookEndpointID string, opts ...option.RequestOption) (res *Webhook, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if webhookEndpointID == "" {
-		err = errors.New("missing required webhookEndpointId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("webhooks/%s", webhookEndpointID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return res, err
-}
-
 // Update the configuration of an existing webhook endpoint. A webhook that has
 // been disabled due to consecutive delivery failures can be reactivated by setting
 // its status to 'active'.
@@ -110,6 +98,18 @@ func (r *WebhookService) Delete(ctx context.Context, webhookEndpointID string, o
 	path := fmt.Sprintf("webhooks/%s", webhookEndpointID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
 	return err
+}
+
+// Retrieve details of a specific webhook endpoint by ID
+func (r *WebhookService) Get(ctx context.Context, webhookEndpointID string, opts ...option.RequestOption) (res *Webhook, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if webhookEndpointID == "" {
+		err = errors.New("missing required webhookEndpointId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("webhooks/%s", webhookEndpointID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
 }
 
 // Send a test event to verify the webhook endpoint is properly configured and

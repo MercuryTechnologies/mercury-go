@@ -40,18 +40,6 @@ func NewAccountService(opts ...option.RequestOption) (r AccountService) {
 	return
 }
 
-// Get account by ID
-func (r *AccountService) Get(ctx context.Context, accountID string, opts ...option.RequestOption) (res *Account, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if accountID == "" {
-		err = errors.New("missing required accountId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("account/%s", accountID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return res, err
-}
-
 // Retrieve a paginated list of accounts. Supports cursor-based pagination with
 // limit, order, start_after, and end_before query parameters.
 func (r *AccountService) List(ctx context.Context, query AccountListParams, opts ...option.RequestOption) (res *pagination.CursorIDAccounts[Account], err error) {
@@ -87,6 +75,34 @@ func (r *AccountService) NewTransaction(ctx context.Context, accountID string, b
 	}
 	path := fmt.Sprintf("account/%s/transactions", accountID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return res, err
+}
+
+// Get account by ID
+func (r *AccountService) Get(ctx context.Context, accountID string, opts ...option.RequestOption) (res *Account, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if accountID == "" {
+		err = errors.New("missing required accountId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("account/%s", accountID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
+// Get transaction by ID
+func (r *AccountService) GetTransaction(ctx context.Context, transactionID string, query AccountGetTransactionParams, opts ...option.RequestOption) (res *Transaction, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if query.AccountID == "" {
+		err = errors.New("missing required accountId parameter")
+		return nil, err
+	}
+	if transactionID == "" {
+		err = errors.New("missing required transactionId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("account/%s/transaction/%s", query.AccountID, transactionID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }
 
@@ -172,22 +188,6 @@ func (r *AccountService) RequestSendMoney(ctx context.Context, accountID string,
 	}
 	path := fmt.Sprintf("account/%s/request-send-money", accountID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return res, err
-}
-
-// Get transaction by ID
-func (r *AccountService) GetTransaction(ctx context.Context, transactionID string, query AccountGetTransactionParams, opts ...option.RequestOption) (res *Transaction, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if query.AccountID == "" {
-		err = errors.New("missing required accountId parameter")
-		return nil, err
-	}
-	if transactionID == "" {
-		err = errors.New("missing required transactionId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("account/%s/transaction/%s", query.AccountID, transactionID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }
 
@@ -1003,6 +1003,12 @@ func init() {
 	)
 }
 
+type AccountGetTransactionParams struct {
+	// ID for a Mercury account.
+	AccountID string `path:"accountId" api:"required" format:"uuid" json:"-"`
+	paramObj
+}
+
 type AccountListStatementsParams struct {
 	// Filter statements where the period start date is on or before this date. If the
 	// date is in the future, defaults to the current date. Format: YYYY-MM-DD
@@ -1125,10 +1131,4 @@ func (r AccountRequestSendMoneyParams) MarshalJSON() (data []byte, err error) {
 }
 func (r *AccountRequestSendMoneyParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-type AccountGetTransactionParams struct {
-	// ID for a Mercury account.
-	AccountID string `path:"accountId" api:"required" format:"uuid" json:"-"`
-	paramObj
 }

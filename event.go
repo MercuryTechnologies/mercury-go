@@ -40,18 +40,6 @@ func NewEventService(opts ...option.RequestOption) (r EventService) {
 	return
 }
 
-// Get event by ID
-func (r *EventService) Get(ctx context.Context, eventID string, opts ...option.RequestOption) (res *Event, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if eventID == "" {
-		err = errors.New("missing required eventId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("events/%s", eventID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return res, err
-}
-
 // Get all events
 func (r *EventService) List(ctx context.Context, query EventListParams, opts ...option.RequestOption) (res *pagination.CursorIDEvents[Event], err error) {
 	var raw *http.Response
@@ -73,6 +61,18 @@ func (r *EventService) List(ctx context.Context, query EventListParams, opts ...
 // Get all events
 func (r *EventService) ListAutoPaging(ctx context.Context, query EventListParams, opts ...option.RequestOption) *pagination.CursorIDEventsAutoPager[Event] {
 	return pagination.NewCursorIDEventsAutoPager(r.List(ctx, query, opts...))
+}
+
+// Get event by ID
+func (r *EventService) Gaet(ctx context.Context, eventID string, opts ...option.RequestOption) (res *Event, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if eventID == "" {
+		err = errors.New("missing required eventId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("events/%s", eventID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
 }
 
 // Represents a single event in the Mercury API event stream. | Events track
