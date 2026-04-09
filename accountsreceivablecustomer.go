@@ -48,18 +48,6 @@ func (r *AccountsReceivableCustomerService) New(ctx context.Context, body Accoun
 	return res, err
 }
 
-// Retrieve details of a specific customer by their ID
-func (r *AccountsReceivableCustomerService) Get(ctx context.Context, customerID string, opts ...option.RequestOption) (res *Customer, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if customerID == "" {
-		err = errors.New("missing required customerId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("ar/customers/%s", customerID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return res, err
-}
-
 // Update an existing customer
 func (r *AccountsReceivableCustomerService) Update(ctx context.Context, customerID string, body AccountsReceivableCustomerUpdateParams, opts ...option.RequestOption) (res *Customer, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -108,6 +96,18 @@ func (r *AccountsReceivableCustomerService) Delete(ctx context.Context, customer
 	path := fmt.Sprintf("ar/customers/%s", customerID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
 	return err
+}
+
+// Retrieve details of a specific customer by their ID
+func (r *AccountsReceivableCustomerService) Get(ctx context.Context, customerID string, opts ...option.RequestOption) (res *Customer, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if customerID == "" {
+		err = errors.New("missing required customerId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("ar/customers/%s", customerID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
 }
 
 // Address input for creating or updating customers

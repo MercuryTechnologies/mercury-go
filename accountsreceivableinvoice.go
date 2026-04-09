@@ -50,18 +50,6 @@ func (r *AccountsReceivableInvoiceService) New(ctx context.Context, body Account
 	return res, err
 }
 
-// Retrieve details of an invoice by its ID
-func (r *AccountsReceivableInvoiceService) Get(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *Invoice, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if invoiceID == "" {
-		err = errors.New("missing required invoiceId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("ar/invoices/%s", invoiceID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return res, err
-}
-
 // Update an existing invoice
 func (r *AccountsReceivableInvoiceService) Update(ctx context.Context, invoiceID string, body AccountsReceivableInvoiceUpdateParams, opts ...option.RequestOption) (res *Invoice, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -122,6 +110,18 @@ func (r *AccountsReceivableInvoiceService) DownloadPdf(ctx context.Context, invo
 		return nil, err
 	}
 	path := fmt.Sprintf("ar/invoices/%s/pdf", invoiceID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
+// Retrieve details of an invoice by its ID
+func (r *AccountsReceivableInvoiceService) Get(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *Invoice, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if invoiceID == "" {
+		err = errors.New("missing required invoiceId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("ar/invoices/%s", invoiceID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }

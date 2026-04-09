@@ -37,18 +37,6 @@ func NewSafeService(opts ...option.RequestOption) (r SafeService) {
 	return
 }
 
-// Retrieve a specific SAFE request by its ID.
-func (r *SafeService) Get(ctx context.Context, safeRequestID string, opts ...option.RequestOption) (res *SafeRequest, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if safeRequestID == "" {
-		err = errors.New("missing required safeRequestId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("safes/%s", safeRequestID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return res, err
-}
-
 // Retrieve all SAFE (Simple Agreement for Future Equity) requests for your
 // organization.
 func (r *SafeService) List(ctx context.Context, opts ...option.RequestOption) (res *[]SafeRequest, err error) {
@@ -68,6 +56,18 @@ func (r *SafeService) DownloadDocument(ctx context.Context, safeRequestID string
 		return nil, err
 	}
 	path := fmt.Sprintf("safes/%s/document", safeRequestID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
+// Retrieve a specific SAFE request by its ID.
+func (r *SafeService) Get(ctx context.Context, safeRequestID string, opts ...option.RequestOption) (res *SafeRequest, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if safeRequestID == "" {
+		err = errors.New("missing required safeRequestId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("safes/%s", safeRequestID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }

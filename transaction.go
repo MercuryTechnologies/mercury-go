@@ -43,19 +43,6 @@ func NewTransactionService(opts ...option.RequestOption) (r TransactionService) 
 	return
 }
 
-// Retrieve a single transaction by its ID. Returns full transaction details
-// including attachments, check images, and related metadata.
-func (r *TransactionService) Get(ctx context.Context, transactionID string, opts ...option.RequestOption) (res *Transaction, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if transactionID == "" {
-		err = errors.New("missing required transactionId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("transaction/%s", transactionID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return res, err
-}
-
 // Update the note and/or category of an existing transaction. Use null values to
 // clear existing data.
 func (r *TransactionService) Update(ctx context.Context, transactionID string, body TransactionUpdateParams, opts ...option.RequestOption) (res *Transaction, err error) {
@@ -94,6 +81,19 @@ func (r *TransactionService) List(ctx context.Context, query TransactionListPara
 // pagination.
 func (r *TransactionService) ListAutoPaging(ctx context.Context, query TransactionListParams, opts ...option.RequestOption) *pagination.CursorIDTransactionsAutoPager[Transaction] {
 	return pagination.NewCursorIDTransactionsAutoPager(r.List(ctx, query, opts...))
+}
+
+// Retrieve a single transaction by its ID. Returns full transaction details
+// including attachments, check images, and related metadata.
+func (r *TransactionService) Get(ctx context.Context, transactionID string, opts ...option.RequestOption) (res *Transaction, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if transactionID == "" {
+		err = errors.New("missing required transactionId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("transaction/%s", transactionID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
 }
 
 // Upload a file attachment to a transaction. The file is uploaded via

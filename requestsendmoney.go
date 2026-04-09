@@ -38,18 +38,6 @@ func NewRequestSendMoneyService(opts ...option.RequestOption) (r RequestSendMone
 	return
 }
 
-// Get send money approval request by ID
-func (r *RequestSendMoneyService) Get(ctx context.Context, requestID string, opts ...option.RequestOption) (res *SendMoneyApproval, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if requestID == "" {
-		err = errors.New("missing required requestId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("request-send-money/%s", requestID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return res, err
-}
-
 // Retrieve a paginated list of send money approval requests for the authenticated
 // organization. Supports filtering by account and status.
 func (r *RequestSendMoneyService) List(ctx context.Context, query RequestSendMoneyListParams, opts ...option.RequestOption) (res *pagination.CursorIDRequestSendMoney[SendMoneyApproval], err error) {
@@ -73,6 +61,18 @@ func (r *RequestSendMoneyService) List(ctx context.Context, query RequestSendMon
 // organization. Supports filtering by account and status.
 func (r *RequestSendMoneyService) ListAutoPaging(ctx context.Context, query RequestSendMoneyListParams, opts ...option.RequestOption) *pagination.CursorIDRequestSendMoneyAutoPager[SendMoneyApproval] {
 	return pagination.NewCursorIDRequestSendMoneyAutoPager(r.List(ctx, query, opts...))
+}
+
+// Get send money approval request by ID
+func (r *RequestSendMoneyService) Get(ctx context.Context, requestID string, opts ...option.RequestOption) (res *SendMoneyApproval, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if requestID == "" {
+		err = errors.New("missing required requestId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("request-send-money/%s", requestID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
 }
 
 type RequestSendMoneyListParams struct {
