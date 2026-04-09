@@ -25,12 +25,12 @@ func TestManualPagination(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	page, err := client.AccountsReceivable.Customers.List(context.TODO(), mercury.AccountsReceivableCustomerListParams{})
+	page, err := client.Invoices.List(context.TODO(), mercury.InvoiceListParams{})
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	for _, customer := range page.Customers {
-		t.Logf("%+v\n", customer.ID)
+	for _, invoice := range page.Invoices {
+		t.Logf("%+v\n", invoice.ID)
 	}
 	// The mock server isn't going to give us real pagination
 	page, err = page.GetNextPage()
@@ -38,8 +38,8 @@ func TestManualPagination(t *testing.T) {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
 	if page != nil {
-		for _, customer := range page.Customers {
-			t.Logf("%+v\n", customer.ID)
+		for _, invoice := range page.Invoices {
+			t.Logf("%+v\n", invoice.ID)
 		}
 	}
 }
