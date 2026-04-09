@@ -40,7 +40,7 @@ func TestSafeList(t *testing.T) {
 	}
 }
 
-func TestSafeDownloadDocument(t *testing.T) {
+func TestSafeDownload(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
 		w.Write([]byte("abc"))
@@ -51,7 +51,7 @@ func TestSafeDownloadDocument(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	resp, err := client.Safes.DownloadDocument(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	resp, err := client.Safes.Download(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {

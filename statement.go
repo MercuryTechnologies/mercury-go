@@ -37,7 +37,7 @@ func NewStatementService(opts ...option.RequestOption) (r StatementService) {
 // Downloads a PDF file for the specified account statement. The response includes
 // a Content-Disposition header for proper file download handling. Returns binary
 // PDF data.
-func (r *StatementService) DownloadPdf(ctx context.Context, statementID string, opts ...option.RequestOption) (res *http.Response, err error) {
+func (r *StatementService) Download(ctx context.Context, statementID string, opts ...option.RequestOption) (res *http.Response, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/pdf")}, opts...)
 	if statementID == "" {

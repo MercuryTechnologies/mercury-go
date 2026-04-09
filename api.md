@@ -121,14 +121,14 @@ Response Types:
 Methods:
 
 - <code title="get /safes">client.Safes.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SafeService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*[]<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SafeRequest">SafeRequest</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /safes/{safeRequestId}/document">client.Safes.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SafeService.DownloadDocument">DownloadDocument</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, safeRequestID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /safes/{safeRequestId}/document">client.Safes.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SafeService.Download">Download</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, safeRequestID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /safes/{safeRequestId}">client.Safes.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SafeService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, safeRequestID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SafeRequest">SafeRequest</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Statements
 
 Methods:
 
-- <code title="get /statements/{statementId}/pdf">client.Statements.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#StatementService.DownloadPdf">DownloadPdf</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, statementID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /statements/{statementId}/pdf">client.Statements.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#StatementService.Download">Download</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, statementID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Transfer
 
