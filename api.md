@@ -1,6 +1,6 @@
 # AccountsReceivable
 
-## Attachements
+## Attachments
 
 Response Types:
 
@@ -8,7 +8,7 @@ Response Types:
 
 Methods:
 
-- <code title="get /ar/attachments/{attachmentId}">client.AccountsReceivable.Attachements.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountsReceivableAttachementService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, attachmentID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Attachment">Attachment</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /ar/attachments/{attachmentId}">client.AccountsReceivable.Attachments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountsReceivableAttachmentService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, attachmentID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Attachment">Attachment</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ## Customers
 
