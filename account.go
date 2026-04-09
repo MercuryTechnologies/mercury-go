@@ -106,18 +106,6 @@ func (r *AccountService) GetTransaction(ctx context.Context, transactionID strin
 	return res, err
 }
 
-// Retrieve all debit and credit cards associated with a specific account.
-func (r *AccountService) ListCards(ctx context.Context, accountID string, opts ...option.RequestOption) (res *AccountListCardsResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if accountID == "" {
-		err = errors.New("missing required accountId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("account/%s/cards", accountID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return res, err
-}
-
 // Retrieve a paginated list of monthly statements for a specific account. Supports
 // cursor-based pagination with limit, order, start_after, and end_before query
 // parameters, as well as date range filtering with start and end parameters.
@@ -777,53 +765,6 @@ type TransactionMethodDataDebitCardInfo struct {
 // Returns the unmodified JSON received from the API
 func (r TransactionMethodDataDebitCardInfo) RawJSON() string { return r.JSON.raw }
 func (r *TransactionMethodDataDebitCardInfo) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type AccountListCardsResponse struct {
-	Cards []AccountListCardsResponseCard `json:"cards" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Cards       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r AccountListCardsResponse) RawJSON() string { return r.JSON.raw }
-func (r *AccountListCardsResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type AccountListCardsResponseCard struct {
-	CardID         string `json:"cardId" api:"required"`
-	CreatedAt      string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	LastFourDigits string `json:"lastFourDigits" api:"required"`
-	NameOnCard     string `json:"nameOnCard" api:"required"`
-	// Any of "visa", "mastercard".
-	Network string `json:"network" api:"required"`
-	// Any of "active", "frozen", "cancelled", "inactive", "expired", "suspended".
-	Status string `json:"status" api:"required"`
-	// Any of "inactive", "active", "paused".
-	PhysicalCardStatus string `json:"physicalCardStatus" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		CardID             respjson.Field
-		CreatedAt          respjson.Field
-		LastFourDigits     respjson.Field
-		NameOnCard         respjson.Field
-		Network            respjson.Field
-		Status             respjson.Field
-		PhysicalCardStatus respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r AccountListCardsResponseCard) RawJSON() string { return r.JSON.raw }
-func (r *AccountListCardsResponseCard) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
