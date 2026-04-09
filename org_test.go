@@ -13,7 +13,7 @@ import (
 	"github.com/MercuryTechnologies/mercury-go/option"
 )
 
-func TestOrganizationGet(t *testing.T) {
+func TestOrgGet(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,7 +26,7 @@ func TestOrganizationGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Organization.Get(context.TODO())
+	_, err := client.Org.Get(context.TODO())
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {
