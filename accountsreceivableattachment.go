@@ -17,27 +17,27 @@ import (
 
 // Manage invoices
 //
-// AccountsReceivableAttachementService contains methods and other services that
+// AccountsReceivableAttachmentService contains methods and other services that
 // help with interacting with the mercury API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewAccountsReceivableAttachementService] method instead.
-type AccountsReceivableAttachementService struct {
+// the [NewAccountsReceivableAttachmentService] method instead.
+type AccountsReceivableAttachmentService struct {
 	Options []option.RequestOption
 }
 
-// NewAccountsReceivableAttachementService generates a new service that applies the
+// NewAccountsReceivableAttachmentService generates a new service that applies the
 // given options to each request. These options are applied after the parent
 // client's options (if there is one), and before any request-specific options.
-func NewAccountsReceivableAttachementService(opts ...option.RequestOption) (r AccountsReceivableAttachementService) {
-	r = AccountsReceivableAttachementService{}
+func NewAccountsReceivableAttachmentService(opts ...option.RequestOption) (r AccountsReceivableAttachmentService) {
+	r = AccountsReceivableAttachmentService{}
 	r.Options = opts
 	return
 }
 
 // Retrieve attachment details including download URL
-func (r *AccountsReceivableAttachementService) Get(ctx context.Context, attachmentID string, opts ...option.RequestOption) (res *Attachment, err error) {
+func (r *AccountsReceivableAttachmentService) Get(ctx context.Context, attachmentID string, opts ...option.RequestOption) (res *Attachment, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if attachmentID == "" {
 		err = errors.New("missing required attachmentId parameter")
