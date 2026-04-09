@@ -25,11 +25,11 @@ func TestAutoPagination(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	iter := client.Invoices.ListAutoPaging(context.TODO(), mercury.InvoiceListParams{})
+	iter := client.Customers.ListAutoPaging(context.TODO(), mercury.CustomerListParams{})
 	// The mock server isn't going to give us real pagination
 	for i := 0; i < 3 && iter.Next(); i++ {
-		invoice := iter.Current()
-		t.Logf("%+v\n", invoice.ID)
+		customer := iter.Current()
+		t.Logf("%+v\n", customer.ID)
 	}
 	if err := iter.Err(); err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
