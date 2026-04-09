@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.4.0 (2026-04-09)
+
+Full Changelog: [v0.3.3...v0.4.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.3.3...v0.4.0)
+
+### ⚠ BREAKING CHANGES
+
+* remove account.get_transaction
+
+### Features
+
+* remove account.get_transaction ([731aeed](https://github.com/MercuryTechnologies/mercury-go/commit/731aeedce97fb40adfb736872f70b6f95c3648b7))
+
+
+### Styles
+
+* use `download` as method ([b024e06](https://github.com/MercuryTechnologies/mercury-go/commit/b024e062478cae5a2fec500d820b17ba6a326c0a))
+
 ## 0.3.3 (2026-04-09)
 
 Full Changelog: [v0.3.2...v0.3.3](https://github.com/MercuryTechnologies/mercury-go/compare/v0.3.2...v0.3.3)
