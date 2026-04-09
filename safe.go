@@ -48,7 +48,7 @@ func (r *SafeService) List(ctx context.Context, opts ...option.RequestOption) (r
 
 // Download the PDF document for a specific SAFE request. Returns binary PDF data
 // with a Content-Disposition header.
-func (r *SafeService) DownloadDocument(ctx context.Context, safeRequestID string, opts ...option.RequestOption) (res *http.Response, err error) {
+func (r *SafeService) Download(ctx context.Context, safeRequestID string, opts ...option.RequestOption) (res *http.Response, err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/pdf")}, opts...)
 	if safeRequestID == "" {
