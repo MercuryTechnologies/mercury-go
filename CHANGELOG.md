@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.3.3 (2026-04-09)
+
+Full Changelog: [v0.3.2...v0.3.3](https://github.com/MercuryTechnologies/mercury-go/compare/v0.3.2...v0.3.3)
+
+### Bug Fixes
+
+* get events typo ([a5d7f04](https://github.com/MercuryTechnologies/mercury-go/commit/a5d7f04d6377f300d5d2cad4511ba0947c205d49))
+
+
+### Chores
+
+* fix attachments typo ([ed13fb4](https://github.com/MercuryTechnologies/mercury-go/commit/ed13fb4e639f552b8a9da0800b3b686d5bde05cf))
+
+
+### Styles
+
+* rename "retrieve" to "get" ([828c52c](https://github.com/MercuryTechnologies/mercury-go/commit/828c52c39b4efa5ce98a29bd604a5772eae898cf))
+* rename `organization` to `org` ([849dc13](https://github.com/MercuryTechnologies/mercury-go/commit/849dc1374beb10e96bde4d9f84e8bc0855a5a9d6))
+
+
+### Refactors
+
+* create cards resource ([0a93dac](https://github.com/MercuryTechnologies/mercury-go/commit/0a93dac162322f7c47c031ee611aca4d9971a557))
+* make `customers` top level resource ([5fe90f0](https://github.com/MercuryTechnologies/mercury-go/commit/5fe90f01286088d88479f7830e7340db57a7e9f2))
+* make `invoices` top level resource ([7a2ad26](https://github.com/MercuryTechnologies/mercury-go/commit/7a2ad26a78edaa0a25412743c476002c6044a3df))
+
 ## 0.3.2 (2026-04-08)
 
 Full Changelog: [v0.3.1...v0.3.2](https://github.com/MercuryTechnologies/mercury-go/compare/v0.3.1...v0.3.2)
