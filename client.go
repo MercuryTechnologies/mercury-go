@@ -18,6 +18,8 @@ import (
 type Client struct {
 	Options            []option.RequestOption
 	AccountsReceivable AccountsReceivableService
+	// Manage bank accounts
+	Cards CardService
 	// Manage expense categories
 	Categories CategoryService
 	// Manage credit accounts
@@ -71,6 +73,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r = Client{Options: opts}
 
 	r.AccountsReceivable = NewAccountsReceivableService(opts...)
+	r.Cards = NewCardService(opts...)
 	r.Categories = NewCategoryService(opts...)
 	r.Credit = NewCreditService(opts...)
 	r.Events = NewEventService(opts...)
