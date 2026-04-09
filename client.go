@@ -17,6 +17,8 @@ import (
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
 	Options []option.RequestOption
+	// Manage customers
+	Customers CustomerService
 	// Manage invoices
 	Invoices           InvoiceService
 	AccountsReceivable AccountsReceivableService
@@ -74,6 +76,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 
 	r = Client{Options: opts}
 
+	r.Customers = NewCustomerService(opts...)
 	r.Invoices = NewInvoiceService(opts...)
 	r.AccountsReceivable = NewAccountsReceivableService(opts...)
 	r.Cards = NewCardService(opts...)

@@ -1,3 +1,22 @@
+# Customers
+
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AddressInputParam">AddressInputParam</a>
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Customer">Customer</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CustomerAddress">CustomerAddress</a>
+
+Methods:
+
+- <code title="post /ar/customers">client.Customers.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CustomerService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CustomerNewParams">CustomerNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Customer">Customer</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /ar/customers/{customerId}">client.Customers.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CustomerService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, customerID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CustomerUpdateParams">CustomerUpdateParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Customer">Customer</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /ar/customers">client.Customers.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CustomerService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CustomerListParams">CustomerListParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination#CursorIDArCustomers">CursorIDArCustomers</a>[<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Customer">Customer</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="delete /ar/customers/{customerId}">client.Customers.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CustomerService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, customerID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+- <code title="get /ar/customers/{customerId}">client.Customers.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CustomerService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, customerID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Customer">Customer</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 # Invoices
 
 Params Types:
@@ -33,25 +52,6 @@ Response Types:
 Methods:
 
 - <code title="get /ar/attachments/{attachmentId}">client.AccountsReceivable.Attachments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountsReceivableAttachmentService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, attachmentID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Attachment">Attachment</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-## Customers
-
-Params Types:
-
-- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AddressInputParam">AddressInputParam</a>
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Customer">Customer</a>
-- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CustomerAddress">CustomerAddress</a>
-
-Methods:
-
-- <code title="post /ar/customers">client.AccountsReceivable.Customers.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountsReceivableCustomerService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountsReceivableCustomerNewParams">AccountsReceivableCustomerNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Customer">Customer</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /ar/customers/{customerId}">client.AccountsReceivable.Customers.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountsReceivableCustomerService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, customerID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountsReceivableCustomerUpdateParams">AccountsReceivableCustomerUpdateParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Customer">Customer</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /ar/customers">client.AccountsReceivable.Customers.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountsReceivableCustomerService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountsReceivableCustomerListParams">AccountsReceivableCustomerListParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination#CursorIDArCustomers">CursorIDArCustomers</a>[<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Customer">Customer</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="delete /ar/customers/{customerId}">client.AccountsReceivable.Customers.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountsReceivableCustomerService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, customerID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-- <code title="get /ar/customers/{customerId}">client.AccountsReceivable.Customers.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountsReceivableCustomerService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, customerID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Customer">Customer</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Cards
 

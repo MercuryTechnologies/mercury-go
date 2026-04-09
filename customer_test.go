@@ -13,7 +13,7 @@ import (
 	"github.com/MercuryTechnologies/mercury-go/option"
 )
 
-func TestAccountsReceivableCustomerNewWithOptionalParams(t *testing.T) {
+func TestCustomerNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,7 +26,7 @@ func TestAccountsReceivableCustomerNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.AccountsReceivable.Customers.New(context.TODO(), mercury.AccountsReceivableCustomerNewParams{
+	_, err := client.Customers.New(context.TODO(), mercury.CustomerNewParams{
 		Email: "email",
 		Name:  "name",
 		Address: mercury.AddressInputParam{
@@ -48,7 +48,7 @@ func TestAccountsReceivableCustomerNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAccountsReceivableCustomerUpdateWithOptionalParams(t *testing.T) {
+func TestCustomerUpdateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -61,10 +61,10 @@ func TestAccountsReceivableCustomerUpdateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.AccountsReceivable.Customers.Update(
+	_, err := client.Customers.Update(
 		context.TODO(),
 		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-		mercury.AccountsReceivableCustomerUpdateParams{
+		mercury.CustomerUpdateParams{
 			Email:              "email",
 			Name:               "name",
 			ResendOpenInvoices: true,
@@ -88,7 +88,7 @@ func TestAccountsReceivableCustomerUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAccountsReceivableCustomerListWithOptionalParams(t *testing.T) {
+func TestCustomerListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -101,10 +101,10 @@ func TestAccountsReceivableCustomerListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.AccountsReceivable.Customers.List(context.TODO(), mercury.AccountsReceivableCustomerListParams{
+	_, err := client.Customers.List(context.TODO(), mercury.CustomerListParams{
 		EndBefore:  mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Limit:      mercury.Int(1),
-		Order:      mercury.AccountsReceivableCustomerListParamsOrderAsc,
+		Order:      mercury.CustomerListParamsOrderAsc,
 		StartAfter: mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
@@ -116,7 +116,7 @@ func TestAccountsReceivableCustomerListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAccountsReceivableCustomerDelete(t *testing.T) {
+func TestCustomerDelete(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -129,7 +129,7 @@ func TestAccountsReceivableCustomerDelete(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	err := client.AccountsReceivable.Customers.Delete(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	err := client.Customers.Delete(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {
@@ -139,7 +139,7 @@ func TestAccountsReceivableCustomerDelete(t *testing.T) {
 	}
 }
 
-func TestAccountsReceivableCustomerGet(t *testing.T) {
+func TestCustomerGet(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -152,7 +152,7 @@ func TestAccountsReceivableCustomerGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.AccountsReceivable.Customers.Get(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	_, err := client.Customers.Get(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {
