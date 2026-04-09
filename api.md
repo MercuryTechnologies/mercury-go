@@ -80,15 +80,15 @@ Methods:
 - <code title="get /events">client.Events.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#EventService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#EventListParams">EventListParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination#CursorIDEvents">CursorIDEvents</a>[<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Event">Event</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /events/{eventId}">client.Events.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#EventService.Gaet">Gaet</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, eventID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Event">Event</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
-# Organization
+# Org
 
 Response Types:
 
-- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#OrganizationGetResponse">OrganizationGetResponse</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#OrgGetResponse">OrgGetResponse</a>
 
 Methods:
 
-- <code title="get /organization">client.Organization.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#OrganizationService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#OrganizationGetResponse">OrganizationGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /organization">client.Org.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#OrgService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#OrgGetResponse">OrgGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # RequestSendMoney
 
