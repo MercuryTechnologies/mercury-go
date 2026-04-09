@@ -16,7 +16,9 @@ import (
 // interacting with the mercury API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options            []option.RequestOption
+	Options []option.RequestOption
+	// Manage invoices
+	Invoices           InvoiceService
 	AccountsReceivable AccountsReceivableService
 	// Manage bank accounts
 	Cards CardService
@@ -72,6 +74,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 
 	r = Client{Options: opts}
 
+	r.Invoices = NewInvoiceService(opts...)
 	r.AccountsReceivable = NewAccountsReceivableService(opts...)
 	r.Cards = NewCardService(opts...)
 	r.Categories = NewCategoryService(opts...)
