@@ -25,7 +25,7 @@ type Client struct {
 	// Manage API events
 	Events EventService
 	// Organization information
-	Organization OrganizationService
+	Org OrgService
 	// Manage send money approval requests
 	RequestSendMoney RequestSendMoneyService
 	// Manage SAFE (Simple Agreement for Future Equity) requests
@@ -74,7 +74,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Categories = NewCategoryService(opts...)
 	r.Credit = NewCreditService(opts...)
 	r.Events = NewEventService(opts...)
-	r.Organization = NewOrganizationService(opts...)
+	r.Org = NewOrgService(opts...)
 	r.RequestSendMoney = NewRequestSendMoneyService(opts...)
 	r.Safes = NewSafeService(opts...)
 	r.Statements = NewStatementService(opts...)
