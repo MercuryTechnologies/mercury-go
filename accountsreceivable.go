@@ -15,7 +15,7 @@ import (
 type AccountsReceivableService struct {
 	Options []option.RequestOption
 	// Manage invoices
-	Attachements AccountsReceivableAttachementService
+	Attachments AccountsReceivableAttachmentService
 	// Manage customers
 	Customers AccountsReceivableCustomerService
 	// Manage invoices
@@ -28,7 +28,7 @@ type AccountsReceivableService struct {
 func NewAccountsReceivableService(opts ...option.RequestOption) (r AccountsReceivableService) {
 	r = AccountsReceivableService{}
 	r.Options = opts
-	r.Attachements = NewAccountsReceivableAttachementService(opts...)
+	r.Attachments = NewAccountsReceivableAttachmentService(opts...)
 	r.Customers = NewAccountsReceivableCustomerService(opts...)
 	r.Invoices = NewAccountsReceivableInvoiceService(opts...)
 	return
