@@ -15,7 +15,7 @@ import (
 	"github.com/MercuryTechnologies/mercury-go/option"
 )
 
-func TestStatementDownloadPdf(t *testing.T) {
+func TestStatementDownload(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
 		w.Write([]byte("abc"))
@@ -26,7 +26,7 @@ func TestStatementDownloadPdf(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	resp, err := client.Statements.DownloadPdf(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+	resp, err := client.Statements.Download(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {
