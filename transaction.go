@@ -20,6 +20,7 @@ import (
 	"github.com/MercuryTechnologies/mercury-go/option"
 	"github.com/MercuryTechnologies/mercury-go/packages/pagination"
 	"github.com/MercuryTechnologies/mercury-go/packages/param"
+	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
 )
 
 // Manage transactions
@@ -109,6 +110,416 @@ func (r *TransactionService) UploadAttachment(ctx context.Context, transactionID
 	path := fmt.Sprintf("transaction/%s/attachments", transactionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
 	return err
+}
+
+type CurrencyExchangeInfo struct {
+	ConvertedFromAmount   float64 `json:"convertedFromAmount" api:"required"`
+	ConvertedFromCurrency string  `json:"convertedFromCurrency" api:"required"`
+	ConvertedToAmount     float64 `json:"convertedToAmount" api:"required"`
+	ConvertedToCurrency   string  `json:"convertedToCurrency" api:"required"`
+	// Exchange rate goes from "from currency" to "to currency" (ie from currency \*
+	// exchange rate = to currency)
+	ExchangeRate  float64 `json:"exchangeRate" api:"required"`
+	FeeAmount     float64 `json:"feeAmount" api:"required"`
+	FeePercentage float64 `json:"feePercentage" api:"required"`
+	// ID for this transaction
+	FeeTransactionID string `json:"feeTransactionId" api:"nullable" format:"uuid"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ConvertedFromAmount   respjson.Field
+		ConvertedFromCurrency respjson.Field
+		ConvertedToAmount     respjson.Field
+		ConvertedToCurrency   respjson.Field
+		ExchangeRate          respjson.Field
+		FeeAmount             respjson.Field
+		FeePercentage         respjson.Field
+		FeeTransactionID      respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CurrencyExchangeInfo) RawJSON() string { return r.JSON.raw }
+func (r *CurrencyExchangeInfo) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A GL code allocation on a transaction — a GL code name paired with the amount
+// allocated to it. When a transaction is fully categorized, the amounts across all
+// allocations sum to the transaction total.
+type GlAllocation struct {
+	// The amount allocated to this GL code
+	Amount float64 `json:"amount" api:"required"`
+	// The name of the GL code from the connected accounting integration
+	GlCodeName string `json:"glCodeName" api:"required"`
+	// Optional user-provided description for this allocation
+	Description string `json:"description" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Amount      respjson.Field
+		GlCodeName  respjson.Field
+		Description respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r GlAllocation) RawJSON() string { return r.JSON.raw }
+func (r *GlAllocation) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Merchant information for card transactions
+type MerchantData struct {
+	// Merchant ID for card transactions
+	ID string `json:"id" api:"nullable"`
+	// Mercury category for the merchant (e.g., "Restaurants", "Software")
+	//
+	// Any of "Other", "Advertising", "Airlines", "AlcoholAndBars",
+	// "BooksAndNewspaper", "CarRental", "Charity", "Clothing", "Conferences",
+	// "Education", "Electronics", "Entertainment", "FacilitiesExpenses", "Fees",
+	// "FoodDelivery", "FuelAndGas", "Gambling", "GovernmentServices", "Grocery",
+	// "GroundTransportation", "Insurance", "InternetAndTelephone", "Legal", "Lodging",
+	// "Medical", "Memberships", "OfficeSupplies", "OtherTravel", "Parking",
+	// "Political", "ProfessionalServices", "Restaurants", "Retail",
+	// "RideshareAndTaxis", "Shipping", "Software", "Taxes", "Utilities",
+	// "VehicleExpenses".
+	Category MercuryCategory `json:"category" api:"nullable"`
+	// 4-digit merchant category code (MCC) for card transactions
+	CategoryCode string `json:"categoryCode" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID           respjson.Field
+		Category     respjson.Field
+		CategoryCode respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r MerchantData) RawJSON() string { return r.JSON.raw }
+func (r *MerchantData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A Public API version of RelatedTransactionData.
+type RelatedTransactionData struct {
+	// ID for this transaction
+	ID string `json:"id" api:"required" format:"uuid"`
+	// ID for a Mercury account.
+	AccountID string  `json:"accountId" api:"required" format:"uuid"`
+	Amount    float64 `json:"amount" api:"required"`
+	// Any of "ProvisionalCreditReversalToMerchantRefund",
+	// "MerchantRefundToProvisionalCreditReversal", "MerchantRefundToFraudulentCharge",
+	// "FraudulentChargeToMerchantRefund", "PaymentRefundToFailedPayment",
+	// "FailedPaymentToPaymentRefund", "GiftCompensationToOriginalTransaction",
+	// "FeePaymentToOriginalTransaction", "OriginalTransactionToFeePayment",
+	// "FeePaymentToFeeRebate", "FeeRebateToFeePayment", "FeePaymentToFeeReversal",
+	// "FeeReversalToFeePayment", "FeeRebateToFeeRebateReversal",
+	// "FeeRebateReversalToFeeRebate", "TreasurySplitLiquidation",
+	// "ProvisionalCreditToOriginalCharge", "OriginalChargeToProvisionalCredit",
+	// "FeeAtmReimbursementToAtmTransaction", "AtmTransactionToFeeAtmReimbursement",
+	// "AtmTransactionToAtmReimbursementReversal",
+	// "AtmReimbursementReversalToAtmTransaction", "ReturnToOriginalTransaction",
+	// "OriginalTransactionToReturn", "ProvisionalCreditToReversal",
+	// "ReversalToProvisionalCredit".
+	RelationKind RelatedTransactionDataRelationKind `json:"relationKind" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID           respjson.Field
+		AccountID    respjson.Field
+		Amount       respjson.Field
+		RelationKind respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r RelatedTransactionData) RawJSON() string { return r.JSON.raw }
+func (r *RelatedTransactionData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type RelatedTransactionDataRelationKind string
+
+const (
+	RelatedTransactionDataRelationKindProvisionalCreditReversalToMerchantRefund RelatedTransactionDataRelationKind = "ProvisionalCreditReversalToMerchantRefund"
+	RelatedTransactionDataRelationKindMerchantRefundToProvisionalCreditReversal RelatedTransactionDataRelationKind = "MerchantRefundToProvisionalCreditReversal"
+	RelatedTransactionDataRelationKindMerchantRefundToFraudulentCharge          RelatedTransactionDataRelationKind = "MerchantRefundToFraudulentCharge"
+	RelatedTransactionDataRelationKindFraudulentChargeToMerchantRefund          RelatedTransactionDataRelationKind = "FraudulentChargeToMerchantRefund"
+	RelatedTransactionDataRelationKindPaymentRefundToFailedPayment              RelatedTransactionDataRelationKind = "PaymentRefundToFailedPayment"
+	RelatedTransactionDataRelationKindFailedPaymentToPaymentRefund              RelatedTransactionDataRelationKind = "FailedPaymentToPaymentRefund"
+	RelatedTransactionDataRelationKindGiftCompensationToOriginalTransaction     RelatedTransactionDataRelationKind = "GiftCompensationToOriginalTransaction"
+	RelatedTransactionDataRelationKindFeePaymentToOriginalTransaction           RelatedTransactionDataRelationKind = "FeePaymentToOriginalTransaction"
+	RelatedTransactionDataRelationKindOriginalTransactionToFeePayment           RelatedTransactionDataRelationKind = "OriginalTransactionToFeePayment"
+	RelatedTransactionDataRelationKindFeePaymentToFeeRebate                     RelatedTransactionDataRelationKind = "FeePaymentToFeeRebate"
+	RelatedTransactionDataRelationKindFeeRebateToFeePayment                     RelatedTransactionDataRelationKind = "FeeRebateToFeePayment"
+	RelatedTransactionDataRelationKindFeePaymentToFeeReversal                   RelatedTransactionDataRelationKind = "FeePaymentToFeeReversal"
+	RelatedTransactionDataRelationKindFeeReversalToFeePayment                   RelatedTransactionDataRelationKind = "FeeReversalToFeePayment"
+	RelatedTransactionDataRelationKindFeeRebateToFeeRebateReversal              RelatedTransactionDataRelationKind = "FeeRebateToFeeRebateReversal"
+	RelatedTransactionDataRelationKindFeeRebateReversalToFeeRebate              RelatedTransactionDataRelationKind = "FeeRebateReversalToFeeRebate"
+	RelatedTransactionDataRelationKindTreasurySplitLiquidation                  RelatedTransactionDataRelationKind = "TreasurySplitLiquidation"
+	RelatedTransactionDataRelationKindProvisionalCreditToOriginalCharge         RelatedTransactionDataRelationKind = "ProvisionalCreditToOriginalCharge"
+	RelatedTransactionDataRelationKindOriginalChargeToProvisionalCredit         RelatedTransactionDataRelationKind = "OriginalChargeToProvisionalCredit"
+	RelatedTransactionDataRelationKindFeeAtmReimbursementToAtmTransaction       RelatedTransactionDataRelationKind = "FeeAtmReimbursementToAtmTransaction"
+	RelatedTransactionDataRelationKindAtmTransactionToFeeAtmReimbursement       RelatedTransactionDataRelationKind = "AtmTransactionToFeeAtmReimbursement"
+	RelatedTransactionDataRelationKindAtmTransactionToAtmReimbursementReversal  RelatedTransactionDataRelationKind = "AtmTransactionToAtmReimbursementReversal"
+	RelatedTransactionDataRelationKindAtmReimbursementReversalToAtmTransaction  RelatedTransactionDataRelationKind = "AtmReimbursementReversalToAtmTransaction"
+	RelatedTransactionDataRelationKindReturnToOriginalTransaction               RelatedTransactionDataRelationKind = "ReturnToOriginalTransaction"
+	RelatedTransactionDataRelationKindOriginalTransactionToReturn               RelatedTransactionDataRelationKind = "OriginalTransactionToReturn"
+	RelatedTransactionDataRelationKindProvisionalCreditToReversal               RelatedTransactionDataRelationKind = "ProvisionalCreditToReversal"
+	RelatedTransactionDataRelationKindReversalToProvisionalCredit               RelatedTransactionDataRelationKind = "ReversalToProvisionalCredit"
+)
+
+type Transaction struct {
+	// ID for this transaction
+	ID string `json:"id" api:"required" format:"uuid"`
+	// ID for a Mercury account.
+	AccountID                  string                  `json:"accountId" api:"required" format:"uuid"`
+	Amount                     float64                 `json:"amount" api:"required"`
+	Attachments                []TransactionAttachment `json:"attachments" api:"required"`
+	CompliantWithReceiptPolicy bool                    `json:"compliantWithReceiptPolicy" api:"required"`
+	// ID for a Mercury account.
+	CounterpartyID        string `json:"counterpartyId" api:"required" format:"uuid"`
+	CounterpartyName      string `json:"counterpartyName" api:"required"`
+	CreatedAt             string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	DashboardLink         string `json:"dashboardLink" api:"required"`
+	EstimatedDeliveryDate string `json:"estimatedDeliveryDate" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	// GL code allocations assigned to this transaction via a connected accounting
+	// software integration (e.g. QuickBooks, Xero, NetSuite). Each allocation has a GL
+	// code name and the amount allocated to it; amounts sum to the transaction total
+	// when the transaction is fully categorized. Empty if no GL codes have been
+	// assigned. Distinct from Mercury custom categories (see transactionCategoryData).
+	GlAllocations       []GlAllocation `json:"glAllocations" api:"required"`
+	HasGeneratedReceipt bool           `json:"hasGeneratedReceipt" api:"required"`
+	// Any of "externalTransfer", "internalTransfer", "outgoingPayment",
+	// "creditCardCredit", "creditCardTransaction", "debitCardCredit",
+	// "debitCardTransaction", "cardInternationalTransactionFee",
+	// "cardInternationalTransactionFeeRebate",
+	// "cardInternationalTransactionFeeReversal",
+	// "cardInternationalTransactionFeeRebateReversal", "incomingDomesticWire",
+	// "checkDeposit", "incomingInternationalWire", "treasuryTransfer",
+	// "currencyCloudReturn", "wireFee", "personalBankingSubscriptionFee",
+	// "billingEngineSubscriptionFee", "expenseReimbursement", "exogenousWireDrawdown",
+	// "other".
+	Kind                TransactionKind          `json:"kind" api:"required"`
+	RelatedTransactions []RelatedTransactionData `json:"relatedTransactions" api:"required"`
+	// Any of "pending", "sent", "cancelled", "failed", "reversed", "blocked".
+	Status          TransactionStatus `json:"status" api:"required"`
+	BankDescription string            `json:"bankDescription" api:"nullable"`
+	// Represents an expense category for transaction classification.
+	CategoryData CategoryData `json:"categoryData" api:"nullable"`
+	// Present for check deposits and mailed checks; Nothing otherwise.
+	CheckNumber          string `json:"checkNumber" api:"nullable"`
+	CounterpartyNickname string `json:"counterpartyNickname" api:"nullable"`
+	// ID for the credit statement period
+	CreditAccountPeriodID string                `json:"creditAccountPeriodId" api:"nullable" format:"uuid"`
+	CurrencyExchangeInfo  CurrencyExchangeInfo  `json:"currencyExchangeInfo" api:"nullable"`
+	Details               TransactionMethodData `json:"details" api:"nullable"`
+	ExternalMemo          string                `json:"externalMemo" api:"nullable"`
+	FailedAt              string                `json:"failedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	// ID for this transaction
+	FeeID string `json:"feeId" api:"nullable" format:"uuid"`
+	// Deprecated: use transactionGlAllocations instead. This field does not reflect GL
+	// codes assigned via Mercury auto-categorization rules. Preserved for backwards
+	// compatibility.
+	GeneralLedgerCodeName string `json:"generalLedgerCodeName" api:"nullable"`
+	// Merchant information for card transactions
+	Merchant MerchantData `json:"merchant" api:"nullable"`
+	// Any of "Other", "Advertising", "Airlines", "AlcoholAndBars",
+	// "BooksAndNewspaper", "CarRental", "Charity", "Clothing", "Conferences",
+	// "Education", "Electronics", "Entertainment", "FacilitiesExpenses", "Fees",
+	// "FoodDelivery", "FuelAndGas", "Gambling", "GovernmentServices", "Grocery",
+	// "GroundTransportation", "Insurance", "InternetAndTelephone", "Legal", "Lodging",
+	// "Medical", "Memberships", "OfficeSupplies", "OtherTravel", "Parking",
+	// "Political", "ProfessionalServices", "Restaurants", "Retail",
+	// "RideshareAndTaxis", "Shipping", "Software", "Taxes", "Utilities",
+	// "VehicleExpenses".
+	MercuryCategory  MercuryCategory `json:"mercuryCategory" api:"nullable"`
+	Note             string          `json:"note" api:"nullable"`
+	PostedAt         string          `json:"postedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	ReasonForFailure string          `json:"reasonForFailure" api:"nullable"`
+	RequestID        string          `json:"requestId" api:"nullable"`
+	// Present for transactions that have tracking numbers (e.g., RTP, ACH, wires);
+	// Nothing otherwise.
+	TrackingNumber string `json:"trackingNumber" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID                         respjson.Field
+		AccountID                  respjson.Field
+		Amount                     respjson.Field
+		Attachments                respjson.Field
+		CompliantWithReceiptPolicy respjson.Field
+		CounterpartyID             respjson.Field
+		CounterpartyName           respjson.Field
+		CreatedAt                  respjson.Field
+		DashboardLink              respjson.Field
+		EstimatedDeliveryDate      respjson.Field
+		GlAllocations              respjson.Field
+		HasGeneratedReceipt        respjson.Field
+		Kind                       respjson.Field
+		RelatedTransactions        respjson.Field
+		Status                     respjson.Field
+		BankDescription            respjson.Field
+		CategoryData               respjson.Field
+		CheckNumber                respjson.Field
+		CounterpartyNickname       respjson.Field
+		CreditAccountPeriodID      respjson.Field
+		CurrencyExchangeInfo       respjson.Field
+		Details                    respjson.Field
+		ExternalMemo               respjson.Field
+		FailedAt                   respjson.Field
+		FeeID                      respjson.Field
+		GeneralLedgerCodeName      respjson.Field
+		Merchant                   respjson.Field
+		MercuryCategory            respjson.Field
+		Note                       respjson.Field
+		PostedAt                   respjson.Field
+		ReasonForFailure           respjson.Field
+		RequestID                  respjson.Field
+		TrackingNumber             respjson.Field
+		ExtraFields                map[string]respjson.Field
+		raw                        string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r Transaction) RawJSON() string { return r.JSON.raw }
+func (r *Transaction) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type TransactionKind string
+
+const (
+	TransactionKindExternalTransfer                              TransactionKind = "externalTransfer"
+	TransactionKindInternalTransfer                              TransactionKind = "internalTransfer"
+	TransactionKindOutgoingPayment                               TransactionKind = "outgoingPayment"
+	TransactionKindCreditCardCredit                              TransactionKind = "creditCardCredit"
+	TransactionKindCreditCardTransaction                         TransactionKind = "creditCardTransaction"
+	TransactionKindDebitCardCredit                               TransactionKind = "debitCardCredit"
+	TransactionKindDebitCardTransaction                          TransactionKind = "debitCardTransaction"
+	TransactionKindCardInternationalTransactionFee               TransactionKind = "cardInternationalTransactionFee"
+	TransactionKindCardInternationalTransactionFeeRebate         TransactionKind = "cardInternationalTransactionFeeRebate"
+	TransactionKindCardInternationalTransactionFeeReversal       TransactionKind = "cardInternationalTransactionFeeReversal"
+	TransactionKindCardInternationalTransactionFeeRebateReversal TransactionKind = "cardInternationalTransactionFeeRebateReversal"
+	TransactionKindIncomingDomesticWire                          TransactionKind = "incomingDomesticWire"
+	TransactionKindCheckDeposit                                  TransactionKind = "checkDeposit"
+	TransactionKindIncomingInternationalWire                     TransactionKind = "incomingInternationalWire"
+	TransactionKindTreasuryTransfer                              TransactionKind = "treasuryTransfer"
+	TransactionKindCurrencyCloudReturn                           TransactionKind = "currencyCloudReturn"
+	TransactionKindWireFee                                       TransactionKind = "wireFee"
+	TransactionKindPersonalBankingSubscriptionFee                TransactionKind = "personalBankingSubscriptionFee"
+	TransactionKindBillingEngineSubscriptionFee                  TransactionKind = "billingEngineSubscriptionFee"
+	TransactionKindExpenseReimbursement                          TransactionKind = "expenseReimbursement"
+	TransactionKindExogenousWireDrawdown                         TransactionKind = "exogenousWireDrawdown"
+	TransactionKindOther                                         TransactionKind = "other"
+)
+
+type TransactionStatus string
+
+const (
+	TransactionStatusPending   TransactionStatus = "pending"
+	TransactionStatusSent      TransactionStatus = "sent"
+	TransactionStatusCancelled TransactionStatus = "cancelled"
+	TransactionStatusFailed    TransactionStatus = "failed"
+	TransactionStatusReversed  TransactionStatus = "reversed"
+	TransactionStatusBlocked   TransactionStatus = "blocked"
+)
+
+type TransactionAttachment struct {
+	// Any of "checkImage", "receipt", "other".
+	AttachmentType TransactionAttachmentAttachmentType `json:"attachmentType" api:"required"`
+	FileName       string                              `json:"fileName" api:"required"`
+	URL            string                              `json:"url" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AttachmentType respjson.Field
+		FileName       respjson.Field
+		URL            respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TransactionAttachment) RawJSON() string { return r.JSON.raw }
+func (r *TransactionAttachment) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type TransactionAttachmentAttachmentType string
+
+const (
+	TransactionAttachmentAttachmentTypeCheckImage TransactionAttachmentAttachmentType = "checkImage"
+	TransactionAttachmentAttachmentTypeReceipt    TransactionAttachmentAttachmentType = "receipt"
+	TransactionAttachmentAttachmentTypeOther      TransactionAttachmentAttachmentType = "other"
+)
+
+type TransactionMethodData struct {
+	Address                      AddressData                         `json:"address" api:"nullable"`
+	CreditCardInfo               TransactionMethodDataCreditCardInfo `json:"creditCardInfo" api:"nullable"`
+	DebitCardInfo                TransactionMethodDataDebitCardInfo  `json:"debitCardInfo" api:"nullable"`
+	DomesticWireRoutingInfo      DomesticWireRoutingInfo             `json:"domesticWireRoutingInfo" api:"nullable"`
+	ElectronicRoutingInfo        ElectronicRoutingInfo               `json:"electronicRoutingInfo" api:"nullable"`
+	InternationalWireRoutingInfo InternationalWireRoutingInfo        `json:"internationalWireRoutingInfo" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Address                      respjson.Field
+		CreditCardInfo               respjson.Field
+		DebitCardInfo                respjson.Field
+		DomesticWireRoutingInfo      respjson.Field
+		ElectronicRoutingInfo        respjson.Field
+		InternationalWireRoutingInfo respjson.Field
+		ExtraFields                  map[string]respjson.Field
+		raw                          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TransactionMethodData) RawJSON() string { return r.JSON.raw }
+func (r *TransactionMethodData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type TransactionMethodDataCreditCardInfo struct {
+	ID            string `json:"id" api:"required" format:"uuid"`
+	PaymentMethod string `json:"paymentMethod" api:"required"`
+	Email         string `json:"email" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID            respjson.Field
+		PaymentMethod respjson.Field
+		Email         respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TransactionMethodDataCreditCardInfo) RawJSON() string { return r.JSON.raw }
+func (r *TransactionMethodDataCreditCardInfo) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type TransactionMethodDataDebitCardInfo struct {
+	ID string `json:"id" api:"required" format:"uuid"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TransactionMethodDataDebitCardInfo) RawJSON() string { return r.JSON.raw }
+func (r *TransactionMethodDataDebitCardInfo) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type TransactionUpdateParams struct {
