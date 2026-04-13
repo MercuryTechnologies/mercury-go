@@ -29,7 +29,6 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#LineItemData">LineItemData</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentLinkStatus">PaymentLinkStatus</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceListResponse">InvoiceListResponse</a>
-- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceListAttachmentsResponse">InvoiceListAttachmentsResponse</a>
 
 Methods:
 
@@ -39,7 +38,6 @@ Methods:
 - <code title="post /ar/invoices/{invoiceId}/cancel">client.Invoices.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceService.Cancel">Cancel</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, invoiceID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 - <code title="get /ar/invoices/{invoiceId}/pdf">client.Invoices.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceService.Download">Download</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, invoiceID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /ar/invoices/{invoiceId}">client.Invoices.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, invoiceID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Invoice">Invoice</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /ar/invoices/{invoiceId}/attachments">client.Invoices.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceService.ListAttachments">ListAttachments</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, invoiceID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceListAttachmentsResponse">InvoiceListAttachmentsResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ## Attachments
 
