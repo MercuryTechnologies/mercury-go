@@ -100,12 +100,25 @@ Methods:
 
 - <code title="get /organization">client.Org.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#OrgService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#OrgGetResponse">OrgGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
-# RequestSendMoney
+# Payments
+
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyPaymentMethod">SendMoneyPaymentMethod</a>
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyApproval">SendMoneyApproval</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyPaymentMethod">SendMoneyPaymentMethod</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentTransferResponse">PaymentTransferResponse</a>
 
 Methods:
 
-- <code title="get /request-send-money">client.RequestSendMoney.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#RequestSendMoneyService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#RequestSendMoneyListParams">RequestSendMoneyListParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination#CursorIDRequestSendMoney">CursorIDRequestSendMoney</a>[<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyApproval">SendMoneyApproval</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /request-send-money/{requestId}">client.RequestSendMoney.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#RequestSendMoneyService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, requestID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyApproval">SendMoneyApproval</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /account/{accountId}/transactions">client.Payments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, accountID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentNewParams">PaymentNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Transaction">Transaction</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /request-send-money">client.Payments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentListParams">PaymentListParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination#CursorIDRequestSendMoney">CursorIDRequestSendMoney</a>[<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyApproval">SendMoneyApproval</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /request-send-money/{requestId}">client.Payments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, requestID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyApproval">SendMoneyApproval</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /account/{accountId}/request-send-money">client.Payments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentService.Request">Request</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, accountID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentRequestParams">PaymentRequestParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyApproval">SendMoneyApproval</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /transfer">client.Payments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentService.Transfer">Transfer</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentTransferParams">PaymentTransferParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentTransferResponse">PaymentTransferResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Safes
 
@@ -150,16 +163,6 @@ Methods:
 
 - <code title="get /treasury/{treasuryId}/statements">client.Statements.Treasury.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#StatementTreasuryService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, treasuryID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#StatementTreasuryListParams">StatementTreasuryListParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination#CursorIDAccountStatements">CursorIDAccountStatements</a>[<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#StatementTreasuryListResponse">StatementTreasuryListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
-# Transfer
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#TransferNewResponse">TransferNewResponse</a>
-
-Methods:
-
-- <code title="post /transfer">client.Transfer.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#TransferService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#TransferNewParams">TransferNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#TransferNewResponse">TransferNewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
 # Treasury
 
 Response Types:
@@ -200,25 +203,17 @@ Methods:
 
 # Accounts
 
-Params Types:
-
-- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyPaymentMethod">SendMoneyPaymentMethod</a>
-
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Account">Account</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountStatus">AccountStatus</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CategoryData">CategoryData</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#MercuryCategory">MercuryCategory</a>
-- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyApproval">SendMoneyApproval</a>
-- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyPaymentMethod">SendMoneyPaymentMethod</a>
 
 Methods:
 
 - <code title="get /accounts">client.Accounts.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountListParams">AccountListParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination#CursorIDAccounts">CursorIDAccounts</a>[<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Account">Account</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /account/{accountId}/transactions">client.Accounts.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountService.NewTransaction">NewTransaction</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, accountID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountNewTransactionParams">AccountNewTransactionParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Transaction">Transaction</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /account/{accountId}">client.Accounts.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, accountID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Account">Account</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /account/{accountId}/request-send-money">client.Accounts.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountService.RequestSendMoney">RequestSendMoney</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, accountID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountRequestSendMoneyParams">AccountRequestSendMoneyParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyApproval">SendMoneyApproval</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Recipients
 
