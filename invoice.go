@@ -31,6 +31,8 @@ import (
 // the [NewInvoiceService] method instead.
 type InvoiceService struct {
 	Options []option.RequestOption
+	// Manage invoices
+	Attachments InvoiceAttachmentService
 }
 
 // NewInvoiceService generates a new service that applies the given options to each
@@ -39,6 +41,7 @@ type InvoiceService struct {
 func NewInvoiceService(opts ...option.RequestOption) (r InvoiceService) {
 	r = InvoiceService{}
 	r.Options = opts
+	r.Attachments = NewInvoiceAttachmentService(opts...)
 	return
 }
 

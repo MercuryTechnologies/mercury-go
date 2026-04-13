@@ -20,8 +20,7 @@ type Client struct {
 	// Manage customers
 	Customers CustomerService
 	// Manage invoices
-	Invoices           InvoiceService
-	AccountsReceivable AccountsReceivableService
+	Invoices InvoiceService
 	// Manage bank accounts
 	Cards CardService
 	// Manage expense categories
@@ -75,7 +74,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 
 	r.Customers = NewCustomerService(opts...)
 	r.Invoices = NewInvoiceService(opts...)
-	r.AccountsReceivable = NewAccountsReceivableService(opts...)
 	r.Cards = NewCardService(opts...)
 	r.Categories = NewCategoryService(opts...)
 	r.Credit = NewCreditService(opts...)

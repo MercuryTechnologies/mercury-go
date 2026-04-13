@@ -17,27 +17,39 @@ import (
 
 // Manage invoices
 //
-// AccountsReceivableAttachmentService contains methods and other services that
-// help with interacting with the mercury API.
+// InvoiceAttachmentService contains methods and other services that help with
+// interacting with the mercury API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewAccountsReceivableAttachmentService] method instead.
-type AccountsReceivableAttachmentService struct {
+// the [NewInvoiceAttachmentService] method instead.
+type InvoiceAttachmentService struct {
 	Options []option.RequestOption
 }
 
-// NewAccountsReceivableAttachmentService generates a new service that applies the
-// given options to each request. These options are applied after the parent
-// client's options (if there is one), and before any request-specific options.
-func NewAccountsReceivableAttachmentService(opts ...option.RequestOption) (r AccountsReceivableAttachmentService) {
-	r = AccountsReceivableAttachmentService{}
+// NewInvoiceAttachmentService generates a new service that applies the given
+// options to each request. These options are applied after the parent client's
+// options (if there is one), and before any request-specific options.
+func NewInvoiceAttachmentService(opts ...option.RequestOption) (r InvoiceAttachmentService) {
+	r = InvoiceAttachmentService{}
 	r.Options = opts
 	return
 }
 
+// Retrieve a list of all attachments for a specific invoice
+func (r *InvoiceAttachmentService) List(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *InvoiceAttachmentListResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if invoiceID == "" {
+		err = errors.New("missing required invoiceId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("ar/invoices/%s/attachments", invoiceID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
 // Retrieve attachment details including download URL
-func (r *AccountsReceivableAttachmentService) Get(ctx context.Context, attachmentID string, opts ...option.RequestOption) (res *Attachment, err error) {
+func (r *InvoiceAttachmentService) Get(ctx context.Context, attachmentID string, opts ...option.RequestOption) (res *Attachment, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if attachmentID == "" {
 		err = errors.New("missing required attachmentId parameter")
@@ -71,5 +83,23 @@ type Attachment struct {
 // Returns the unmodified JSON received from the API
 func (r Attachment) RawJSON() string { return r.JSON.raw }
 func (r *Attachment) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The response type for fetching attachments related to an AR Invoice.
+type InvoiceAttachmentListResponse struct {
+	// The list of attachments
+	Attachments []Attachment `json:"attachments" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Attachments respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r InvoiceAttachmentListResponse) RawJSON() string { return r.JSON.raw }
+func (r *InvoiceAttachmentListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }

@@ -41,17 +41,17 @@ Methods:
 - <code title="get /ar/invoices/{invoiceId}">client.Invoices.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, invoiceID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Invoice">Invoice</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /ar/invoices/{invoiceId}/attachments">client.Invoices.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceService.ListAttachments">ListAttachments</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, invoiceID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceListAttachmentsResponse">InvoiceListAttachmentsResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
-# AccountsReceivable
-
 ## Attachments
 
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Attachment">Attachment</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceAttachmentListResponse">InvoiceAttachmentListResponse</a>
 
 Methods:
 
-- <code title="get /ar/attachments/{attachmentId}">client.AccountsReceivable.Attachments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountsReceivableAttachmentService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, attachmentID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Attachment">Attachment</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /ar/invoices/{invoiceId}/attachments">client.Invoices.Attachments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceAttachmentService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, invoiceID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceAttachmentListResponse">InvoiceAttachmentListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /ar/attachments/{attachmentId}">client.Invoices.Attachments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceAttachmentService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, attachmentID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Attachment">Attachment</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Cards
 
