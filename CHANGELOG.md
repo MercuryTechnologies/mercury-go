@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.4.2 (2026-04-13)
+
+Full Changelog: [v0.4.1...v0.4.2](https://github.com/MercuryTechnologies/mercury-go/compare/v0.4.1...v0.4.2)
+
+### Chores
+
+* remove old list_attachments. ([c67478c](https://github.com/MercuryTechnologies/mercury-go/commit/c67478c5724effbb86ff2691c2ac00e00a603f83))
+
+
+### Refactors
+
+* make attachments a sub resource ([4629e8e](https://github.com/MercuryTechnologies/mercury-go/commit/4629e8edafd5840ebc2f7b3b908a5100e6c33ddb))
+
 ## 0.4.1 (2026-04-13)
 
 Full Changelog: [v0.4.0...v0.4.1](https://github.com/MercuryTechnologies/mercury-go/compare/v0.4.0...v0.4.1)
