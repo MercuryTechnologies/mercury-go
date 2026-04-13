@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.1 (2026-04-13)
+
+Full Changelog: [v0.4.0...v0.4.1](https://github.com/MercuryTechnologies/mercury-go/compare/v0.4.0...v0.4.1)
+
+### Refactors
+
+* consolidate money movement into single payments resource ([f6d9145](https://github.com/MercuryTechnologies/mercury-go/commit/f6d91452184a57d354629920d21f30cbaebcf5ae))
+* move ar attachments as a sub resrource ([7491d94](https://github.com/MercuryTechnologies/mercury-go/commit/7491d94868b5fed08a38701e29b4176658bd9c5f))
+* rename upload_attachment -&gt; attach ([2f5cbf2](https://github.com/MercuryTechnologies/mercury-go/commit/2f5cbf2e4b839157d73e9747b81d2215d82af28c))
+* unify statements into single resource with account/treasury subresources ([37db929](https://github.com/MercuryTechnologies/mercury-go/commit/37db929ec3c57a94ff503db0cd61e4087b1ce62b))
+* unify transactions listing into single resource ([60f504c](https://github.com/MercuryTechnologies/mercury-go/commit/60f504c3d347ad593fdb5491efe395d44ac39561))
+
 ## 0.4.0 (2026-04-09)
 
 Full Changelog: [v0.3.3...v0.4.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.3.3...v0.4.0)
