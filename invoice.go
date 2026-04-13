@@ -129,18 +129,6 @@ func (r *InvoiceService) Get(ctx context.Context, invoiceID string, opts ...opti
 	return res, err
 }
 
-// Retrieve a list of all attachments for a specific invoice
-func (r *InvoiceService) ListAttachments(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *InvoiceListAttachmentsResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if invoiceID == "" {
-		err = errors.New("missing required invoiceId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("ar/invoices/%s/attachments", invoiceID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return res, err
-}
-
 // The response type for an invoice in the api.
 type Invoice struct {
 	// ID for the invoice.
@@ -384,24 +372,6 @@ type InvoiceListResponse struct {
 // Returns the unmodified JSON received from the API
 func (r InvoiceListResponse) RawJSON() string { return r.JSON.raw }
 func (r *InvoiceListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The response type for fetching attachments related to an AR Invoice.
-type InvoiceListAttachmentsResponse struct {
-	// The list of attachments
-	Attachments []Attachment `json:"attachments" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Attachments respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r InvoiceListAttachmentsResponse) RawJSON() string { return r.JSON.raw }
-func (r *InvoiceListAttachmentsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
