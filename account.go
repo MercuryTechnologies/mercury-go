@@ -90,37 +90,6 @@ func (r *AccountService) Get(ctx context.Context, accountID string, opts ...opti
 	return res, err
 }
 
-// Retrieve a paginated list of monthly statements for a specific account. Supports
-// cursor-based pagination with limit, order, start_after, and end_before query
-// parameters, as well as date range filtering with start and end parameters.
-func (r *AccountService) ListStatements(ctx context.Context, accountID string, query AccountListStatementsParams, opts ...option.RequestOption) (res *pagination.CursorIDAccountStatements[AccountListStatementsResponse], err error) {
-	var raw *http.Response
-	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
-	if accountID == "" {
-		err = errors.New("missing required accountId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("account/%s/statements", accountID)
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Retrieve a paginated list of monthly statements for a specific account. Supports
-// cursor-based pagination with limit, order, start_after, and end_before query
-// parameters, as well as date range filtering with start and end parameters.
-func (r *AccountService) ListStatementsAutoPaging(ctx context.Context, accountID string, query AccountListStatementsParams, opts ...option.RequestOption) *pagination.CursorIDAccountStatementsAutoPager[AccountListStatementsResponse] {
-	return pagination.NewCursorIDAccountStatementsAutoPager(r.ListStatements(ctx, accountID, query, opts...))
-}
-
 // Create a "request to send money" that will require approval based on your
 // organization's approval policies.
 func (r *AccountService) RequestSendMoney(ctx context.Context, accountID string, body AccountRequestSendMoneyParams, opts ...option.RequestOption) (res *SendMoneyApproval, err error) {
@@ -313,65 +282,6 @@ const (
 	SendMoneyPaymentMethodInternationalWire SendMoneyPaymentMethod = "internationalWire"
 )
 
-type AccountListStatementsResponse struct {
-	// ID for the account statement
-	ID                  string  `json:"id" api:"required" format:"uuid"`
-	AccountNumber       string  `json:"accountNumber" api:"required"`
-	CompanyLegalAddress Address `json:"companyLegalAddress" api:"required"`
-	CompanyLegalName    string  `json:"companyLegalName" api:"required"`
-	DownloadURL         string  `json:"downloadUrl" api:"required"`
-	EndDate             string  `json:"endDate" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	// A dollar amount
-	EndingBalance float64                                    `json:"endingBalance" api:"required"`
-	RoutingNumber string                                     `json:"routingNumber" api:"required"`
-	StartDate     string                                     `json:"startDate" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	Transactions  []AccountListStatementsResponseTransaction `json:"transactions" api:"required"`
-	Ein           string                                     `json:"ein" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID                  respjson.Field
-		AccountNumber       respjson.Field
-		CompanyLegalAddress respjson.Field
-		CompanyLegalName    respjson.Field
-		DownloadURL         respjson.Field
-		EndDate             respjson.Field
-		EndingBalance       respjson.Field
-		RoutingNumber       respjson.Field
-		StartDate           respjson.Field
-		Transactions        respjson.Field
-		Ein                 respjson.Field
-		ExtraFields         map[string]respjson.Field
-		raw                 string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r AccountListStatementsResponse) RawJSON() string { return r.JSON.raw }
-func (r *AccountListStatementsResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type AccountListStatementsResponseTransaction struct {
-	// ID for this transaction
-	ID        string `json:"id" api:"required" format:"uuid"`
-	CreatedAt string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	PostedAt  string `json:"postedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		CreatedAt   respjson.Field
-		PostedAt    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r AccountListStatementsResponseTransaction) RawJSON() string { return r.JSON.raw }
-func (r *AccountListStatementsResponseTransaction) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type AccountListParams struct {
 	// The ID of the account to end the page before (exclusive). When provided, results
 	// will end just before this ID and work backwards. Use this for reverse pagination
@@ -488,48 +398,6 @@ func init() {
 		"category", "Employee", "Landlord", "Vendor", "Contractor", "Subsidiary", "TransferToMyExternalAccount", "FamilyMemberOrFriend", "ForGoodsOrServices", "AngelInvestment", "SavingsOrInvestments", "Expenses", "Travel", "Other",
 	)
 }
-
-type AccountListStatementsParams struct {
-	// Filter statements where the period start date is on or before this date. If the
-	// date is in the future, defaults to the current date. Format: YYYY-MM-DD
-	End param.Opt[string] `query:"end,omitzero" json:"-"`
-	// The ID of the statement to end the page before (exclusive). When provided,
-	// results will end just before this ID and work backwards. Use this for reverse
-	// pagination or to retrieve previous pages. Cannot be combined with start_after.
-	EndBefore param.Opt[string] `query:"end_before,omitzero" format:"uuid" json:"-"`
-	// Maximum number of results to return. Allowed range: 1 to 1000. Defaults to 1000
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Filter statements where the period start date is on or after this date. Format:
-	// YYYY-MM-DD
-	Start param.Opt[string] `query:"start,omitzero" json:"-"`
-	// The ID of the statement to start the page after (exclusive). When provided,
-	// results will begin with the statement immediately following this ID. Use this
-	// for standard forward pagination to get the next page of results. Cannot be
-	// combined with end_before.
-	StartAfter param.Opt[string] `query:"start_after,omitzero" format:"uuid" json:"-"`
-	// Sort order. Can be 'asc' or 'desc'. Defaults to 'desc'
-	//
-	// Any of "asc", "desc".
-	Order AccountListStatementsParamsOrder `query:"order,omitzero" json:"-"`
-	paramObj
-}
-
-// URLQuery serializes [AccountListStatementsParams]'s query parameters as
-// `url.Values`.
-func (r AccountListStatementsParams) URLQuery() (v url.Values, err error) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Sort order. Can be 'asc' or 'desc'. Defaults to 'desc'
-type AccountListStatementsParamsOrder string
-
-const (
-	AccountListStatementsParamsOrderAsc  AccountListStatementsParamsOrder = "asc"
-	AccountListStatementsParamsOrderDesc AccountListStatementsParamsOrder = "desc"
-)
 
 type AccountRequestSendMoneyParams struct {
 	// A positive dollar amount with at least 1 cent.

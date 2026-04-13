@@ -23,6 +23,10 @@ import (
 // the [NewStatementService] method instead.
 type StatementService struct {
 	Options []option.RequestOption
+	// Manage bank accounts
+	Accounts StatementAccountService
+	// Manage treasury accounts and transactions
+	Treasury StatementTreasuryService
 }
 
 // NewStatementService generates a new service that applies the given options to
@@ -31,6 +35,8 @@ type StatementService struct {
 func NewStatementService(opts ...option.RequestOption) (r StatementService) {
 	r = StatementService{}
 	r.Options = opts
+	r.Accounts = NewStatementAccountService(opts...)
+	r.Treasury = NewStatementTreasuryService(opts...)
 	return
 }
 
