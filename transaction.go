@@ -3,17 +3,13 @@
 package mercury
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
-	"io"
-	"mime/multipart"
 	"net/http"
 	"net/url"
 	"slices"
 
-	"github.com/MercuryTechnologies/mercury-go/internal/apiform"
 	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
 	"github.com/MercuryTechnologies/mercury-go/internal/apiquery"
 	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
@@ -33,6 +29,8 @@ import (
 // the [NewTransactionService] method instead.
 type TransactionService struct {
 	Options []option.RequestOption
+	// Manage transactions
+	Attachments TransactionAttachmentService
 }
 
 // NewTransactionService generates a new service that applies the given options to
@@ -41,6 +39,7 @@ type TransactionService struct {
 func NewTransactionService(opts ...option.RequestOption) (r TransactionService) {
 	r = TransactionService{}
 	r.Options = opts
+	r.Attachments = NewTransactionAttachmentService(opts...)
 	return
 }
 
@@ -82,21 +81,6 @@ func (r *TransactionService) List(ctx context.Context, query TransactionListPara
 // pagination.
 func (r *TransactionService) ListAutoPaging(ctx context.Context, query TransactionListParams, opts ...option.RequestOption) *pagination.CursorIDTransactionsAutoPager[Transaction] {
 	return pagination.NewCursorIDTransactionsAutoPager(r.List(ctx, query, opts...))
-}
-
-// Upload a file attachment to a transaction. The file is uploaded via
-// multipart/form-data. Supported file types include PDF, images (PNG, JPG, GIF),
-// and common document formats.
-func (r *TransactionService) Attach(ctx context.Context, transactionID string, body TransactionAttachParams, opts ...option.RequestOption) (err error) {
-	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
-	if transactionID == "" {
-		err = errors.New("missing required transactionId parameter")
-		return err
-	}
-	path := fmt.Sprintf("transaction/%s/attachments", transactionID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return err
 }
 
 // Retrieve a single transaction by its ID. Returns full transaction details
@@ -431,35 +415,6 @@ const (
 	TransactionStatusBlocked   TransactionStatus = "blocked"
 )
 
-type TransactionAttachment struct {
-	// Any of "checkImage", "receipt", "other".
-	AttachmentType TransactionAttachmentAttachmentType `json:"attachmentType" api:"required"`
-	FileName       string                              `json:"fileName" api:"required"`
-	URL            string                              `json:"url" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		AttachmentType respjson.Field
-		FileName       respjson.Field
-		URL            respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TransactionAttachment) RawJSON() string { return r.JSON.raw }
-func (r *TransactionAttachment) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type TransactionAttachmentAttachmentType string
-
-const (
-	TransactionAttachmentAttachmentTypeCheckImage TransactionAttachmentAttachmentType = "checkImage"
-	TransactionAttachmentAttachmentTypeReceipt    TransactionAttachmentAttachmentType = "receipt"
-	TransactionAttachmentAttachmentTypeOther      TransactionAttachmentAttachmentType = "other"
-)
-
 type TransactionMethodData struct {
 	Address                      AddressData                         `json:"address" api:"nullable"`
 	CreditCardInfo               TransactionMethodDataCreditCardInfo `json:"creditCardInfo" api:"nullable"`
@@ -600,41 +555,4 @@ type TransactionListParamsOrder string
 const (
 	TransactionListParamsOrderAsc  TransactionListParamsOrder = "asc"
 	TransactionListParamsOrderDesc TransactionListParamsOrder = "desc"
-)
-
-type TransactionAttachParams struct {
-	// The file to upload
-	File io.Reader `json:"file,omitzero" api:"required" format:"binary"`
-	// Type of attachment: 'receipt', 'bill', or 'other'. Defaults to 'other'.
-	//
-	// Any of "receipt", "bill", "other".
-	AttachmentType TransactionAttachParamsAttachmentType `json:"attachmentType,omitzero"`
-	paramObj
-}
-
-func (r TransactionAttachParams) MarshalMultipart() (data []byte, contentType string, err error) {
-	buf := bytes.NewBuffer(nil)
-	writer := multipart.NewWriter(buf)
-	err = apiform.MarshalRoot(r, writer)
-	if err == nil {
-		err = apiform.WriteExtras(writer, r.ExtraFields())
-	}
-	if err != nil {
-		writer.Close()
-		return nil, "", err
-	}
-	err = writer.Close()
-	if err != nil {
-		return nil, "", err
-	}
-	return buf.Bytes(), writer.FormDataContentType(), nil
-}
-
-// Type of attachment: 'receipt', 'bill', or 'other'. Defaults to 'other'.
-type TransactionAttachParamsAttachmentType string
-
-const (
-	TransactionAttachParamsAttachmentTypeReceipt TransactionAttachParamsAttachmentType = "receipt"
-	TransactionAttachParamsAttachmentTypeBill    TransactionAttachParamsAttachmentType = "bill"
-	TransactionAttachParamsAttachmentTypeOther   TransactionAttachParamsAttachmentType = "other"
 )
