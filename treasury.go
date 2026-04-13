@@ -69,7 +69,7 @@ func (r *TreasuryService) ListAutoPaging(ctx context.Context, query TreasuryList
 }
 
 // Retrieve paginated treasury transactions for a specific treasury account.
-func (r *TreasuryService) GetTransactions(ctx context.Context, treasuryID string, query TreasuryGetTransactionsParams, opts ...option.RequestOption) (res *TreasuryGetTransactionsResponse, err error) {
+func (r *TreasuryService) Transactions(ctx context.Context, treasuryID string, query TreasuryTransactionsParams, opts ...option.RequestOption) (res *TreasuryTransactionsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if treasuryID == "" {
 		err = errors.New("missing required treasuryId parameter")
@@ -172,9 +172,9 @@ func (r *TreasuryListResponseNetReturnDividend) UnmarshalJSON(data []byte) error
 }
 
 // Response type for treasury transactions API endpoint
-type TreasuryGetTransactionsResponse struct {
+type TreasuryTransactionsResponse struct {
 	// List of treasury transactions in the response
-	Transactions []TreasuryGetTransactionsResponseTransaction `json:"transactions" api:"required"`
+	Transactions []TreasuryTransactionsResponseTransaction `json:"transactions" api:"required"`
 	// Pagination cursor for retrieving next batch of transactions
 	Cursor int64 `json:"cursor" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -187,13 +187,13 @@ type TreasuryGetTransactionsResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TreasuryGetTransactionsResponse) RawJSON() string { return r.JSON.raw }
-func (r *TreasuryGetTransactionsResponse) UnmarshalJSON(data []byte) error {
+func (r TreasuryTransactionsResponse) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryTransactionsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Treasury transaction data for external API consumption
-type TreasuryGetTransactionsResponseTransaction struct {
+type TreasuryTransactionsResponseTransaction struct {
 	// ID for this treasury transaction
 	ID string `json:"id" api:"required" format:"uuid"`
 	// ID for a Mercury account.
@@ -212,10 +212,10 @@ type TreasuryGetTransactionsResponseTransaction struct {
 	// "sweepInPosted", "sweepOutPosted", "sweepReconcilePosted",
 	// "valuationChangePosted", "oemsMutualFundOrderSettled",
 	// "oemsMutualFundOrderCanceled", "oemsMutualFundOrderRejected".
-	Type              string                                            `json:"type" api:"required"`
-	AdditionalDetails string                                            `json:"additionalDetails" api:"nullable"`
-	Details           TreasuryGetTransactionsResponseTransactionDetails `json:"details" api:"nullable"`
-	Security          string                                            `json:"security" api:"nullable"`
+	Type              string                                         `json:"type" api:"required"`
+	AdditionalDetails string                                         `json:"additionalDetails" api:"nullable"`
+	Details           TreasuryTransactionsResponseTransactionDetails `json:"details" api:"nullable"`
+	Security          string                                         `json:"security" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                respjson.Field
@@ -234,12 +234,12 @@ type TreasuryGetTransactionsResponseTransaction struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TreasuryGetTransactionsResponseTransaction) RawJSON() string { return r.JSON.raw }
-func (r *TreasuryGetTransactionsResponseTransaction) UnmarshalJSON(data []byte) error {
+func (r TreasuryTransactionsResponseTransaction) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryTransactionsResponseTransaction) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type TreasuryGetTransactionsResponseTransactionDetails struct {
+type TreasuryTransactionsResponseTransactionDetails struct {
 	CreditDescription string `json:"creditDescription" api:"nullable"`
 	// ID for a Mercury account.
 	DepositCounterpartyID      string `json:"depositCounterpartyId" api:"nullable" format:"uuid"`
@@ -266,8 +266,8 @@ type TreasuryGetTransactionsResponseTransactionDetails struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TreasuryGetTransactionsResponseTransactionDetails) RawJSON() string { return r.JSON.raw }
-func (r *TreasuryGetTransactionsResponseTransactionDetails) UnmarshalJSON(data []byte) error {
+func (r TreasuryTransactionsResponseTransactionDetails) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryTransactionsResponseTransactionDetails) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -306,7 +306,7 @@ const (
 	TreasuryListParamsOrderDesc TreasuryListParamsOrder = "desc"
 )
 
-type TreasuryGetTransactionsParams struct {
+type TreasuryTransactionsParams struct {
 	// Pagination cursor for retrieving next batch of transactions. Must be an
 	// integer >= 0
 	Cursor param.Opt[int64] `query:"cursor,omitzero" json:"-"`
@@ -315,13 +315,13 @@ type TreasuryGetTransactionsParams struct {
 	// Sort order for transactions. Can be 'asc' or 'desc'. Defaults to 'desc'
 	//
 	// Any of "asc", "desc".
-	Order TreasuryGetTransactionsParamsOrder `query:"order,omitzero" json:"-"`
+	Order TreasuryTransactionsParamsOrder `query:"order,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [TreasuryGetTransactionsParams]'s query parameters as
+// URLQuery serializes [TreasuryTransactionsParams]'s query parameters as
 // `url.Values`.
-func (r TreasuryGetTransactionsParams) URLQuery() (v url.Values, err error) {
+func (r TreasuryTransactionsParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
@@ -329,9 +329,9 @@ func (r TreasuryGetTransactionsParams) URLQuery() (v url.Values, err error) {
 }
 
 // Sort order for transactions. Can be 'asc' or 'desc'. Defaults to 'desc'
-type TreasuryGetTransactionsParamsOrder string
+type TreasuryTransactionsParamsOrder string
 
 const (
-	TreasuryGetTransactionsParamsOrderAsc  TreasuryGetTransactionsParamsOrder = "asc"
-	TreasuryGetTransactionsParamsOrderDesc TreasuryGetTransactionsParamsOrder = "desc"
+	TreasuryTransactionsParamsOrderAsc  TreasuryTransactionsParamsOrder = "asc"
+	TreasuryTransactionsParamsOrderDesc TreasuryTransactionsParamsOrder = "desc"
 )
