@@ -41,7 +41,7 @@ func TestTreasuryListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestTreasuryGetTransactionsWithOptionalParams(t *testing.T) {
+func TestTreasuryTransactionsWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -54,13 +54,13 @@ func TestTreasuryGetTransactionsWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Treasury.GetTransactions(
+	_, err := client.Treasury.Transactions(
 		context.TODO(),
 		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-		mercury.TreasuryGetTransactionsParams{
+		mercury.TreasuryTransactionsParams{
 			Cursor: mercury.Int(0),
 			Limit:  mercury.Int(1),
-			Order:  mercury.TreasuryGetTransactionsParamsOrderAsc,
+			Order:  mercury.TreasuryTransactionsParamsOrderAsc,
 		},
 	)
 	if err != nil {
