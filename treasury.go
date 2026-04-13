@@ -68,35 +68,6 @@ func (r *TreasuryService) ListAutoPaging(ctx context.Context, query TreasuryList
 	return pagination.NewCursorIDAccountsAutoPager(r.List(ctx, query, opts...))
 }
 
-// Retrieve a paginated list of statements for a specific treasury account.
-// Supports cursor-based pagination and filtering by document type.
-func (r *TreasuryService) GetStatements(ctx context.Context, treasuryID string, query TreasuryGetStatementsParams, opts ...option.RequestOption) (res *pagination.CursorIDAccountStatements[TreasuryGetStatementsResponse], err error) {
-	var raw *http.Response
-	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
-	if treasuryID == "" {
-		err = errors.New("missing required treasuryId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("treasury/%s/statements", treasuryID)
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Retrieve a paginated list of statements for a specific treasury account.
-// Supports cursor-based pagination and filtering by document type.
-func (r *TreasuryService) GetStatementsAutoPaging(ctx context.Context, treasuryID string, query TreasuryGetStatementsParams, opts ...option.RequestOption) *pagination.CursorIDAccountStatementsAutoPager[TreasuryGetStatementsResponse] {
-	return pagination.NewCursorIDAccountStatementsAutoPager(r.GetStatements(ctx, treasuryID, query, opts...))
-}
-
 // Retrieve paginated treasury transactions for a specific treasury account.
 func (r *TreasuryService) GetTransactions(ctx context.Context, treasuryID string, query TreasuryGetTransactionsParams, opts ...option.RequestOption) (res *TreasuryGetTransactionsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -199,70 +170,6 @@ func (r TreasuryListResponseNetReturnDividend) RawJSON() string { return r.JSON.
 func (r *TreasuryListResponseNetReturnDividend) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
-
-// Individual treasury statement in the response
-type TreasuryGetStatementsResponse struct {
-	// ID for the account statement
-	ID string `json:"id" api:"required" format:"uuid"`
-	// ID for a Mercury account.
-	AccountID string `json:"accountId" api:"required" format:"uuid"`
-	// Timestamp when the record was created
-	CreatedAt string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	// Date the statement was created by the custodian
-	CreationDate string `json:"creationDate" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	// Human-readable description of the statement
-	Description string `json:"description" api:"required"`
-	// Type of document (e.g. monthly statement, trade confirmation, tax form)
-	//
-	// Any of "MonthlyStatement", "TradeConfirmation", "1099", "1099R", "1042S",
-	// "5498", "5498ESA", "1099Q", "FMV", "SDIRA".
-	DocumentType TreasuryGetStatementsResponseDocumentType `json:"documentType" api:"required"`
-	// URL to download the statement PDF
-	DownloadURL string `json:"downloadUrl" api:"required"`
-	// End of the period covered by the statement
-	PeriodEnd time.Time `json:"periodEnd" api:"required" format:"date"`
-	// Start of the period covered by the statement
-	PeriodStart time.Time `json:"periodStart" api:"required" format:"date"`
-	// Timestamp when the record was last updated
-	UpdatedAt string `json:"updatedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID           respjson.Field
-		AccountID    respjson.Field
-		CreatedAt    respjson.Field
-		CreationDate respjson.Field
-		Description  respjson.Field
-		DocumentType respjson.Field
-		DownloadURL  respjson.Field
-		PeriodEnd    respjson.Field
-		PeriodStart  respjson.Field
-		UpdatedAt    respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r TreasuryGetStatementsResponse) RawJSON() string { return r.JSON.raw }
-func (r *TreasuryGetStatementsResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Type of document (e.g. monthly statement, trade confirmation, tax form)
-type TreasuryGetStatementsResponseDocumentType string
-
-const (
-	TreasuryGetStatementsResponseDocumentTypeMonthlyStatement  TreasuryGetStatementsResponseDocumentType = "MonthlyStatement"
-	TreasuryGetStatementsResponseDocumentTypeTradeConfirmation TreasuryGetStatementsResponseDocumentType = "TradeConfirmation"
-	TreasuryGetStatementsResponseDocumentType1099              TreasuryGetStatementsResponseDocumentType = "1099"
-	TreasuryGetStatementsResponseDocumentType1099R             TreasuryGetStatementsResponseDocumentType = "1099R"
-	TreasuryGetStatementsResponseDocumentType1042S             TreasuryGetStatementsResponseDocumentType = "1042S"
-	TreasuryGetStatementsResponseDocumentType5498              TreasuryGetStatementsResponseDocumentType = "5498"
-	TreasuryGetStatementsResponseDocumentType5498Esa           TreasuryGetStatementsResponseDocumentType = "5498ESA"
-	TreasuryGetStatementsResponseDocumentType1099Q             TreasuryGetStatementsResponseDocumentType = "1099Q"
-	TreasuryGetStatementsResponseDocumentTypeFmv               TreasuryGetStatementsResponseDocumentType = "FMV"
-	TreasuryGetStatementsResponseDocumentTypeSdira             TreasuryGetStatementsResponseDocumentType = "SDIRA"
-)
 
 // Response type for treasury transactions API endpoint
 type TreasuryGetTransactionsResponse struct {
@@ -397,63 +304,6 @@ type TreasuryListParamsOrder string
 const (
 	TreasuryListParamsOrderAsc  TreasuryListParamsOrder = "asc"
 	TreasuryListParamsOrderDesc TreasuryListParamsOrder = "desc"
-)
-
-type TreasuryGetStatementsParams struct {
-	// The ID of the statement to end the page before (exclusive). When provided,
-	// results will end just before this ID and work backwards. Use this for reverse
-	// pagination or to retrieve previous pages. Cannot be combined with start_after.
-	EndBefore param.Opt[string] `query:"end_before,omitzero" format:"uuid" json:"-"`
-	// Maximum number of results to return. Allowed range: 1 to 1000. Defaults to 1000
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// The ID of the statement to start the page after (exclusive). When provided,
-	// results will begin with the statement immediately following this ID. Use this
-	// for standard forward pagination to get the next page of results. Cannot be
-	// combined with end_before.
-	StartAfter param.Opt[string] `query:"start_after,omitzero" format:"uuid" json:"-"`
-	// Filter statements by document type.
-	//
-	// Any of "MonthlyStatement", "TradeConfirmation", "1099", "1099R", "1042S",
-	// "5498", "5498ESA", "1099Q", "FMV", "SDIRA".
-	DocumentType TreasuryGetStatementsParamsDocumentType `query:"documentType,omitzero" json:"-"`
-	// Sort order. Can be 'asc' or 'desc'. Defaults to 'asc'
-	//
-	// Any of "asc", "desc".
-	Order TreasuryGetStatementsParamsOrder `query:"order,omitzero" json:"-"`
-	paramObj
-}
-
-// URLQuery serializes [TreasuryGetStatementsParams]'s query parameters as
-// `url.Values`.
-func (r TreasuryGetStatementsParams) URLQuery() (v url.Values, err error) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Filter statements by document type.
-type TreasuryGetStatementsParamsDocumentType string
-
-const (
-	TreasuryGetStatementsParamsDocumentTypeMonthlyStatement  TreasuryGetStatementsParamsDocumentType = "MonthlyStatement"
-	TreasuryGetStatementsParamsDocumentTypeTradeConfirmation TreasuryGetStatementsParamsDocumentType = "TradeConfirmation"
-	TreasuryGetStatementsParamsDocumentType1099              TreasuryGetStatementsParamsDocumentType = "1099"
-	TreasuryGetStatementsParamsDocumentType1099R             TreasuryGetStatementsParamsDocumentType = "1099R"
-	TreasuryGetStatementsParamsDocumentType1042S             TreasuryGetStatementsParamsDocumentType = "1042S"
-	TreasuryGetStatementsParamsDocumentType5498              TreasuryGetStatementsParamsDocumentType = "5498"
-	TreasuryGetStatementsParamsDocumentType5498Esa           TreasuryGetStatementsParamsDocumentType = "5498ESA"
-	TreasuryGetStatementsParamsDocumentType1099Q             TreasuryGetStatementsParamsDocumentType = "1099Q"
-	TreasuryGetStatementsParamsDocumentTypeFmv               TreasuryGetStatementsParamsDocumentType = "FMV"
-	TreasuryGetStatementsParamsDocumentTypeSdira             TreasuryGetStatementsParamsDocumentType = "SDIRA"
-)
-
-// Sort order. Can be 'asc' or 'desc'. Defaults to 'asc'
-type TreasuryGetStatementsParamsOrder string
-
-const (
-	TreasuryGetStatementsParamsOrderAsc  TreasuryGetStatementsParamsOrder = "asc"
-	TreasuryGetStatementsParamsOrderDesc TreasuryGetStatementsParamsOrder = "desc"
 )
 
 type TreasuryGetTransactionsParams struct {
