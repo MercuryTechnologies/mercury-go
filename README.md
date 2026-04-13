@@ -372,17 +372,17 @@ which can be used to wrap any `io.Reader` with the appropriate file name and con
 ```go
 // A file from the file system
 file, err := os.Open("/path/to/file")
-mercury.RecipientAttachParams{
+mercury.RecipientAttachmentAttachParams{
 	File: file,
 }
 
 // A file from a string
-mercury.RecipientAttachParams{
+mercury.RecipientAttachmentAttachParams{
 	File: strings.NewReader("my file contents"),
 }
 
 // With a custom filename and contentType
-mercury.RecipientAttachParams{
+mercury.RecipientAttachmentAttachParams{
 	File: mercury.File(strings.NewReader(`{"hello": "foo"}`), "file.go", "application/json"),
 }
 ```
