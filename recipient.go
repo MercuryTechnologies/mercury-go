@@ -3,18 +3,14 @@
 package mercury
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"mime/multipart"
 	"net/http"
 	"net/url"
 	"slices"
 
-	"github.com/MercuryTechnologies/mercury-go/internal/apiform"
 	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
 	"github.com/MercuryTechnologies/mercury-go/internal/apiquery"
 	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
@@ -34,6 +30,8 @@ import (
 // the [NewRecipientService] method instead.
 type RecipientService struct {
 	Options []option.RequestOption
+	// Manage payment recipients
+	Attachments RecipientAttachmentService
 }
 
 // NewRecipientService generates a new service that applies the given options to
@@ -42,6 +40,7 @@ type RecipientService struct {
 func NewRecipientService(opts ...option.RequestOption) (r RecipientService) {
 	r = RecipientService{}
 	r.Options = opts
+	r.Attachments = NewRecipientAttachmentService(opts...)
 	return
 }
 
@@ -90,22 +89,6 @@ func (r *RecipientService) ListAutoPaging(ctx context.Context, query RecipientLi
 	return pagination.NewCursorIDRecipientsAutoPager(r.List(ctx, query, opts...))
 }
 
-// Upload a tax form attachment for a recipient. The file is uploaded via
-// multipart/form-data. Supported file types include PDF, images (PNG, JPG, GIF),
-// and common document formats. The attachment will be associated as a tax document
-// for the recipient.
-func (r *RecipientService) Attach(ctx context.Context, recipientID string, body RecipientAttachParams, opts ...option.RequestOption) (err error) {
-	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
-	if recipientID == "" {
-		err = errors.New("missing required recipientId parameter")
-		return err
-	}
-	path := fmt.Sprintf("recipient/%s/attachments", recipientID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return err
-}
-
 // Retrieve details of a specific recipient by ID
 func (r *RecipientService) Get(ctx context.Context, recipientID string, opts ...option.RequestOption) (res *Recipient, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -116,33 +99,6 @@ func (r *RecipientService) Get(ctx context.Context, recipientID string, opts ...
 	path := fmt.Sprintf("recipient/%s", recipientID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
-}
-
-// Retrieve a paginated list of all recipient tax form attachments across all
-// recipients in the organization. Use cursor parameters (start_after, end_before)
-// for pagination.
-func (r *RecipientService) ListAttachments(ctx context.Context, query RecipientListAttachmentsParams, opts ...option.RequestOption) (res *pagination.CursorIDRecipientAttachments[RecipientListAttachmentsResponse], err error) {
-	var raw *http.Response
-	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
-	path := "recipients/attachments"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Retrieve a paginated list of all recipient tax form attachments across all
-// recipients in the organization. Use cursor parameters (start_after, end_before)
-// for pagination.
-func (r *RecipientService) ListAttachmentsAutoPaging(ctx context.Context, query RecipientListAttachmentsParams, opts ...option.RequestOption) *pagination.CursorIDRecipientAttachmentsAutoPager[RecipientListAttachmentsResponse] {
-	return pagination.NewCursorIDRecipientAttachmentsAutoPager(r.ListAttachments(ctx, query, opts...))
 }
 
 type Address struct {
@@ -862,35 +818,6 @@ const (
 	RecipientStatusDeleted RecipientStatus = "deleted"
 )
 
-type RecipientAttachment struct {
-	// Name of the uploaded file
-	FileName string `json:"fileName" api:"required"`
-	// Timestamp when the attachment was uploaded
-	UploadedAt string `json:"uploadedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	// Presigned URL to download the attachment (valid for 12 hours)
-	URL string `json:"url" api:"required"`
-	// The tax form type (W-9 for US persons, W-8BEN for foreign individuals, W-8BEN-E
-	// for foreign entities)
-	//
-	// Any of "w9", "w8BEN", "w8BENE", "unknown".
-	FormType TaxFormType `json:"formType" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		FileName    respjson.Field
-		UploadedAt  respjson.Field
-		URL         respjson.Field
-		FormType    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r RecipientAttachment) RawJSON() string { return r.JSON.raw }
-func (r *RecipientAttachment) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type SwiftBankAccountType string
 
 const (
@@ -906,40 +833,6 @@ const (
 	TaxFormTypeW8Bene  TaxFormType = "w8BENE"
 	TaxFormTypeUnknown TaxFormType = "unknown"
 )
-
-type RecipientListAttachmentsResponse struct {
-	// ID for the recipient tax form attachment
-	ID string `json:"id" api:"required" format:"uuid"`
-	// Name of the uploaded file
-	FileName string `json:"fileName" api:"required"`
-	// ID for a Mercury account.
-	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
-	// Timestamp when the attachment was uploaded
-	UploadedAt string `json:"uploadedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	// Presigned URL to download the attachment (valid for 12 hours)
-	URL string `json:"url" api:"required"`
-	// The tax form type (W-9, W-8BEN, W-8BEN-E, or Unknown)
-	//
-	// Any of "w9", "w8BEN", "w8BENE", "unknown".
-	FormType TaxFormType `json:"formType" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		FileName    respjson.Field
-		RecipientID respjson.Field
-		UploadedAt  respjson.Field
-		URL         respjson.Field
-		FormType    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r RecipientListAttachmentsResponse) RawJSON() string { return r.JSON.raw }
-func (r *RecipientListAttachmentsResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 type RecipientNewParams struct {
 	Emails []string `json:"emails,omitzero" api:"required"`
@@ -1024,65 +917,4 @@ type RecipientListParamsOrder string
 const (
 	RecipientListParamsOrderAsc  RecipientListParamsOrder = "asc"
 	RecipientListParamsOrderDesc RecipientListParamsOrder = "desc"
-)
-
-type RecipientAttachParams struct {
-	// The file to upload (tax form document)
-	File io.Reader `json:"file,omitzero" api:"required" format:"binary"`
-	paramObj
-}
-
-func (r RecipientAttachParams) MarshalMultipart() (data []byte, contentType string, err error) {
-	buf := bytes.NewBuffer(nil)
-	writer := multipart.NewWriter(buf)
-	err = apiform.MarshalRoot(r, writer)
-	if err == nil {
-		err = apiform.WriteExtras(writer, r.ExtraFields())
-	}
-	if err != nil {
-		writer.Close()
-		return nil, "", err
-	}
-	err = writer.Close()
-	if err != nil {
-		return nil, "", err
-	}
-	return buf.Bytes(), writer.FormDataContentType(), nil
-}
-
-type RecipientListAttachmentsParams struct {
-	// The ID of the recipient attachment to end the page before (exclusive). When
-	// provided, results will end just before this ID and work backwards. Use this for
-	// reverse pagination or to retrieve previous pages. Cannot be combined with
-	// start_after.
-	EndBefore param.Opt[string] `query:"end_before,omitzero" format:"uuid" json:"-"`
-	// Maximum number of results to return. Allowed range: 1 to 1000. Defaults to 1000
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// The ID of the recipient attachment to start the page after (exclusive). When
-	// provided, results will begin with the recipient attachment immediately following
-	// this ID. Use this for standard forward pagination to get the next page of
-	// results. Cannot be combined with end_before.
-	StartAfter param.Opt[string] `query:"start_after,omitzero" format:"uuid" json:"-"`
-	// Sort order. Can be 'asc' or 'desc'. Defaults to 'asc'
-	//
-	// Any of "asc", "desc".
-	Order RecipientListAttachmentsParamsOrder `query:"order,omitzero" json:"-"`
-	paramObj
-}
-
-// URLQuery serializes [RecipientListAttachmentsParams]'s query parameters as
-// `url.Values`.
-func (r RecipientListAttachmentsParams) URLQuery() (v url.Values, err error) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Sort order. Can be 'asc' or 'desc'. Defaults to 'asc'
-type RecipientListAttachmentsParamsOrder string
-
-const (
-	RecipientListAttachmentsParamsOrderAsc  RecipientListAttachmentsParamsOrder = "asc"
-	RecipientListAttachmentsParamsOrderDesc RecipientListAttachmentsParamsOrder = "desc"
 )
