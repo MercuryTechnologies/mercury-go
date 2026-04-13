@@ -31,15 +31,12 @@ type Client struct {
 	// Manage API events
 	Events EventService
 	// Organization information
-	Org OrgService
-	// Manage send money approval requests
-	RequestSendMoney RequestSendMoneyService
+	Org      OrgService
+	Payments PaymentService
 	// Manage SAFE (Simple Agreement for Future Equity) requests
 	Safes SafeService
 	// Download account statements
 	Statements StatementService
-	// Manage bank accounts
-	Transfer TransferService
 	// Manage treasury accounts and transactions
 	Treasury TreasuryService
 	// Manage organization team members
@@ -84,10 +81,9 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Credit = NewCreditService(opts...)
 	r.Events = NewEventService(opts...)
 	r.Org = NewOrgService(opts...)
-	r.RequestSendMoney = NewRequestSendMoneyService(opts...)
+	r.Payments = NewPaymentService(opts...)
 	r.Safes = NewSafeService(opts...)
 	r.Statements = NewStatementService(opts...)
-	r.Transfer = NewTransferService(opts...)
 	r.Treasury = NewTreasuryService(opts...)
 	r.Users = NewUserService(opts...)
 	r.Webhooks = NewWebhookService(opts...)

@@ -65,19 +65,6 @@ func (r *AccountService) ListAutoPaging(ctx context.Context, query AccountListPa
 	return pagination.NewCursorIDAccountsAutoPager(r.List(ctx, query, opts...))
 }
 
-// Send money from an account to a recipient. Creates a transaction that will be
-// processed immediately or may require approval.
-func (r *AccountService) NewTransaction(ctx context.Context, accountID string, body AccountNewTransactionParams, opts ...option.RequestOption) (res *Transaction, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if accountID == "" {
-		err = errors.New("missing required accountId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("account/%s/transactions", accountID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return res, err
-}
-
 // Get account by ID
 func (r *AccountService) Get(ctx context.Context, accountID string, opts ...option.RequestOption) (res *Account, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -87,19 +74,6 @@ func (r *AccountService) Get(ctx context.Context, accountID string, opts ...opti
 	}
 	path := fmt.Sprintf("account/%s", accountID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return res, err
-}
-
-// Create a "request to send money" that will require approval based on your
-// organization's approval policies.
-func (r *AccountService) RequestSendMoney(ctx context.Context, accountID string, body AccountRequestSendMoneyParams, opts ...option.RequestOption) (res *SendMoneyApproval, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if accountID == "" {
-		err = errors.New("missing required accountId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("account/%s/request-send-money", accountID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err
 }
 
@@ -230,58 +204,6 @@ const (
 	MercuryCategoryVehicleExpenses      MercuryCategory = "VehicleExpenses"
 )
 
-// Extremely close to the internal type, but strips out potentially unwanted fields
-type SendMoneyApproval struct {
-	// ID for a Mercury account.
-	AccountID string `json:"accountId" api:"required" format:"uuid"`
-	// A positive dollar amount with at least 1 cent.
-	Amount float64 `json:"amount" api:"required"`
-	// Any of "ach", "check", "domesticWire", "internationalWire".
-	PaymentMethod SendMoneyPaymentMethod `json:"paymentMethod" api:"required"`
-	// ID for a Mercury account.
-	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
-	RequestID   string `json:"requestId" api:"required"`
-	// Any of "pendingApproval", "approved", "rejected", "cancelled".
-	Status SendMoneyApprovalStatus `json:"status" api:"required"`
-	Memo   string                  `json:"memo" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		AccountID     respjson.Field
-		Amount        respjson.Field
-		PaymentMethod respjson.Field
-		RecipientID   respjson.Field
-		RequestID     respjson.Field
-		Status        respjson.Field
-		Memo          respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r SendMoneyApproval) RawJSON() string { return r.JSON.raw }
-func (r *SendMoneyApproval) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type SendMoneyApprovalStatus string
-
-const (
-	SendMoneyApprovalStatusPendingApproval SendMoneyApprovalStatus = "pendingApproval"
-	SendMoneyApprovalStatusApproved        SendMoneyApprovalStatus = "approved"
-	SendMoneyApprovalStatusRejected        SendMoneyApprovalStatus = "rejected"
-	SendMoneyApprovalStatusCancelled       SendMoneyApprovalStatus = "cancelled"
-)
-
-type SendMoneyPaymentMethod string
-
-const (
-	SendMoneyPaymentMethodACH               SendMoneyPaymentMethod = "ach"
-	SendMoneyPaymentMethodCheck             SendMoneyPaymentMethod = "check"
-	SendMoneyPaymentMethodDomesticWire      SendMoneyPaymentMethod = "domesticWire"
-	SendMoneyPaymentMethodInternationalWire SendMoneyPaymentMethod = "internationalWire"
-)
-
 type AccountListParams struct {
 	// The ID of the account to end the page before (exclusive). When provided, results
 	// will end just before this ID and work backwards. Use this for reverse pagination
@@ -316,111 +238,3 @@ const (
 	AccountListParamsOrderAsc  AccountListParamsOrder = "asc"
 	AccountListParamsOrderDesc AccountListParamsOrder = "desc"
 )
-
-type AccountNewTransactionParams struct {
-	// A positive dollar amount with at least 1 cent.
-	Amount float64 `json:"amount" api:"required"`
-	// Unique string identifying the transaction
-	IdempotencyKey string `json:"idempotencyKey" api:"required"`
-	// If domesticWire is used, then the purpose field is required.
-	//
-	// Any of "ach", "check", "domesticWire".
-	PaymentMethod AccountNewTransactionParamsPaymentMethod `json:"paymentMethod,omitzero" api:"required"`
-	// ID for a Mercury account.
-	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
-	// Optional external memo
-	ExternalMemo param.Opt[string] `json:"externalMemo,omitzero"`
-	// Optional note
-	Note param.Opt[string] `json:"note,omitzero"`
-	// External API representation of SendMoneyPurpose. Only exposes the 'simple' field
-	// to decouple internal implementation from external API.
-	Purpose AccountNewTransactionParamsPurpose `json:"purpose,omitzero"`
-	paramObj
-}
-
-func (r AccountNewTransactionParams) MarshalJSON() (data []byte, err error) {
-	type shadow AccountNewTransactionParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *AccountNewTransactionParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// If domesticWire is used, then the purpose field is required.
-type AccountNewTransactionParamsPaymentMethod string
-
-const (
-	AccountNewTransactionParamsPaymentMethodACH          AccountNewTransactionParamsPaymentMethod = "ach"
-	AccountNewTransactionParamsPaymentMethodCheck        AccountNewTransactionParamsPaymentMethod = "check"
-	AccountNewTransactionParamsPaymentMethodDomesticWire AccountNewTransactionParamsPaymentMethod = "domesticWire"
-)
-
-// External API representation of SendMoneyPurpose. Only exposes the 'simple' field
-// to decouple internal implementation from external API.
-type AccountNewTransactionParamsPurpose struct {
-	Simple AccountNewTransactionParamsPurposeSimple `json:"simple,omitzero"`
-	paramObj
-}
-
-func (r AccountNewTransactionParamsPurpose) MarshalJSON() (data []byte, err error) {
-	type shadow AccountNewTransactionParamsPurpose
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *AccountNewTransactionParamsPurpose) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The property Category is required.
-type AccountNewTransactionParamsPurposeSimple struct {
-	// Payment category.
-	//
-	// Any of "Employee", "Landlord", "Vendor", "Contractor", "Subsidiary",
-	// "TransferToMyExternalAccount", "FamilyMemberOrFriend", "ForGoodsOrServices",
-	// "AngelInvestment", "SavingsOrInvestments", "Expenses", "Travel", "Other".
-	Category string `json:"category,omitzero" api:"required"`
-	// Additional information. Required for: Vendor (vendor name), Contractor
-	// (contractor name), Other (payment description). Optional for Subsidiary
-	// (subsidiary name). Not accepted for any other categories.
-	AdditionalInfo param.Opt[string] `json:"additionalInfo,omitzero"`
-	paramObj
-}
-
-func (r AccountNewTransactionParamsPurposeSimple) MarshalJSON() (data []byte, err error) {
-	type shadow AccountNewTransactionParamsPurposeSimple
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *AccountNewTransactionParamsPurposeSimple) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[AccountNewTransactionParamsPurposeSimple](
-		"category", "Employee", "Landlord", "Vendor", "Contractor", "Subsidiary", "TransferToMyExternalAccount", "FamilyMemberOrFriend", "ForGoodsOrServices", "AngelInvestment", "SavingsOrInvestments", "Expenses", "Travel", "Other",
-	)
-}
-
-type AccountRequestSendMoneyParams struct {
-	// A positive dollar amount with at least 1 cent.
-	Amount float64 `json:"amount" api:"required"`
-	// Unique string identifying the transaction
-	IdempotencyKey string `json:"idempotencyKey" api:"required"`
-	// Payment method to use.
-	//
-	// Any of "ach", "check", "domesticWire", "internationalWire".
-	PaymentMethod SendMoneyPaymentMethod `json:"paymentMethod,omitzero" api:"required"`
-	// ID for a Mercury account.
-	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
-	// Optional external memo
-	ExternalMemo param.Opt[string] `json:"externalMemo,omitzero"`
-	// Optional note
-	Note param.Opt[string] `json:"note,omitzero"`
-	paramObj
-}
-
-func (r AccountRequestSendMoneyParams) MarshalJSON() (data []byte, err error) {
-	type shadow AccountRequestSendMoneyParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *AccountRequestSendMoneyParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
