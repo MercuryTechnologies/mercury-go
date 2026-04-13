@@ -189,6 +189,35 @@ func TestRecipientListWithOptionalParams(t *testing.T) {
 	}
 }
 
+func TestRecipientAttach(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := mercury.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	err := client.Recipients.Attach(
+		context.TODO(),
+		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+		mercury.RecipientAttachParams{
+			File: io.Reader(bytes.NewBuffer([]byte("Example data"))),
+		},
+	)
+	if err != nil {
+		var apierr *mercury.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestRecipientGet(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
@@ -231,35 +260,6 @@ func TestRecipientListAttachmentsWithOptionalParams(t *testing.T) {
 		Order:      mercury.RecipientListAttachmentsParamsOrderAsc,
 		StartAfter: mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
-	if err != nil {
-		var apierr *mercury.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestRecipientUploadAttachment(t *testing.T) {
-	t.Skip("Mock server tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := mercury.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
-	)
-	err := client.Recipients.UploadAttachment(
-		context.TODO(),
-		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-		mercury.RecipientUploadAttachmentParams{
-			File: io.Reader(bytes.NewBuffer([]byte("Example data"))),
-		},
-	)
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {

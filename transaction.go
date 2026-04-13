@@ -84,6 +84,21 @@ func (r *TransactionService) ListAutoPaging(ctx context.Context, query Transacti
 	return pagination.NewCursorIDTransactionsAutoPager(r.List(ctx, query, opts...))
 }
 
+// Upload a file attachment to a transaction. The file is uploaded via
+// multipart/form-data. Supported file types include PDF, images (PNG, JPG, GIF),
+// and common document formats.
+func (r *TransactionService) Attach(ctx context.Context, transactionID string, body TransactionAttachParams, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if transactionID == "" {
+		err = errors.New("missing required transactionId parameter")
+		return err
+	}
+	path := fmt.Sprintf("transaction/%s/attachments", transactionID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
+	return err
+}
+
 // Retrieve a single transaction by its ID. Returns full transaction details
 // including attachments, check images, and related metadata.
 func (r *TransactionService) Get(ctx context.Context, transactionID string, opts ...option.RequestOption) (res *Transaction, err error) {
@@ -95,21 +110,6 @@ func (r *TransactionService) Get(ctx context.Context, transactionID string, opts
 	path := fmt.Sprintf("transaction/%s", transactionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
-}
-
-// Upload a file attachment to a transaction. The file is uploaded via
-// multipart/form-data. Supported file types include PDF, images (PNG, JPG, GIF),
-// and common document formats.
-func (r *TransactionService) UploadAttachment(ctx context.Context, transactionID string, body TransactionUploadAttachmentParams, opts ...option.RequestOption) (err error) {
-	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
-	if transactionID == "" {
-		err = errors.New("missing required transactionId parameter")
-		return err
-	}
-	path := fmt.Sprintf("transaction/%s/attachments", transactionID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return err
 }
 
 type CurrencyExchangeInfo struct {
@@ -602,17 +602,17 @@ const (
 	TransactionListParamsOrderDesc TransactionListParamsOrder = "desc"
 )
 
-type TransactionUploadAttachmentParams struct {
+type TransactionAttachParams struct {
 	// The file to upload
 	File io.Reader `json:"file,omitzero" api:"required" format:"binary"`
 	// Type of attachment: 'receipt', 'bill', or 'other'. Defaults to 'other'.
 	//
 	// Any of "receipt", "bill", "other".
-	AttachmentType TransactionUploadAttachmentParamsAttachmentType `json:"attachmentType,omitzero"`
+	AttachmentType TransactionAttachParamsAttachmentType `json:"attachmentType,omitzero"`
 	paramObj
 }
 
-func (r TransactionUploadAttachmentParams) MarshalMultipart() (data []byte, contentType string, err error) {
+func (r TransactionAttachParams) MarshalMultipart() (data []byte, contentType string, err error) {
 	buf := bytes.NewBuffer(nil)
 	writer := multipart.NewWriter(buf)
 	err = apiform.MarshalRoot(r, writer)
@@ -631,10 +631,10 @@ func (r TransactionUploadAttachmentParams) MarshalMultipart() (data []byte, cont
 }
 
 // Type of attachment: 'receipt', 'bill', or 'other'. Defaults to 'other'.
-type TransactionUploadAttachmentParamsAttachmentType string
+type TransactionAttachParamsAttachmentType string
 
 const (
-	TransactionUploadAttachmentParamsAttachmentTypeReceipt TransactionUploadAttachmentParamsAttachmentType = "receipt"
-	TransactionUploadAttachmentParamsAttachmentTypeBill    TransactionUploadAttachmentParamsAttachmentType = "bill"
-	TransactionUploadAttachmentParamsAttachmentTypeOther   TransactionUploadAttachmentParamsAttachmentType = "other"
+	TransactionAttachParamsAttachmentTypeReceipt TransactionAttachParamsAttachmentType = "receipt"
+	TransactionAttachParamsAttachmentTypeBill    TransactionAttachParamsAttachmentType = "bill"
+	TransactionAttachParamsAttachmentTypeOther   TransactionAttachParamsAttachmentType = "other"
 )

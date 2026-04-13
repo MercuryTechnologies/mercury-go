@@ -90,6 +90,22 @@ func (r *RecipientService) ListAutoPaging(ctx context.Context, query RecipientLi
 	return pagination.NewCursorIDRecipientsAutoPager(r.List(ctx, query, opts...))
 }
 
+// Upload a tax form attachment for a recipient. The file is uploaded via
+// multipart/form-data. Supported file types include PDF, images (PNG, JPG, GIF),
+// and common document formats. The attachment will be associated as a tax document
+// for the recipient.
+func (r *RecipientService) Attach(ctx context.Context, recipientID string, body RecipientAttachParams, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if recipientID == "" {
+		err = errors.New("missing required recipientId parameter")
+		return err
+	}
+	path := fmt.Sprintf("recipient/%s/attachments", recipientID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
+	return err
+}
+
 // Retrieve details of a specific recipient by ID
 func (r *RecipientService) Get(ctx context.Context, recipientID string, opts ...option.RequestOption) (res *Recipient, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -127,22 +143,6 @@ func (r *RecipientService) ListAttachments(ctx context.Context, query RecipientL
 // for pagination.
 func (r *RecipientService) ListAttachmentsAutoPaging(ctx context.Context, query RecipientListAttachmentsParams, opts ...option.RequestOption) *pagination.CursorIDRecipientAttachmentsAutoPager[RecipientListAttachmentsResponse] {
 	return pagination.NewCursorIDRecipientAttachmentsAutoPager(r.ListAttachments(ctx, query, opts...))
-}
-
-// Upload a tax form attachment for a recipient. The file is uploaded via
-// multipart/form-data. Supported file types include PDF, images (PNG, JPG, GIF),
-// and common document formats. The attachment will be associated as a tax document
-// for the recipient.
-func (r *RecipientService) UploadAttachment(ctx context.Context, recipientID string, body RecipientUploadAttachmentParams, opts ...option.RequestOption) (err error) {
-	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
-	if recipientID == "" {
-		err = errors.New("missing required recipientId parameter")
-		return err
-	}
-	path := fmt.Sprintf("recipient/%s/attachments", recipientID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return err
 }
 
 type Address struct {
@@ -1026,6 +1026,30 @@ const (
 	RecipientListParamsOrderDesc RecipientListParamsOrder = "desc"
 )
 
+type RecipientAttachParams struct {
+	// The file to upload (tax form document)
+	File io.Reader `json:"file,omitzero" api:"required" format:"binary"`
+	paramObj
+}
+
+func (r RecipientAttachParams) MarshalMultipart() (data []byte, contentType string, err error) {
+	buf := bytes.NewBuffer(nil)
+	writer := multipart.NewWriter(buf)
+	err = apiform.MarshalRoot(r, writer)
+	if err == nil {
+		err = apiform.WriteExtras(writer, r.ExtraFields())
+	}
+	if err != nil {
+		writer.Close()
+		return nil, "", err
+	}
+	err = writer.Close()
+	if err != nil {
+		return nil, "", err
+	}
+	return buf.Bytes(), writer.FormDataContentType(), nil
+}
+
 type RecipientListAttachmentsParams struct {
 	// The ID of the recipient attachment to end the page before (exclusive). When
 	// provided, results will end just before this ID and work backwards. Use this for
@@ -1062,27 +1086,3 @@ const (
 	RecipientListAttachmentsParamsOrderAsc  RecipientListAttachmentsParamsOrder = "asc"
 	RecipientListAttachmentsParamsOrderDesc RecipientListAttachmentsParamsOrder = "desc"
 )
-
-type RecipientUploadAttachmentParams struct {
-	// The file to upload (tax form document)
-	File io.Reader `json:"file,omitzero" api:"required" format:"binary"`
-	paramObj
-}
-
-func (r RecipientUploadAttachmentParams) MarshalMultipart() (data []byte, contentType string, err error) {
-	buf := bytes.NewBuffer(nil)
-	writer := multipart.NewWriter(buf)
-	err = apiform.MarshalRoot(r, writer)
-	if err == nil {
-		err = apiform.WriteExtras(writer, r.ExtraFields())
-	}
-	if err != nil {
-		writer.Close()
-		return nil, "", err
-	}
-	err = writer.Close()
-	if err != nil {
-		return nil, "", err
-	}
-	return buf.Bytes(), writer.FormDataContentType(), nil
-}
