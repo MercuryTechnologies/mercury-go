@@ -83,6 +83,36 @@ func TestTransactionListWithOptionalParams(t *testing.T) {
 	}
 }
 
+func TestTransactionAttachWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := mercury.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	err := client.Transactions.Attach(
+		context.TODO(),
+		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+		mercury.TransactionAttachParams{
+			File:           io.Reader(bytes.NewBuffer([]byte("Example data"))),
+			AttachmentType: mercury.TransactionAttachParamsAttachmentTypeReceipt,
+		},
+	)
+	if err != nil {
+		var apierr *mercury.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestTransactionGet(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
@@ -97,36 +127,6 @@ func TestTransactionGet(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Transactions.Get(context.TODO(), "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-	if err != nil {
-		var apierr *mercury.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestTransactionUploadAttachmentWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := mercury.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithAPIKey("My API Key"),
-	)
-	err := client.Transactions.UploadAttachment(
-		context.TODO(),
-		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-		mercury.TransactionUploadAttachmentParams{
-			File:           io.Reader(bytes.NewBuffer([]byte("Example data"))),
-			AttachmentType: mercury.TransactionUploadAttachmentParamsAttachmentTypeReceipt,
-		},
-	)
 	if err != nil {
 		var apierr *mercury.Error
 		if errors.As(err, &apierr) {
