@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.3 (2026-04-13)
+
+Full Changelog: [v0.4.2...v0.4.3](https://github.com/MercuryTechnologies/mercury-go/compare/v0.4.2...v0.4.3)
+
+### Refactors
+
+* rename list_transactions -&gt; transactions ([e414464](https://github.com/MercuryTechnologies/mercury-go/commit/e41446445f20863956456a3af788d44c6f7c4a7d))
+
 ## 0.4.2 (2026-04-13)
 
 Full Changelog: [v0.4.1...v0.4.2](https://github.com/MercuryTechnologies/mercury-go/compare/v0.4.1...v0.4.2)
