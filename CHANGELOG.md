@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.4 (2026-04-22)
+
+Full Changelog: [v0.4.3...v0.4.4](https://github.com/MercuryTechnologies/mercury-go/compare/v0.4.3...v0.4.4)
+
+### Chores
+
+* **internal:** more robust bootstrap script ([584df4b](https://github.com/MercuryTechnologies/mercury-go/commit/584df4b032d7738a6a77e971c1f9c4116e969253))
+
 ## 0.4.3 (2026-04-13)
 
 Full Changelog: [v0.4.2...v0.4.3](https://github.com/MercuryTechnologies/mercury-go/compare/v0.4.2...v0.4.3)
