@@ -145,12 +145,21 @@ type CategoryData struct {
 	ID string `json:"id" api:"required" format:"uuid"`
 	// The name of the category
 	Name string `json:"name" api:"required"`
+	// Whether this category is applicable to card transactions
+	VisibleForCardSpend bool `json:"visibleForCardSpend" api:"required"`
+	// Whether this category is applicable to all other transaction kinds
+	VisibleForOther bool `json:"visibleForOther" api:"required"`
+	// Whether this category is applicable to expense reimbursement transactions
+	VisibleForReimbursements bool `json:"visibleForReimbursements" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		Name        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		ID                       respjson.Field
+		Name                     respjson.Field
+		VisibleForCardSpend      respjson.Field
+		VisibleForOther          respjson.Field
+		VisibleForReimbursements respjson.Field
+		ExtraFields              map[string]respjson.Field
+		raw                      string
 	} `json:"-"`
 }
 
