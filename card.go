@@ -73,7 +73,7 @@ type CardListResponseCard struct {
 	Network string `json:"network" api:"required"`
 	// Any of "active", "frozen", "cancelled", "inactive", "expired", "suspended".
 	Status string `json:"status" api:"required"`
-	// Any of "inactive", "active", "paused".
+	// Any of "inactive", "active", "locked".
 	PhysicalCardStatus string `json:"physicalCardStatus" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
