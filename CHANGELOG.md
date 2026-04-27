@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0 (2026-04-27)
+
+Full Changelog: [v0.4.5...v0.5.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.4.5...v0.5.0)
+
+### Features
+
+* **go:** add default http client with timeout ([dfff2c6](https://github.com/MercuryTechnologies/mercury-go/commit/dfff2c642ac4e1db63e7a8058888d193f8a40aac))
+
 ## 0.4.5 (2026-04-23)
 
 Full Changelog: [v0.4.4...v0.4.5](https://github.com/MercuryTechnologies/mercury-go/compare/v0.4.4...v0.4.5)
