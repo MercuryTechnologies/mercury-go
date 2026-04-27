@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0 (2026-04-27)
+
+Full Changelog: [v0.5.0...v0.6.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.5.0...v0.6.0)
+
+### Features
+
+* support setting headers via env ([5b49280](https://github.com/MercuryTechnologies/mercury-go/commit/5b49280b1a83155d583e47834b4fb3f67a304c31))
+
 ## 0.5.0 (2026-04-27)
 
 Full Changelog: [v0.4.5...v0.5.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.4.5...v0.5.0)
