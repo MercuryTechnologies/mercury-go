@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.1 (2026-04-30)
+
+Full Changelog: [v0.6.0...v0.6.1](https://github.com/MercuryTechnologies/mercury-go/compare/v0.6.0...v0.6.1)
+
+### Chores
+
+* avoid embedding reflect.Type for dead code elimination ([45697de](https://github.com/MercuryTechnologies/mercury-go/commit/45697de9c6a053bbffcdfe57e039ac25d012fd5f))
+* update OpenAPI spec from 915a0ba3e3f52bbd165420618396b2fd674694d6 ([f3012c2](https://github.com/MercuryTechnologies/mercury-go/commit/f3012c2bdc9b56ca76d9d3a3556e32d5a609fdee))
+
 ## 0.6.0 (2026-04-27)
 
 Full Changelog: [v0.5.0...v0.6.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.5.0...v0.6.0)
