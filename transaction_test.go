@@ -58,6 +58,7 @@ func TestTransactionListWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Transactions.List(context.TODO(), mercury.TransactionListParams{
 		AccountID:       []string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"},
+		CardID:          []string{"string"},
 		CategoryID:      mercury.String("categoryId"),
 		End:             mercury.String("end"),
 		EndBefore:       mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),

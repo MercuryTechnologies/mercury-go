@@ -532,6 +532,7 @@ type TransactionListParams struct {
 	// start_after or end_before.
 	StartAt   param.Opt[string] `query:"start_at,omitzero" json:"-"`
 	AccountID []string          `query:"accountId,omitzero" format:"uuid" json:"-"`
+	CardID    []string          `query:"cardId,omitzero" json:"-"`
 	// Sort order. Can be 'asc' or 'desc'. Defaults to 'asc'
 	//
 	// Any of "asc", "desc".
