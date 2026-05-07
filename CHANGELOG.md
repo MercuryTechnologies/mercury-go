@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.6.2 (2026-05-07)
+
+Full Changelog: [v0.6.1...v0.6.2](https://github.com/MercuryTechnologies/mercury-go/compare/v0.6.1...v0.6.2)
+
+### Bug Fixes
+
+* **go:** avoid panic when http.DefaultTransport is wrapped ([2a9d1fd](https://github.com/MercuryTechnologies/mercury-go/commit/2a9d1fd998ced1557b33993392f3bff252fe1480))
+
+
+### Chores
+
+* redact api-key headers in debug logs ([a61cb76](https://github.com/MercuryTechnologies/mercury-go/commit/a61cb76162f5367d16d0af8aa423170716e5fd8f))
+
 ## 0.6.1 (2026-04-30)
 
 Full Changelog: [v0.6.0...v0.6.1](https://github.com/MercuryTechnologies/mercury-go/compare/v0.6.0...v0.6.1)
