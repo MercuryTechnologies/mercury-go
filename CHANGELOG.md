@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.3 (2026-05-07)
+
+Full Changelog: [v0.6.2...v0.6.3](https://github.com/MercuryTechnologies/mercury-go/compare/v0.6.2...v0.6.3)
+
+### Chores
+
+* update OpenAPI spec from b8efe25c41c7115523ba02ee534fbbc8230ff942 ([7aa7b19](https://github.com/MercuryTechnologies/mercury-go/commit/7aa7b1999c596679a6dc474cca8ed98eb963639e))
+
 ## 0.6.2 (2026-05-07)
 
 Full Changelog: [v0.6.1...v0.6.2](https://github.com/MercuryTechnologies/mercury-go/compare/v0.6.1...v0.6.2)
