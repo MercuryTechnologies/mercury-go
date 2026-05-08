@@ -135,7 +135,7 @@ type Invoice struct {
 	ID string `json:"id" api:"required" format:"uuid"`
 	// Whether or not the invoice can be paid via ach debit.
 	ACHDebitEnabled bool `json:"achDebitEnabled" api:"required"`
-	// A positive dollar amount with at least 1 cent.
+	// The total amount of the invoice line items plus taxes.
 	Amount float64 `json:"amount" api:"required"`
 	// Emails to be CCed on invoice notifications/reminders.
 	CcEmails []string `json:"ccEmails" api:"required"`
@@ -229,7 +229,7 @@ type LineItemData struct {
 	Name string `json:"name" api:"required"`
 	// the quantity of this item
 	Quantity float64 `json:"quantity" api:"required"`
-	// A dollar amount
+	// the price of one unit of the item before sales tax
 	UnitPrice float64 `json:"unitPrice" api:"required"`
 	// the sales tax applied to this item
 	SalesTaxRate float64 `json:"salesTaxRate" api:"nullable"`
@@ -267,7 +267,7 @@ type LineItemDataParam struct {
 	Name string `json:"name" api:"required"`
 	// the quantity of this item
 	Quantity float64 `json:"quantity" api:"required"`
-	// A dollar amount
+	// the price of one unit of the item before sales tax
 	UnitPrice float64 `json:"unitPrice" api:"required"`
 	// the sales tax applied to this item
 	SalesTaxRate param.Opt[float64] `json:"salesTaxRate,omitzero"`
@@ -297,7 +297,7 @@ type InvoiceListResponse struct {
 	ID string `json:"id" api:"required" format:"uuid"`
 	// Whether or not the invoice can be paid via ach debit.
 	ACHDebitEnabled bool `json:"achDebitEnabled" api:"required"`
-	// A positive dollar amount with at least 1 cent.
+	// The total amount of the invoice line items plus taxes
 	Amount float64 `json:"amount" api:"required"`
 	// Emails to be CCed on invoice notifications/reminders.
 	CcEmails []string `json:"ccEmails" api:"required"`
