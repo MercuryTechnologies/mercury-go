@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"slices"
 
 	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
@@ -43,7 +44,7 @@ func (r *InvoiceAttachmentService) List(ctx context.Context, invoiceID string, o
 		err = errors.New("missing required invoiceId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("ar/invoices/%s/attachments", invoiceID)
+	path := fmt.Sprintf("ar/invoices/%s/attachments", url.PathEscape(invoiceID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }
@@ -55,7 +56,7 @@ func (r *InvoiceAttachmentService) Get(ctx context.Context, attachmentID string,
 		err = errors.New("missing required attachmentId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("ar/attachments/%s", attachmentID)
+	path := fmt.Sprintf("ar/attachments/%s", url.PathEscape(attachmentID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }

@@ -70,7 +70,7 @@ func (r *UserService) Get(ctx context.Context, userID string, opts ...option.Req
 		err = errors.New("missing required userId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("users/%s", userID)
+	path := fmt.Sprintf("users/%s", url.PathEscape(userID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }

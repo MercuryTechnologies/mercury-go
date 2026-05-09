@@ -82,7 +82,7 @@ func (r *RecipientAttachmentService) Attach(ctx context.Context, recipientID str
 		err = errors.New("missing required recipientId parameter")
 		return err
 	}
-	path := fmt.Sprintf("recipient/%s/attachments", recipientID)
+	path := fmt.Sprintf("recipient/%s/attachments", url.PathEscape(recipientID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
 	return err
 }

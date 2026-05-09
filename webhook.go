@@ -57,7 +57,7 @@ func (r *WebhookService) Update(ctx context.Context, webhookEndpointID string, b
 		err = errors.New("missing required webhookEndpointId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("webhooks/%s", webhookEndpointID)
+	path := fmt.Sprintf("webhooks/%s", url.PathEscape(webhookEndpointID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err
 }
@@ -95,7 +95,7 @@ func (r *WebhookService) Delete(ctx context.Context, webhookEndpointID string, o
 		err = errors.New("missing required webhookEndpointId parameter")
 		return err
 	}
-	path := fmt.Sprintf("webhooks/%s", webhookEndpointID)
+	path := fmt.Sprintf("webhooks/%s", url.PathEscape(webhookEndpointID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
 	return err
 }
@@ -107,7 +107,7 @@ func (r *WebhookService) Get(ctx context.Context, webhookEndpointID string, opts
 		err = errors.New("missing required webhookEndpointId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("webhooks/%s", webhookEndpointID)
+	path := fmt.Sprintf("webhooks/%s", url.PathEscape(webhookEndpointID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }
@@ -123,7 +123,7 @@ func (r *WebhookService) Verify(ctx context.Context, webhookEndpointID string, b
 		err = errors.New("missing required webhookEndpointId parameter")
 		return err
 	}
-	path := fmt.Sprintf("webhooks/%s/verify", webhookEndpointID)
+	path := fmt.Sprintf("webhooks/%s/verify", url.PathEscape(webhookEndpointID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
 	return err
 }

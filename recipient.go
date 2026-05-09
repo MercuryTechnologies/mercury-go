@@ -59,7 +59,7 @@ func (r *RecipientService) Update(ctx context.Context, recipientID string, body 
 		err = errors.New("missing required recipientId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("recipient/%s", recipientID)
+	path := fmt.Sprintf("recipient/%s", url.PathEscape(recipientID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err
 }
@@ -96,7 +96,7 @@ func (r *RecipientService) Get(ctx context.Context, recipientID string, opts ...
 		err = errors.New("missing required recipientId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("recipient/%s", recipientID)
+	path := fmt.Sprintf("recipient/%s", url.PathEscape(recipientID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }

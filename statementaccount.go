@@ -51,7 +51,7 @@ func (r *StatementAccountService) List(ctx context.Context, accountID string, qu
 		err = errors.New("missing required accountId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("account/%s/statements", accountID)
+	path := fmt.Sprintf("account/%s/statements", url.PathEscape(accountID))
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {
 		return nil, err

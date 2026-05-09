@@ -72,7 +72,7 @@ func (r *AccountService) Get(ctx context.Context, accountID string, opts ...opti
 		err = errors.New("missing required accountId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("account/%s", accountID)
+	path := fmt.Sprintf("account/%s", url.PathEscape(accountID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }
