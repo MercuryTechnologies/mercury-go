@@ -65,6 +65,11 @@ func (r *OrgGetResponse) UnmarshalJSON(data []byte) error {
 type OrgGetResponseOrganization struct {
 	// Unique identifier for the organization
 	ID string `json:"id" api:"required" format:"uuid"`
+	// How often the organization is billed for its current subscription. Always
+	// "monthly" when the tier is "free".
+	//
+	// Any of "monthly", "annual".
+	BillingCadence string `json:"billingCadence" api:"required"`
 	// List of DBAs (Doing Business As names) for this organization
 	Dbas []OrgGetResponseOrganizationDba `json:"dbas" api:"required"`
 	// Whether this is a personal or business organization
@@ -73,14 +78,21 @@ type OrgGetResponseOrganization struct {
 	Kind string `json:"kind" api:"required"`
 	// Legal business name as registered
 	LegalBusinessName string `json:"legalBusinessName" api:"required"`
+	// The Mercury subscription tier this organization is currently on. Reports "free"
+	// when the organization has no paid subscription.
+	//
+	// Any of "free", "plus", "premium", "pro", "enterprise".
+	SubscriptionTier string `json:"subscriptionTier" api:"required"`
 	// Employer Identification Number (EIN), if available
 	Ein string `json:"ein" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                respjson.Field
+		BillingCadence    respjson.Field
 		Dbas              respjson.Field
 		Kind              respjson.Field
 		LegalBusinessName respjson.Field
+		SubscriptionTier  respjson.Field
 		Ein               respjson.Field
 		ExtraFields       map[string]respjson.Field
 		raw               string
