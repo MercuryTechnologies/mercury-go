@@ -64,6 +64,8 @@ func (r *CardListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Deprecated account card representation, used by the @/v1/account\/:id\/cards@
+// endpoint.
 type CardListResponseCard struct {
 	CardID         string `json:"cardId" api:"required"`
 	CreatedAt      string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
@@ -71,8 +73,14 @@ type CardListResponseCard struct {
 	NameOnCard     string `json:"nameOnCard" api:"required"`
 	// Any of "visa", "mastercard".
 	Network string `json:"network" api:"required"`
+	// Spending controls applied to a card
+	SpendLimit CardListResponseCardSpendLimit `json:"spendLimit" api:"required"`
 	// Any of "active", "frozen", "cancelled", "inactive", "expired", "suspended".
 	Status string `json:"status" api:"required"`
+	// Any of "virtual", "physical".
+	Type      string `json:"type" api:"required"`
+	UpdatedAt string `json:"updatedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	UserID    string `json:"userId" api:"required"`
 	// Any of "inactive", "active", "locked".
 	PhysicalCardStatus string `json:"physicalCardStatus" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -82,7 +90,11 @@ type CardListResponseCard struct {
 		LastFourDigits     respjson.Field
 		NameOnCard         respjson.Field
 		Network            respjson.Field
+		SpendLimit         respjson.Field
 		Status             respjson.Field
+		Type               respjson.Field
+		UpdatedAt          respjson.Field
+		UserID             respjson.Field
 		PhysicalCardStatus respjson.Field
 		ExtraFields        map[string]respjson.Field
 		raw                string
@@ -92,5 +104,31 @@ type CardListResponseCard struct {
 // Returns the unmodified JSON received from the API
 func (r CardListResponseCard) RawJSON() string { return r.JSON.raw }
 func (r *CardListResponseCard) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Spending controls applied to a card
+type CardListResponseCardSpendLimit struct {
+	// Maximum total spend allowed per interval, in cents.
+	AmountCents int64 `json:"amountCents" api:"required"`
+	// Rolling window the limit applies to.
+	//
+	// Any of "daily", "weekly", "monthly".
+	Interval string `json:"interval" api:"required"`
+	// Maximum ATM withdrawal allowed per interval, in cents. Null for virtual cards.
+	AtmAmountCents int64 `json:"atmAmountCents" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AmountCents    respjson.Field
+		Interval       respjson.Field
+		AtmAmountCents respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CardListResponseCardSpendLimit) RawJSON() string { return r.JSON.raw }
+func (r *CardListResponseCardSpendLimit) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
