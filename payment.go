@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
+	"time"
 
 	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
 	"github.com/MercuryTechnologies/mercury-go/internal/apiquery"
@@ -112,37 +113,77 @@ func (r *PaymentService) Transfer(ctx context.Context, body PaymentTransferParam
 	return res, err
 }
 
-// Extremely close to the internal type, but strips out potentially unwanted fields
+// A pending or completed approval request for a Mercury payment.
 type SendMoneyApproval struct {
 	// ID for a Mercury account.
 	AccountID string `json:"accountId" api:"required" format:"uuid"`
 	// A positive dollar amount with at least 1 cent.
 	Amount float64 `json:"amount" api:"required"`
+	// Time at which the payment request was created.
+	CreatedAt string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// Any of "ach", "check", "domesticWire", "internationalWire".
 	PaymentMethod SendMoneyPaymentMethod `json:"paymentMethod" api:"required"`
 	// ID for a Mercury account.
 	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
-	RequestID   string `json:"requestId" api:"required"`
+	// ID for the user
+	RequestedByUserID string `json:"requestedByUserId" api:"required" format:"uuid"`
+	RequestID         string `json:"requestId" api:"required"`
+	// Approval decisions recorded against this request, ordered from oldest to most
+	// recent.
+	Reviews []SendMoneyApprovalReview `json:"reviews" api:"required"`
 	// Any of "pendingApproval", "approved", "rejected", "cancelled".
 	Status SendMoneyApprovalStatus `json:"status" api:"required"`
 	Memo   string                  `json:"memo" api:"nullable"`
+	// Total number of approvals required for this payment to be sent. May be null for
+	// older requests where the requirement is not available.
+	NumberOfApproversRequired int64 `json:"numberOfApproversRequired" api:"nullable"`
+	// Date on which the payment is scheduled to be sent once fully approved. Null when
+	// the payment will be sent as soon as approvals are complete.
+	ScheduledSendDate time.Time `json:"scheduledSendDate" api:"nullable" format:"date"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		AccountID     respjson.Field
-		Amount        respjson.Field
-		PaymentMethod respjson.Field
-		RecipientID   respjson.Field
-		RequestID     respjson.Field
-		Status        respjson.Field
-		Memo          respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
+		AccountID                 respjson.Field
+		Amount                    respjson.Field
+		CreatedAt                 respjson.Field
+		PaymentMethod             respjson.Field
+		RecipientID               respjson.Field
+		RequestedByUserID         respjson.Field
+		RequestID                 respjson.Field
+		Reviews                   respjson.Field
+		Status                    respjson.Field
+		Memo                      respjson.Field
+		NumberOfApproversRequired respjson.Field
+		ScheduledSendDate         respjson.Field
+		ExtraFields               map[string]respjson.Field
+		raw                       string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
 func (r SendMoneyApproval) RawJSON() string { return r.JSON.raw }
 func (r *SendMoneyApproval) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type SendMoneyApprovalReview struct {
+	ReviewedAt string `json:"reviewedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	// ID for the user
+	ReviewerUserID string `json:"reviewerUserId" api:"required" format:"uuid"`
+	// Any of "approved", "rejected".
+	Status string `json:"status" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ReviewedAt     respjson.Field
+		ReviewerUserID respjson.Field
+		Status         respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r SendMoneyApprovalReview) RawJSON() string { return r.JSON.raw }
+func (r *SendMoneyApprovalReview) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
