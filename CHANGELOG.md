@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.7.0 (2026-05-13)
+
+Full Changelog: [v0.6.3...v0.7.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.6.3...v0.7.0)
+
+### Features
+
+* **client:** optimize json encoder for internal types ([e46c839](https://github.com/MercuryTechnologies/mercury-go/commit/e46c83955790f2bbc60f8b03ba0208991da18bcc))
+
+
+### Chores
+
+* update OpenAPI spec from 0cde29c1f4502d1067f547752b695d75aa4f0dd9 ([0f6b028](https://github.com/MercuryTechnologies/mercury-go/commit/0f6b0286b4202f6881de6430c7a728b53dbef771))
+* update OpenAPI spec from 16655e75292be95a906c3e70cd4b28206d504a9c ([bd02e72](https://github.com/MercuryTechnologies/mercury-go/commit/bd02e7210dbde4fef36cac255237481439df671f))
+* update OpenAPI spec from 7cb5eb5e7004fc928e0b8cbbb2e4fcaf1d0b8c69 ([4a7384f](https://github.com/MercuryTechnologies/mercury-go/commit/4a7384ffcf1e53a9e935d1815f145736baae46b2))
+
 ## 0.6.3 (2026-05-07)
 
 Full Changelog: [v0.6.2...v0.6.3](https://github.com/MercuryTechnologies/mercury-go/compare/v0.6.2...v0.6.3)
