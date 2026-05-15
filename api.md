@@ -284,3 +284,17 @@ Response Types:
 Methods:
 
 - <code title="post /transaction/{transactionId}/attachments">client.Transactions.Attachments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#TransactionAttachmentService.Attach">Attach</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, transactionID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#TransactionAttachmentAttachParams">TransactionAttachmentAttachParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+
+# Onboarding
+
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SubmitOnboardingDataParams">SubmitOnboardingDataParams</a>
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SubmitOnboardingDataResponse">SubmitOnboardingDataResponse</a>
+
+Methods:
+
+- <code title="post /submit-onboarding-data">client.Onboarding.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#OnboardingService.Submit">Submit</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#OnboardingSubmitParams">OnboardingSubmitParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SubmitOnboardingDataResponse">SubmitOnboardingDataResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
