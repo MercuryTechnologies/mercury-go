@@ -49,6 +49,8 @@ type Client struct {
 	Recipients RecipientService
 	// Manage transactions
 	Transactions TransactionService
+	// Endpoints for partner onboarding integration
+	Onboarding OnboardingService
 }
 
 // DefaultClientOptions read from the environment (MERCURY_API_KEY,
@@ -97,6 +99,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Accounts = NewAccountService(opts...)
 	r.Recipients = NewRecipientService(opts...)
 	r.Transactions = NewTransactionService(opts...)
+	r.Onboarding = NewOnboardingService(opts...)
 
 	return
 }
