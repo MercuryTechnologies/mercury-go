@@ -24,7 +24,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewCardService] method instead.
 type CardService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewCardService generates a new service that applies the given options to each
@@ -32,13 +32,13 @@ type CardService struct {
 // is one), and before any request-specific options.
 func NewCardService(opts ...option.RequestOption) (r CardService) {
 	r = CardService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
 // Retrieve all debit and credit cards associated with a specific account.
 func (r *CardService) List(ctx context.Context, accountID string, opts ...option.RequestOption) (res *CardListResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
 		return nil, err

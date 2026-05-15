@@ -25,7 +25,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewOnboardingService] method instead.
 type OnboardingService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewOnboardingService generates a new service that applies the given options to
@@ -33,13 +33,13 @@ type OnboardingService struct {
 // there is one), and before any request-specific options.
 func NewOnboardingService(opts ...option.RequestOption) (r OnboardingService) {
 	r = OnboardingService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
 // Submit onboarding data for applicants to pre-fill their Mercury application
 func (r *OnboardingService) Submit(ctx context.Context, body OnboardingSubmitParams, opts ...option.RequestOption) (res *SubmitOnboardingDataResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	path := "submit-onboarding-data"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err

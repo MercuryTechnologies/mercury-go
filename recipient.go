@@ -29,7 +29,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewRecipientService] method instead.
 type RecipientService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 	// Manage payment recipients
 	Attachments RecipientAttachmentService
 }
@@ -39,14 +39,14 @@ type RecipientService struct {
 // there is one), and before any request-specific options.
 func NewRecipientService(opts ...option.RequestOption) (r RecipientService) {
 	r = RecipientService{}
-	r.Options = opts
+	r.options = opts
 	r.Attachments = NewRecipientAttachmentService(opts...)
 	return
 }
 
 // Create a new recipient for making payments
 func (r *RecipientService) New(ctx context.Context, body RecipientNewParams, opts ...option.RequestOption) (res *Recipient, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	path := "recipients"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err
@@ -54,7 +54,7 @@ func (r *RecipientService) New(ctx context.Context, body RecipientNewParams, opt
 
 // Update an existing recipient's information
 func (r *RecipientService) Update(ctx context.Context, recipientID string, body RecipientUpdateParams, opts ...option.RequestOption) (res *Recipient, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if recipientID == "" {
 		err = errors.New("missing required recipientId parameter")
 		return nil, err
@@ -68,7 +68,7 @@ func (r *RecipientService) Update(ctx context.Context, recipientID string, body 
 // end_before) for pagination.
 func (r *RecipientService) List(ctx context.Context, query RecipientListParams, opts ...option.RequestOption) (res *pagination.CursorIDRecipients[Recipient], err error) {
 	var raw *http.Response
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "recipients"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -91,7 +91,7 @@ func (r *RecipientService) ListAutoPaging(ctx context.Context, query RecipientLi
 
 // Retrieve details of a specific recipient by ID
 func (r *RecipientService) Get(ctx context.Context, recipientID string, opts ...option.RequestOption) (res *Recipient, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if recipientID == "" {
 		err = errors.New("missing required recipientId parameter")
 		return nil, err

@@ -24,7 +24,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewCategoryService] method instead.
 type CategoryService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewCategoryService generates a new service that applies the given options to
@@ -32,7 +32,7 @@ type CategoryService struct {
 // there is one), and before any request-specific options.
 func NewCategoryService(opts ...option.RequestOption) (r CategoryService) {
 	r = CategoryService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
@@ -41,7 +41,7 @@ func NewCategoryService(opts ...option.RequestOption) (r CategoryService) {
 // and end_before query parameters.
 func (r *CategoryService) List(ctx context.Context, query CategoryListParams, opts ...option.RequestOption) (res *pagination.CursorIDCategories[CategoryData], err error) {
 	var raw *http.Response
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "categories"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

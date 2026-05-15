@@ -28,7 +28,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewStatementAccountService] method instead.
 type StatementAccountService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewStatementAccountService generates a new service that applies the given
@@ -36,7 +36,7 @@ type StatementAccountService struct {
 // options (if there is one), and before any request-specific options.
 func NewStatementAccountService(opts ...option.RequestOption) (r StatementAccountService) {
 	r = StatementAccountService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
@@ -45,7 +45,7 @@ func NewStatementAccountService(opts ...option.RequestOption) (r StatementAccoun
 // parameters, as well as date range filtering with start and end parameters.
 func (r *StatementAccountService) List(ctx context.Context, accountID string, query StatementAccountListParams, opts ...option.RequestOption) (res *pagination.CursorIDAccountStatements[StatementAccountListResponse], err error) {
 	var raw *http.Response
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")

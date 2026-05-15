@@ -28,7 +28,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewWebhookService] method instead.
 type WebhookService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewWebhookService generates a new service that applies the given options to each
@@ -36,13 +36,13 @@ type WebhookService struct {
 // is one), and before any request-specific options.
 func NewWebhookService(opts ...option.RequestOption) (r WebhookService) {
 	r = WebhookService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
 // Register a new webhook endpoint to receive event notifications
 func (r *WebhookService) New(ctx context.Context, body WebhookNewParams, opts ...option.RequestOption) (res *Webhook, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	path := "webhooks"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err
@@ -52,7 +52,7 @@ func (r *WebhookService) New(ctx context.Context, body WebhookNewParams, opts ..
 // been disabled due to consecutive delivery failures can be reactivated by setting
 // its status to 'active'.
 func (r *WebhookService) Update(ctx context.Context, webhookEndpointID string, body WebhookUpdateParams, opts ...option.RequestOption) (res *Webhook, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if webhookEndpointID == "" {
 		err = errors.New("missing required webhookEndpointId parameter")
 		return nil, err
@@ -66,7 +66,7 @@ func (r *WebhookService) Update(ctx context.Context, webhookEndpointID string, b
 // Supports filtering by status.
 func (r *WebhookService) List(ctx context.Context, query WebhookListParams, opts ...option.RequestOption) (res *pagination.CursorIDWebhooks[Webhook], err error) {
 	var raw *http.Response
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "webhooks"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -89,7 +89,7 @@ func (r *WebhookService) ListAutoPaging(ctx context.Context, query WebhookListPa
 
 // Delete a webhook endpoint
 func (r *WebhookService) Delete(ctx context.Context, webhookEndpointID string, opts ...option.RequestOption) (err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if webhookEndpointID == "" {
 		err = errors.New("missing required webhookEndpointId parameter")
@@ -102,7 +102,7 @@ func (r *WebhookService) Delete(ctx context.Context, webhookEndpointID string, o
 
 // Retrieve details of a specific webhook endpoint by ID
 func (r *WebhookService) Get(ctx context.Context, webhookEndpointID string, opts ...option.RequestOption) (res *Webhook, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if webhookEndpointID == "" {
 		err = errors.New("missing required webhookEndpointId parameter")
 		return nil, err
@@ -117,7 +117,7 @@ func (r *WebhookService) Get(ctx context.Context, webhookEndpointID string, opts
 // which event type to test (e.g., 'transaction.created', 'transaction.updated').
 // If omitted from the request body, defaults to 'transaction.created'.
 func (r *WebhookService) Verify(ctx context.Context, webhookEndpointID string, body WebhookVerifyParams, opts ...option.RequestOption) (err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if webhookEndpointID == "" {
 		err = errors.New("missing required webhookEndpointId parameter")
