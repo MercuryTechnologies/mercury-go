@@ -75,9 +75,9 @@ func (r *EventService) Get(ctx context.Context, eventID string, opts ...option.R
 	return res, err
 }
 
-// Represents a single event in the Mercury API event stream. | Events track
-// changes to resources over time, providing an audit trail | of all modifications
-// with before/after values and metadata about what changed.
+// Represents a single event in the Mercury API event stream. Events track changes
+// to resources over time, providing an audit trail of all modifications with
+// before/after values and metadata about what changed.
 type Event struct {
 	// ID for the API event
 	ID string `json:"id" api:"required" format:"uuid"`
