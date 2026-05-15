@@ -24,7 +24,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewInvoiceAttachmentService] method instead.
 type InvoiceAttachmentService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewInvoiceAttachmentService generates a new service that applies the given
@@ -32,13 +32,13 @@ type InvoiceAttachmentService struct {
 // options (if there is one), and before any request-specific options.
 func NewInvoiceAttachmentService(opts ...option.RequestOption) (r InvoiceAttachmentService) {
 	r = InvoiceAttachmentService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
 // Retrieve a list of all attachments for a specific invoice
 func (r *InvoiceAttachmentService) List(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *InvoiceAttachmentListResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if invoiceID == "" {
 		err = errors.New("missing required invoiceId parameter")
 		return nil, err
@@ -50,7 +50,7 @@ func (r *InvoiceAttachmentService) List(ctx context.Context, invoiceID string, o
 
 // Retrieve attachment details including download URL
 func (r *InvoiceAttachmentService) Get(ctx context.Context, attachmentID string, opts ...option.RequestOption) (res *Attachment, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if attachmentID == "" {
 		err = errors.New("missing required attachmentId parameter")
 		return nil, err

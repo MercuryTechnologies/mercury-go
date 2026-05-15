@@ -17,7 +17,7 @@ import (
 // interacting with the mercury API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 	// Manage customers
 	Customers CustomerService
 	// Manage invoices
@@ -81,7 +81,7 @@ func DefaultClientOptions() []option.RequestOption {
 func NewClient(opts ...option.RequestOption) (r Client) {
 	opts = append(DefaultClientOptions(), opts...)
 
-	r = Client{Options: opts}
+	r = Client{options: opts}
 
 	r.Customers = NewCustomerService(opts...)
 	r.Invoices = NewInvoiceService(opts...)
@@ -136,7 +136,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 // For even greater flexibility, see [option.WithResponseInto] and
 // [option.WithResponseBodyInto].
 func (r *Client) Execute(ctx context.Context, method string, path string, params any, res any, opts ...option.RequestOption) error {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	return requestconfig.ExecuteNewRequest(ctx, method, path, params, res, opts...)
 }
 

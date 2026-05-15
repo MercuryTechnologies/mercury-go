@@ -27,7 +27,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewPaymentService] method instead.
 type PaymentService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewPaymentService generates a new service that applies the given options to each
@@ -35,14 +35,14 @@ type PaymentService struct {
 // is one), and before any request-specific options.
 func NewPaymentService(opts ...option.RequestOption) (r PaymentService) {
 	r = PaymentService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
 // Send money from an account to a recipient. Creates a transaction that will be
 // processed immediately or may require approval.
 func (r *PaymentService) New(ctx context.Context, accountID string, body PaymentNewParams, opts ...option.RequestOption) (res *Transaction, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
 		return nil, err
@@ -56,7 +56,7 @@ func (r *PaymentService) New(ctx context.Context, accountID string, body Payment
 // organization. Supports filtering by account and status.
 func (r *PaymentService) List(ctx context.Context, query PaymentListParams, opts ...option.RequestOption) (res *pagination.CursorIDRequestSendMoney[SendMoneyApproval], err error) {
 	var raw *http.Response
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "request-send-money"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -79,7 +79,7 @@ func (r *PaymentService) ListAutoPaging(ctx context.Context, query PaymentListPa
 
 // Get send money approval request by ID
 func (r *PaymentService) Get(ctx context.Context, requestID string, opts ...option.RequestOption) (res *SendMoneyApproval, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if requestID == "" {
 		err = errors.New("missing required requestId parameter")
 		return nil, err
@@ -92,7 +92,7 @@ func (r *PaymentService) Get(ctx context.Context, requestID string, opts ...opti
 // Create a "request to send money" that will require approval based on your
 // organization's approval policies.
 func (r *PaymentService) Request(ctx context.Context, accountID string, body PaymentRequestParams, opts ...option.RequestOption) (res *SendMoneyApproval, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
 		return nil, err
@@ -107,7 +107,7 @@ func (r *PaymentService) Request(ctx context.Context, accountID string, body Pay
 // account to a treasury/investment account, and from a treasury/investment account
 // to a depository account. Creates paired debit and credit transactions.
 func (r *PaymentService) Transfer(ctx context.Context, body PaymentTransferParams, opts ...option.RequestOption) (res *PaymentTransferResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	path := "transfer"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err

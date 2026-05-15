@@ -29,7 +29,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewTreasuryService] method instead.
 type TreasuryService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewTreasuryService generates a new service that applies the given options to
@@ -37,7 +37,7 @@ type TreasuryService struct {
 // there is one), and before any request-specific options.
 func NewTreasuryService(opts ...option.RequestOption) (r TreasuryService) {
 	r = TreasuryService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
@@ -46,7 +46,7 @@ func NewTreasuryService(opts ...option.RequestOption) (r TreasuryService) {
 // pagination.
 func (r *TreasuryService) List(ctx context.Context, query TreasuryListParams, opts ...option.RequestOption) (res *pagination.CursorIDAccounts[TreasuryListResponse], err error) {
 	var raw *http.Response
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "treasury"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -70,7 +70,7 @@ func (r *TreasuryService) ListAutoPaging(ctx context.Context, query TreasuryList
 
 // Retrieve paginated treasury transactions for a specific treasury account.
 func (r *TreasuryService) Transactions(ctx context.Context, treasuryID string, query TreasuryTransactionsParams, opts ...option.RequestOption) (res *TreasuryTransactionsResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if treasuryID == "" {
 		err = errors.New("missing required treasuryId parameter")
 		return nil, err

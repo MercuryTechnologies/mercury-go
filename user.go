@@ -28,7 +28,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewUserService] method instead.
 type UserService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewUserService generates a new service that applies the given options to each
@@ -36,14 +36,14 @@ type UserService struct {
 // is one), and before any request-specific options.
 func NewUserService(opts ...option.RequestOption) (r UserService) {
 	r = UserService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
 // Get all users
 func (r *UserService) List(ctx context.Context, query UserListParams, opts ...option.RequestOption) (res *pagination.CursorIDUsers[User], err error) {
 	var raw *http.Response
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "users"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -65,7 +65,7 @@ func (r *UserService) ListAutoPaging(ctx context.Context, query UserListParams, 
 
 // Get user by ID
 func (r *UserService) Get(ctx context.Context, userID string, opts ...option.RequestOption) (res *User, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if userID == "" {
 		err = errors.New("missing required userId parameter")
 		return nil, err

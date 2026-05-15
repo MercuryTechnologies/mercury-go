@@ -22,7 +22,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewCreditService] method instead.
 type CreditService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewCreditService generates a new service that applies the given options to each
@@ -30,13 +30,13 @@ type CreditService struct {
 // is one), and before any request-specific options.
 func NewCreditService(opts ...option.RequestOption) (r CreditService) {
 	r = CreditService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
 // Retrieve a list of all credit accounts for the organization.
 func (r *CreditService) List(ctx context.Context, opts ...option.RequestOption) (res *CreditListResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	path := "credit"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err

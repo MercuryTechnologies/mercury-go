@@ -28,7 +28,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewEventService] method instead.
 type EventService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewEventService generates a new service that applies the given options to each
@@ -36,14 +36,14 @@ type EventService struct {
 // is one), and before any request-specific options.
 func NewEventService(opts ...option.RequestOption) (r EventService) {
 	r = EventService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
 // Get all events
 func (r *EventService) List(ctx context.Context, query EventListParams, opts ...option.RequestOption) (res *pagination.CursorIDEvents[Event], err error) {
 	var raw *http.Response
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "events"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -65,7 +65,7 @@ func (r *EventService) ListAutoPaging(ctx context.Context, query EventListParams
 
 // Get event by ID
 func (r *EventService) Get(ctx context.Context, eventID string, opts ...option.RequestOption) (res *Event, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if eventID == "" {
 		err = errors.New("missing required eventId parameter")
 		return nil, err

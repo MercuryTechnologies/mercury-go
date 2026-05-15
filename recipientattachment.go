@@ -32,7 +32,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewRecipientAttachmentService] method instead.
 type RecipientAttachmentService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewRecipientAttachmentService generates a new service that applies the given
@@ -40,7 +40,7 @@ type RecipientAttachmentService struct {
 // options (if there is one), and before any request-specific options.
 func NewRecipientAttachmentService(opts ...option.RequestOption) (r RecipientAttachmentService) {
 	r = RecipientAttachmentService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
@@ -49,7 +49,7 @@ func NewRecipientAttachmentService(opts ...option.RequestOption) (r RecipientAtt
 // for pagination.
 func (r *RecipientAttachmentService) List(ctx context.Context, query RecipientAttachmentListParams, opts ...option.RequestOption) (res *pagination.CursorIDRecipientAttachments[RecipientAttachmentListResponse], err error) {
 	var raw *http.Response
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "recipients/attachments"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -76,7 +76,7 @@ func (r *RecipientAttachmentService) ListAutoPaging(ctx context.Context, query R
 // and common document formats. The attachment will be associated as a tax document
 // for the recipient.
 func (r *RecipientAttachmentService) Attach(ctx context.Context, recipientID string, body RecipientAttachmentAttachParams, opts ...option.RequestOption) (err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if recipientID == "" {
 		err = errors.New("missing required recipientId parameter")

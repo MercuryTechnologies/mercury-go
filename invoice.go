@@ -30,7 +30,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewInvoiceService] method instead.
 type InvoiceService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 	// Manage invoices
 	Attachments InvoiceAttachmentService
 }
@@ -40,14 +40,14 @@ type InvoiceService struct {
 // is one), and before any request-specific options.
 func NewInvoiceService(opts ...option.RequestOption) (r InvoiceService) {
 	r = InvoiceService{}
-	r.Options = opts
+	r.options = opts
 	r.Attachments = NewInvoiceAttachmentService(opts...)
 	return
 }
 
 // Create a new invoice for the organization
 func (r *InvoiceService) New(ctx context.Context, body InvoiceNewParams, opts ...option.RequestOption) (res *Invoice, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	path := "ar/invoices"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err
@@ -55,7 +55,7 @@ func (r *InvoiceService) New(ctx context.Context, body InvoiceNewParams, opts ..
 
 // Update an existing invoice
 func (r *InvoiceService) Update(ctx context.Context, invoiceID string, body InvoiceUpdateParams, opts ...option.RequestOption) (res *Invoice, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if invoiceID == "" {
 		err = errors.New("missing required invoiceId parameter")
 		return nil, err
@@ -69,7 +69,7 @@ func (r *InvoiceService) Update(ctx context.Context, invoiceID string, body Invo
 // limit, order, start_after, and end_before query parameters.
 func (r *InvoiceService) List(ctx context.Context, query InvoiceListParams, opts ...option.RequestOption) (res *pagination.CursorIDArInvoices[InvoiceListResponse], err error) {
 	var raw *http.Response
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "ar/invoices"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -92,7 +92,7 @@ func (r *InvoiceService) ListAutoPaging(ctx context.Context, query InvoiceListPa
 
 // Cancel an invoice. This action cannot be undone.
 func (r *InvoiceService) Cancel(ctx context.Context, invoiceID string, opts ...option.RequestOption) (err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if invoiceID == "" {
 		err = errors.New("missing required invoiceId parameter")
@@ -106,7 +106,7 @@ func (r *InvoiceService) Cancel(ctx context.Context, invoiceID string, opts ...o
 // Downloads a PDF file for the specified invoice. The response includes a
 // Content-Disposition header set to 'attachment' with the filename.
 func (r *InvoiceService) Download(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *http.Response, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/pdf")}, opts...)
 	if invoiceID == "" {
 		err = errors.New("missing required invoiceId parameter")
@@ -119,7 +119,7 @@ func (r *InvoiceService) Download(ctx context.Context, invoiceID string, opts ..
 
 // Retrieve details of an invoice by its ID
 func (r *InvoiceService) Get(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *Invoice, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if invoiceID == "" {
 		err = errors.New("missing required invoiceId parameter")
 		return nil, err
