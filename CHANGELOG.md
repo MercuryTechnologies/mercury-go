@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.0 (2026-05-15)
+
+Full Changelog: [v0.7.0...v0.8.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.7.0...v0.8.0)
+
+### Features
+
+* **api:** manual updates for onboarding api ([6b7750c](https://github.com/MercuryTechnologies/mercury-go/commit/6b7750ce208dc3cdcb7c0ff6f3b2e469f192b5f0))
+
 ## 0.7.0 (2026-05-13)
 
 Full Changelog: [v0.6.3...v0.7.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.6.3...v0.7.0)
