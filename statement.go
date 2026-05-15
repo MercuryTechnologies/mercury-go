@@ -22,7 +22,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewStatementService] method instead.
 type StatementService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 	// Manage bank accounts
 	Accounts StatementAccountService
 	// Manage treasury accounts and transactions
@@ -34,7 +34,7 @@ type StatementService struct {
 // there is one), and before any request-specific options.
 func NewStatementService(opts ...option.RequestOption) (r StatementService) {
 	r = StatementService{}
-	r.Options = opts
+	r.options = opts
 	r.Accounts = NewStatementAccountService(opts...)
 	r.Treasury = NewStatementTreasuryService(opts...)
 	return
@@ -44,7 +44,7 @@ func NewStatementService(opts ...option.RequestOption) (r StatementService) {
 // a Content-Disposition header for proper file download handling. Returns binary
 // PDF data.
 func (r *StatementService) Download(ctx context.Context, statementID string, opts ...option.RequestOption) (res *http.Response, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/pdf")}, opts...)
 	if statementID == "" {
 		err = errors.New("missing required statementId parameter")

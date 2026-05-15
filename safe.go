@@ -25,7 +25,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewSafeService] method instead.
 type SafeService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewSafeService generates a new service that applies the given options to each
@@ -33,14 +33,14 @@ type SafeService struct {
 // is one), and before any request-specific options.
 func NewSafeService(opts ...option.RequestOption) (r SafeService) {
 	r = SafeService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
 // Retrieve all SAFE (Simple Agreement for Future Equity) requests for your
 // organization.
 func (r *SafeService) List(ctx context.Context, opts ...option.RequestOption) (res *[]SafeRequest, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	path := "safes"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
@@ -49,7 +49,7 @@ func (r *SafeService) List(ctx context.Context, opts ...option.RequestOption) (r
 // Download the PDF document for a specific SAFE request. Returns binary PDF data
 // with a Content-Disposition header.
 func (r *SafeService) Download(ctx context.Context, safeRequestID string, opts ...option.RequestOption) (res *http.Response, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/pdf")}, opts...)
 	if safeRequestID == "" {
 		err = errors.New("missing required safeRequestId parameter")
@@ -62,7 +62,7 @@ func (r *SafeService) Download(ctx context.Context, safeRequestID string, opts .
 
 // Retrieve a specific SAFE request by its ID.
 func (r *SafeService) Get(ctx context.Context, safeRequestID string, opts ...option.RequestOption) (res *SafeRequest, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if safeRequestID == "" {
 		err = errors.New("missing required safeRequestId parameter")
 		return nil, err

@@ -22,7 +22,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewOrgService] method instead.
 type OrgService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewOrgService generates a new service that applies the given options to each
@@ -30,14 +30,14 @@ type OrgService struct {
 // is one), and before any request-specific options.
 func NewOrgService(opts ...option.RequestOption) (r OrgService) {
 	r = OrgService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
 // Retrieve information about your organization including EIN, legal business name,
 // and DBAs.
 func (r *OrgService) Get(ctx context.Context, opts ...option.RequestOption) (res *OrgGetResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	path := "organization"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err

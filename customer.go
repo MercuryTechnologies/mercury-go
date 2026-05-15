@@ -28,7 +28,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewCustomerService] method instead.
 type CustomerService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewCustomerService generates a new service that applies the given options to
@@ -36,13 +36,13 @@ type CustomerService struct {
 // there is one), and before any request-specific options.
 func NewCustomerService(opts ...option.RequestOption) (r CustomerService) {
 	r = CustomerService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
 // Create a new customer for the organization
 func (r *CustomerService) New(ctx context.Context, body CustomerNewParams, opts ...option.RequestOption) (res *Customer, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	path := "ar/customers"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err
@@ -50,7 +50,7 @@ func (r *CustomerService) New(ctx context.Context, body CustomerNewParams, opts 
 
 // Update an existing customer
 func (r *CustomerService) Update(ctx context.Context, customerID string, body CustomerUpdateParams, opts ...option.RequestOption) (res *Customer, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if customerID == "" {
 		err = errors.New("missing required customerId parameter")
 		return nil, err
@@ -64,7 +64,7 @@ func (r *CustomerService) Update(ctx context.Context, customerID string, body Cu
 // limit, order, start_after, and end_before query parameters.
 func (r *CustomerService) List(ctx context.Context, query CustomerListParams, opts ...option.RequestOption) (res *pagination.CursorIDArCustomers[Customer], err error) {
 	var raw *http.Response
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "ar/customers"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -87,7 +87,7 @@ func (r *CustomerService) ListAutoPaging(ctx context.Context, query CustomerList
 
 // Delete a customer. This action cannot be undone.
 func (r *CustomerService) Delete(ctx context.Context, customerID string, opts ...option.RequestOption) (err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if customerID == "" {
 		err = errors.New("missing required customerId parameter")
@@ -100,7 +100,7 @@ func (r *CustomerService) Delete(ctx context.Context, customerID string, opts ..
 
 // Retrieve details of a specific customer by their ID
 func (r *CustomerService) Get(ctx context.Context, customerID string, opts ...option.RequestOption) (res *Customer, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if customerID == "" {
 		err = errors.New("missing required customerId parameter")
 		return nil, err

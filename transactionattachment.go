@@ -28,7 +28,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewTransactionAttachmentService] method instead.
 type TransactionAttachmentService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewTransactionAttachmentService generates a new service that applies the given
@@ -36,7 +36,7 @@ type TransactionAttachmentService struct {
 // options (if there is one), and before any request-specific options.
 func NewTransactionAttachmentService(opts ...option.RequestOption) (r TransactionAttachmentService) {
 	r = TransactionAttachmentService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
@@ -44,7 +44,7 @@ func NewTransactionAttachmentService(opts ...option.RequestOption) (r Transactio
 // multipart/form-data. Supported file types include PDF, images (PNG, JPG, GIF),
 // and common document formats.
 func (r *TransactionAttachmentService) Attach(ctx context.Context, transactionID string, body TransactionAttachmentAttachParams, opts ...option.RequestOption) (err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if transactionID == "" {
 		err = errors.New("missing required transactionId parameter")

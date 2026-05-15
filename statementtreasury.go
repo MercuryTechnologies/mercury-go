@@ -29,7 +29,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewStatementTreasuryService] method instead.
 type StatementTreasuryService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewStatementTreasuryService generates a new service that applies the given
@@ -37,7 +37,7 @@ type StatementTreasuryService struct {
 // options (if there is one), and before any request-specific options.
 func NewStatementTreasuryService(opts ...option.RequestOption) (r StatementTreasuryService) {
 	r = StatementTreasuryService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
@@ -45,7 +45,7 @@ func NewStatementTreasuryService(opts ...option.RequestOption) (r StatementTreas
 // Supports cursor-based pagination and filtering by document type.
 func (r *StatementTreasuryService) List(ctx context.Context, treasuryID string, query StatementTreasuryListParams, opts ...option.RequestOption) (res *pagination.CursorIDAccountStatements[StatementTreasuryListResponse], err error) {
 	var raw *http.Response
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if treasuryID == "" {
 		err = errors.New("missing required treasuryId parameter")

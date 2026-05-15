@@ -28,7 +28,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewAccountService] method instead.
 type AccountService struct {
-	Options []option.RequestOption
+	options []option.RequestOption
 }
 
 // NewAccountService generates a new service that applies the given options to each
@@ -36,7 +36,7 @@ type AccountService struct {
 // is one), and before any request-specific options.
 func NewAccountService(opts ...option.RequestOption) (r AccountService) {
 	r = AccountService{}
-	r.Options = opts
+	r.options = opts
 	return
 }
 
@@ -44,7 +44,7 @@ func NewAccountService(opts ...option.RequestOption) (r AccountService) {
 // limit, order, start_after, and end_before query parameters.
 func (r *AccountService) List(ctx context.Context, query AccountListParams, opts ...option.RequestOption) (res *pagination.CursorIDAccounts[Account], err error) {
 	var raw *http.Response
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "accounts"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -67,7 +67,7 @@ func (r *AccountService) ListAutoPaging(ctx context.Context, query AccountListPa
 
 // Get account by ID
 func (r *AccountService) Get(ctx context.Context, accountID string, opts ...option.RequestOption) (res *Account, err error) {
-	opts = slices.Concat(r.Options, opts)
+	opts = slices.Concat(r.options, opts)
 	if accountID == "" {
 		err = errors.New("missing required accountId parameter")
 		return nil, err
