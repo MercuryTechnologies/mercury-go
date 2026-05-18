@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"slices"
 	"time"
 
@@ -55,7 +56,7 @@ func (r *SafeService) Download(ctx context.Context, safeRequestID string, opts .
 		err = errors.New("missing required safeRequestId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("safes/%s/document", safeRequestID)
+	path := fmt.Sprintf("safes/%s/document", url.PathEscape(safeRequestID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }
@@ -67,7 +68,7 @@ func (r *SafeService) Get(ctx context.Context, safeRequestID string, opts ...opt
 		err = errors.New("missing required safeRequestId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("safes/%s", safeRequestID)
+	path := fmt.Sprintf("safes/%s", url.PathEscape(safeRequestID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }

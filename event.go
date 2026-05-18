@@ -70,7 +70,7 @@ func (r *EventService) Get(ctx context.Context, eventID string, opts ...option.R
 		err = errors.New("missing required eventId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("events/%s", eventID)
+	path := fmt.Sprintf("events/%s", url.PathEscape(eventID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }

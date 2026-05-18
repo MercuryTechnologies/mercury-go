@@ -10,6 +10,7 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"slices"
 
 	"github.com/MercuryTechnologies/mercury-go/internal/apiform"
@@ -50,7 +51,7 @@ func (r *TransactionAttachmentService) Attach(ctx context.Context, transactionID
 		err = errors.New("missing required transactionId parameter")
 		return err
 	}
-	path := fmt.Sprintf("transaction/%s/attachments", transactionID)
+	path := fmt.Sprintf("transaction/%s/attachments", url.PathEscape(transactionID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
 	return err
 }

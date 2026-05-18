@@ -51,7 +51,7 @@ func (r *StatementTreasuryService) List(ctx context.Context, treasuryID string, 
 		err = errors.New("missing required treasuryId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("treasury/%s/statements", treasuryID)
+	path := fmt.Sprintf("treasury/%s/statements", url.PathEscape(treasuryID))
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {
 		return nil, err

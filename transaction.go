@@ -51,7 +51,7 @@ func (r *TransactionService) Update(ctx context.Context, transactionID string, b
 		err = errors.New("missing required transactionId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("transaction/%s", transactionID)
+	path := fmt.Sprintf("transaction/%s", url.PathEscape(transactionID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPatch, path, body, &res, opts...)
 	return res, err
 }
@@ -91,7 +91,7 @@ func (r *TransactionService) Get(ctx context.Context, transactionID string, opts
 		err = errors.New("missing required transactionId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("transaction/%s", transactionID)
+	path := fmt.Sprintf("transaction/%s", url.PathEscape(transactionID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }

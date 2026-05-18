@@ -75,7 +75,7 @@ func (r *TreasuryService) Transactions(ctx context.Context, treasuryID string, q
 		err = errors.New("missing required treasuryId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("treasury/%s/transactions", treasuryID)
+	path := fmt.Sprintf("treasury/%s/transactions", url.PathEscape(treasuryID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return res, err
 }

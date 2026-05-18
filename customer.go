@@ -55,7 +55,7 @@ func (r *CustomerService) Update(ctx context.Context, customerID string, body Cu
 		err = errors.New("missing required customerId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("ar/customers/%s", customerID)
+	path := fmt.Sprintf("ar/customers/%s", url.PathEscape(customerID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err
 }
@@ -93,7 +93,7 @@ func (r *CustomerService) Delete(ctx context.Context, customerID string, opts ..
 		err = errors.New("missing required customerId parameter")
 		return err
 	}
-	path := fmt.Sprintf("ar/customers/%s", customerID)
+	path := fmt.Sprintf("ar/customers/%s", url.PathEscape(customerID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
 	return err
 }
@@ -105,7 +105,7 @@ func (r *CustomerService) Get(ctx context.Context, customerID string, opts ...op
 		err = errors.New("missing required customerId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("ar/customers/%s", customerID)
+	path := fmt.Sprintf("ar/customers/%s", url.PathEscape(customerID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"slices"
 
 	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
@@ -43,7 +44,7 @@ func (r *CardService) List(ctx context.Context, accountID string, opts ...option
 		err = errors.New("missing required accountId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("account/%s/cards", accountID)
+	path := fmt.Sprintf("account/%s/cards", url.PathEscape(accountID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }
