@@ -45,32 +45,15 @@ func (r *OnboardingService) Submit(ctx context.Context, body OnboardingSubmitPar
 	return res, err
 }
 
-// The properties BeneficialOwners, Partner are required.
-type SubmitOnboardingDataParams struct {
-	BeneficialOwners []SubmitOnboardingDataParamsBeneficialOwner `json:"beneficialOwners,omitzero" api:"required"`
-	Partner          string                                      `json:"partner" api:"required"`
-	InviteEmail      param.Opt[string]                           `json:"inviteEmail,omitzero"`
-	WebhookURL       param.Opt[string]                           `json:"webhookURL,omitzero"`
-	About            SubmitOnboardingDataParamsAbout             `json:"about,omitzero"`
-	// Any of "PendingEINApplication", "DefaultApplication".
-	ApplicationType         SubmitOnboardingDataParamsApplicationType         `json:"applicationType,omitzero"`
-	BusinessContactDetails  SubmitOnboardingDataParamsBusinessContactDetails  `json:"businessContactDetails,omitzero"`
-	BusinessLegalAddress    SubmitOnboardingDataParamsBusinessLegalAddress    `json:"businessLegalAddress,omitzero"`
-	BusinessPhysicalAddress SubmitOnboardingDataParamsBusinessPhysicalAddress `json:"businessPhysicalAddress,omitzero"`
-	FormationDetails        SubmitOnboardingDataParamsFormationDetails        `json:"formationDetails,omitzero"`
-	paramObj
-}
+type ApplicationType string
 
-func (r SubmitOnboardingDataParams) MarshalJSON() (data []byte, err error) {
-	type shadow SubmitOnboardingDataParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SubmitOnboardingDataParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
+const (
+	ApplicationTypePendingEinApplication ApplicationType = "PendingEINApplication"
+	ApplicationTypeDefaultApplication    ApplicationType = "DefaultApplication"
+)
 
 // Beneficial Owner's Information Gathered From The Onboarding API
-type SubmitOnboardingDataParamsBeneficialOwner struct {
+type BeneficialOwnerParam struct {
 	// Address line 1 of Beneficial Owner's address
 	Address1 param.Opt[string] `json:"address1,omitzero"`
 	// Address line 2 of Beneficial Owner's address
@@ -104,78 +87,102 @@ type SubmitOnboardingDataParamsBeneficialOwner struct {
 	// Beneficial Owner's Citizenship Status
 	//
 	// Any of "USCitizen", "USResident", "NonResident".
-	CitizenshipStatus string `json:"citizenshipStatus,omitzero"`
+	CitizenshipStatus BeneficialOwnerCitizenshipStatus `json:"citizenshipStatus,omitzero"`
 	// Beneficial Owner's Identification File Type
 	//
 	// Any of "Passport", "DriversLicense", "StateID", "AlienRegistrationCard",
 	// "EmployeeAuthorizationDocument", "VerifiedByThirdParty", "NationalID",
 	// "ResidencePermit", "Visa".
-	IdentificationType string `json:"identificationType,omitzero"`
+	IdentificationType BeneficialOwnerIdentificationType `json:"identificationType,omitzero"`
 	// Beneficial Owner's pep status
 	//
 	// Any of "IsPep", "IsNotPep".
-	IsPep string `json:"isPep,omitzero"`
+	IsPep BeneficialOwnerIsPep `json:"isPep,omitzero"`
 	// Beneficial Owner's Job Title
 	//
 	// Any of "ChiefExecutiveOfficer", "ChiefOperatingOfficer",
 	// "ChiefTechnologyOfficer", "ChiefFinancialOfficer", "Founder", "President",
 	// "GeneralPartner", "FinanceTeam", "Other".
-	JobTitle string `json:"jobTitle,omitzero"`
+	JobTitle BeneficialOwnerJobTitle `json:"jobTitle,omitzero"`
 	// Beneficial Owner's Social Profile Websites
 	SocialProfileLinks []string `json:"socialProfileLinks,omitzero"`
 	paramObj
 }
 
-func (r SubmitOnboardingDataParamsBeneficialOwner) MarshalJSON() (data []byte, err error) {
-	type shadow SubmitOnboardingDataParamsBeneficialOwner
+func (r BeneficialOwnerParam) MarshalJSON() (data []byte, err error) {
+	type shadow BeneficialOwnerParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SubmitOnboardingDataParamsBeneficialOwner) UnmarshalJSON(data []byte) error {
+func (r *BeneficialOwnerParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func init() {
-	apijson.RegisterFieldValidator[SubmitOnboardingDataParamsBeneficialOwner](
-		"citizenshipStatus", "USCitizen", "USResident", "NonResident",
-	)
-	apijson.RegisterFieldValidator[SubmitOnboardingDataParamsBeneficialOwner](
-		"identificationType", "Passport", "DriversLicense", "StateID", "AlienRegistrationCard", "EmployeeAuthorizationDocument", "VerifiedByThirdParty", "NationalID", "ResidencePermit", "Visa",
-	)
-	apijson.RegisterFieldValidator[SubmitOnboardingDataParamsBeneficialOwner](
-		"isPep", "IsPep", "IsNotPep",
-	)
-	apijson.RegisterFieldValidator[SubmitOnboardingDataParamsBeneficialOwner](
-		"jobTitle", "ChiefExecutiveOfficer", "ChiefOperatingOfficer", "ChiefTechnologyOfficer", "ChiefFinancialOfficer", "Founder", "President", "GeneralPartner", "FinanceTeam", "Other",
-	)
-}
+// Beneficial Owner's Citizenship Status
+type BeneficialOwnerCitizenshipStatus string
 
-type SubmitOnboardingDataParamsAbout struct {
-	CountryOfOperation param.Opt[string] `json:"countryOfOperation,omitzero"`
-	Description        param.Opt[string] `json:"description,omitzero"`
-	Industry           param.Opt[string] `json:"industry,omitzero"`
-	LegalBusinessName  param.Opt[string] `json:"legalBusinessName,omitzero"`
-	Website            param.Opt[string] `json:"website,omitzero"`
-	// The countries where the company operates.
-	CountriesOfOperations []string `json:"countriesOfOperations,omitzero"`
+const (
+	BeneficialOwnerCitizenshipStatusUsCitizen   BeneficialOwnerCitizenshipStatus = "USCitizen"
+	BeneficialOwnerCitizenshipStatusUsResident  BeneficialOwnerCitizenshipStatus = "USResident"
+	BeneficialOwnerCitizenshipStatusNonResident BeneficialOwnerCitizenshipStatus = "NonResident"
+)
+
+// Beneficial Owner's Identification File Type
+type BeneficialOwnerIdentificationType string
+
+const (
+	BeneficialOwnerIdentificationTypePassport                      BeneficialOwnerIdentificationType = "Passport"
+	BeneficialOwnerIdentificationTypeDriversLicense                BeneficialOwnerIdentificationType = "DriversLicense"
+	BeneficialOwnerIdentificationTypeStateID                       BeneficialOwnerIdentificationType = "StateID"
+	BeneficialOwnerIdentificationTypeAlienRegistrationCard         BeneficialOwnerIdentificationType = "AlienRegistrationCard"
+	BeneficialOwnerIdentificationTypeEmployeeAuthorizationDocument BeneficialOwnerIdentificationType = "EmployeeAuthorizationDocument"
+	BeneficialOwnerIdentificationTypeVerifiedByThirdParty          BeneficialOwnerIdentificationType = "VerifiedByThirdParty"
+	BeneficialOwnerIdentificationTypeNationalID                    BeneficialOwnerIdentificationType = "NationalID"
+	BeneficialOwnerIdentificationTypeResidencePermit               BeneficialOwnerIdentificationType = "ResidencePermit"
+	BeneficialOwnerIdentificationTypeVisa                          BeneficialOwnerIdentificationType = "Visa"
+)
+
+// Beneficial Owner's pep status
+type BeneficialOwnerIsPep string
+
+const (
+	BeneficialOwnerIsPepIsPep    BeneficialOwnerIsPep = "IsPep"
+	BeneficialOwnerIsPepIsNotPep BeneficialOwnerIsPep = "IsNotPep"
+)
+
+// Beneficial Owner's Job Title
+type BeneficialOwnerJobTitle string
+
+const (
+	BeneficialOwnerJobTitleChiefExecutiveOfficer  BeneficialOwnerJobTitle = "ChiefExecutiveOfficer"
+	BeneficialOwnerJobTitleChiefOperatingOfficer  BeneficialOwnerJobTitle = "ChiefOperatingOfficer"
+	BeneficialOwnerJobTitleChiefTechnologyOfficer BeneficialOwnerJobTitle = "ChiefTechnologyOfficer"
+	BeneficialOwnerJobTitleChiefFinancialOfficer  BeneficialOwnerJobTitle = "ChiefFinancialOfficer"
+	BeneficialOwnerJobTitleFounder                BeneficialOwnerJobTitle = "Founder"
+	BeneficialOwnerJobTitlePresident              BeneficialOwnerJobTitle = "President"
+	BeneficialOwnerJobTitleGeneralPartner         BeneficialOwnerJobTitle = "GeneralPartner"
+	BeneficialOwnerJobTitleFinanceTeam            BeneficialOwnerJobTitle = "FinanceTeam"
+	BeneficialOwnerJobTitleOther                  BeneficialOwnerJobTitle = "Other"
+)
+
+type BusinessAddressParam struct {
+	Address1   param.Opt[string] `json:"address1,omitzero"`
+	Address2   param.Opt[string] `json:"address2,omitzero"`
+	City       param.Opt[string] `json:"city,omitzero"`
+	Country    param.Opt[string] `json:"country,omitzero"`
+	PostalCode param.Opt[string] `json:"postalCode,omitzero"`
+	Region     param.Opt[string] `json:"region,omitzero"`
 	paramObj
 }
 
-func (r SubmitOnboardingDataParamsAbout) MarshalJSON() (data []byte, err error) {
-	type shadow SubmitOnboardingDataParamsAbout
+func (r BusinessAddressParam) MarshalJSON() (data []byte, err error) {
+	type shadow BusinessAddressParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SubmitOnboardingDataParamsAbout) UnmarshalJSON(data []byte) error {
+func (r *BusinessAddressParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type SubmitOnboardingDataParamsApplicationType string
-
-const (
-	SubmitOnboardingDataParamsApplicationTypePendingEinApplication SubmitOnboardingDataParamsApplicationType = "PendingEINApplication"
-	SubmitOnboardingDataParamsApplicationTypeDefaultApplication    SubmitOnboardingDataParamsApplicationType = "DefaultApplication"
-)
-
-type SubmitOnboardingDataParamsBusinessContactDetails struct {
+type BusinessContactDetailsParam struct {
 	Address1    param.Opt[string] `json:"address1,omitzero"`
 	Address2    param.Opt[string] `json:"address2,omitzero"`
 	City        param.Opt[string] `json:"city,omitzero"`
@@ -186,52 +193,16 @@ type SubmitOnboardingDataParamsBusinessContactDetails struct {
 	paramObj
 }
 
-func (r SubmitOnboardingDataParamsBusinessContactDetails) MarshalJSON() (data []byte, err error) {
-	type shadow SubmitOnboardingDataParamsBusinessContactDetails
+func (r BusinessContactDetailsParam) MarshalJSON() (data []byte, err error) {
+	type shadow BusinessContactDetailsParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SubmitOnboardingDataParamsBusinessContactDetails) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type SubmitOnboardingDataParamsBusinessLegalAddress struct {
-	Address1   param.Opt[string] `json:"address1,omitzero"`
-	Address2   param.Opt[string] `json:"address2,omitzero"`
-	City       param.Opt[string] `json:"city,omitzero"`
-	Country    param.Opt[string] `json:"country,omitzero"`
-	PostalCode param.Opt[string] `json:"postalCode,omitzero"`
-	Region     param.Opt[string] `json:"region,omitzero"`
-	paramObj
-}
-
-func (r SubmitOnboardingDataParamsBusinessLegalAddress) MarshalJSON() (data []byte, err error) {
-	type shadow SubmitOnboardingDataParamsBusinessLegalAddress
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SubmitOnboardingDataParamsBusinessLegalAddress) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type SubmitOnboardingDataParamsBusinessPhysicalAddress struct {
-	Address1   param.Opt[string] `json:"address1,omitzero"`
-	Address2   param.Opt[string] `json:"address2,omitzero"`
-	City       param.Opt[string] `json:"city,omitzero"`
-	Country    param.Opt[string] `json:"country,omitzero"`
-	PostalCode param.Opt[string] `json:"postalCode,omitzero"`
-	Region     param.Opt[string] `json:"region,omitzero"`
-	paramObj
-}
-
-func (r SubmitOnboardingDataParamsBusinessPhysicalAddress) MarshalJSON() (data []byte, err error) {
-	type shadow SubmitOnboardingDataParamsBusinessPhysicalAddress
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SubmitOnboardingDataParamsBusinessPhysicalAddress) UnmarshalJSON(data []byte) error {
+func (r *BusinessContactDetailsParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The properties FederalEin, FormationDocumentFileBlob are required.
-type SubmitOnboardingDataParamsFormationDetails struct {
+type FormationDetailsParam struct {
 	// Field should be null (no value), 'Pending' (value will be provided at a later
 	// date), or a valid value
 	FederalEin param.Opt[string] `json:"federalEin,omitzero" api:"required"`
@@ -247,29 +218,93 @@ type SubmitOnboardingDataParamsFormationDetails struct {
 	// "GeneralPartnership", "LimitedPartnership", "JointVenture",
 	// "LLCTaxedAsSoleProprietorship", "SoleProprietorship", "ExemptedCompany",
 	// "Limited".
-	CompanyStructure string `json:"companyStructure,omitzero"`
+	CompanyStructure FormationDetailsCompanyStructure `json:"companyStructure,omitzero"`
 	// Any of "ArticlesOfIncorporation", "ArticlesOfOrganization",
 	// "CertificateOfFormation", "PartnershipAgreement",
 	// "SecretaryOfStateRegistrationPage".
-	FormationDocumentType string `json:"formationDocumentType,omitzero"`
+	FormationDocumentType FormationDetailsFormationDocumentType `json:"formationDocumentType,omitzero"`
 	paramObj
 }
 
-func (r SubmitOnboardingDataParamsFormationDetails) MarshalJSON() (data []byte, err error) {
-	type shadow SubmitOnboardingDataParamsFormationDetails
+func (r FormationDetailsParam) MarshalJSON() (data []byte, err error) {
+	type shadow FormationDetailsParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *SubmitOnboardingDataParamsFormationDetails) UnmarshalJSON(data []byte) error {
+func (r *FormationDetailsParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func init() {
-	apijson.RegisterFieldValidator[SubmitOnboardingDataParamsFormationDetails](
-		"companyStructure", "CCorp", "LLC", "LLP", "NonProfit", "Partnership", "ProfessionalAssociation", "ProfessionalCorporation", "SCorp", "GeneralPartnership", "LimitedPartnership", "JointVenture", "LLCTaxedAsSoleProprietorship", "SoleProprietorship", "ExemptedCompany", "Limited",
-	)
-	apijson.RegisterFieldValidator[SubmitOnboardingDataParamsFormationDetails](
-		"formationDocumentType", "ArticlesOfIncorporation", "ArticlesOfOrganization", "CertificateOfFormation", "PartnershipAgreement", "SecretaryOfStateRegistrationPage",
-	)
+type FormationDetailsCompanyStructure string
+
+const (
+	FormationDetailsCompanyStructureCCorp                        FormationDetailsCompanyStructure = "CCorp"
+	FormationDetailsCompanyStructureLlc                          FormationDetailsCompanyStructure = "LLC"
+	FormationDetailsCompanyStructureLlp                          FormationDetailsCompanyStructure = "LLP"
+	FormationDetailsCompanyStructureNonProfit                    FormationDetailsCompanyStructure = "NonProfit"
+	FormationDetailsCompanyStructurePartnership                  FormationDetailsCompanyStructure = "Partnership"
+	FormationDetailsCompanyStructureProfessionalAssociation      FormationDetailsCompanyStructure = "ProfessionalAssociation"
+	FormationDetailsCompanyStructureProfessionalCorporation      FormationDetailsCompanyStructure = "ProfessionalCorporation"
+	FormationDetailsCompanyStructureSCorp                        FormationDetailsCompanyStructure = "SCorp"
+	FormationDetailsCompanyStructureGeneralPartnership           FormationDetailsCompanyStructure = "GeneralPartnership"
+	FormationDetailsCompanyStructureLimitedPartnership           FormationDetailsCompanyStructure = "LimitedPartnership"
+	FormationDetailsCompanyStructureJointVenture                 FormationDetailsCompanyStructure = "JointVenture"
+	FormationDetailsCompanyStructureLlcTaxedAsSoleProprietorship FormationDetailsCompanyStructure = "LLCTaxedAsSoleProprietorship"
+	FormationDetailsCompanyStructureSoleProprietorship           FormationDetailsCompanyStructure = "SoleProprietorship"
+	FormationDetailsCompanyStructureExemptedCompany              FormationDetailsCompanyStructure = "ExemptedCompany"
+	FormationDetailsCompanyStructureLimited                      FormationDetailsCompanyStructure = "Limited"
+)
+
+type FormationDetailsFormationDocumentType string
+
+const (
+	FormationDetailsFormationDocumentTypeArticlesOfIncorporation          FormationDetailsFormationDocumentType = "ArticlesOfIncorporation"
+	FormationDetailsFormationDocumentTypeArticlesOfOrganization           FormationDetailsFormationDocumentType = "ArticlesOfOrganization"
+	FormationDetailsFormationDocumentTypeCertificateOfFormation           FormationDetailsFormationDocumentType = "CertificateOfFormation"
+	FormationDetailsFormationDocumentTypePartnershipAgreement             FormationDetailsFormationDocumentType = "PartnershipAgreement"
+	FormationDetailsFormationDocumentTypeSecretaryOfStateRegistrationPage FormationDetailsFormationDocumentType = "SecretaryOfStateRegistrationPage"
+)
+
+type OnboardingDataAboutParam struct {
+	CountryOfOperation param.Opt[string] `json:"countryOfOperation,omitzero"`
+	Description        param.Opt[string] `json:"description,omitzero"`
+	Industry           param.Opt[string] `json:"industry,omitzero"`
+	LegalBusinessName  param.Opt[string] `json:"legalBusinessName,omitzero"`
+	Website            param.Opt[string] `json:"website,omitzero"`
+	// The countries where the company operates.
+	CountriesOfOperations []string `json:"countriesOfOperations,omitzero"`
+	paramObj
+}
+
+func (r OnboardingDataAboutParam) MarshalJSON() (data []byte, err error) {
+	type shadow OnboardingDataAboutParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *OnboardingDataAboutParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties BeneficialOwners, Partner are required.
+type SubmitOnboardingDataParams struct {
+	BeneficialOwners []BeneficialOwnerParam   `json:"beneficialOwners,omitzero" api:"required"`
+	Partner          string                   `json:"partner" api:"required"`
+	InviteEmail      param.Opt[string]        `json:"inviteEmail,omitzero"`
+	WebhookURL       param.Opt[string]        `json:"webhookURL,omitzero"`
+	About            OnboardingDataAboutParam `json:"about,omitzero"`
+	// Any of "PendingEINApplication", "DefaultApplication".
+	ApplicationType         ApplicationType             `json:"applicationType,omitzero"`
+	BusinessContactDetails  BusinessContactDetailsParam `json:"businessContactDetails,omitzero"`
+	BusinessLegalAddress    BusinessAddressParam        `json:"businessLegalAddress,omitzero"`
+	BusinessPhysicalAddress BusinessAddressParam        `json:"businessPhysicalAddress,omitzero"`
+	FormationDetails        FormationDetailsParam       `json:"formationDetails,omitzero"`
+	paramObj
+}
+
+func (r SubmitOnboardingDataParams) MarshalJSON() (data []byte, err error) {
+	type shadow SubmitOnboardingDataParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SubmitOnboardingDataParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type SubmitOnboardingDataResponse struct {
