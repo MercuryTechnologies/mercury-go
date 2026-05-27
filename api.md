@@ -289,6 +289,7 @@ Methods:
 
 Params Types:
 
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#ApplicationType">ApplicationType</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#BeneficialOwnerParam">BeneficialOwnerParam</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#BusinessAddressParam">BusinessAddressParam</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#BusinessContactDetailsParam">BusinessContactDetailsParam</a>

@@ -45,6 +45,13 @@ func (r *OnboardingService) Submit(ctx context.Context, body OnboardingSubmitPar
 	return res, err
 }
 
+type ApplicationType string
+
+const (
+	ApplicationTypePendingEinApplication ApplicationType = "PendingEINApplication"
+	ApplicationTypeDefaultApplication    ApplicationType = "DefaultApplication"
+)
+
 // Beneficial Owner's Information Gathered From The Onboarding API
 type BeneficialOwnerParam struct {
 	// Address line 1 of Beneficial Owner's address
@@ -278,17 +285,17 @@ func (r *OnboardingDataAboutParam) UnmarshalJSON(data []byte) error {
 
 // The properties BeneficialOwners, Partner are required.
 type SubmitOnboardingDataParams struct {
-	BeneficialOwners []BeneficialOwnerParam `json:"beneficialOwners,omitzero" api:"required"`
-	Partner          string                 `json:"partner" api:"required"`
-	InviteEmail      param.Opt[string]      `json:"inviteEmail,omitzero"`
-	WebhookURL       param.Opt[string]      `json:"webhookURL,omitzero"`
+	BeneficialOwners []BeneficialOwnerParam   `json:"beneficialOwners,omitzero" api:"required"`
+	Partner          string                   `json:"partner" api:"required"`
+	InviteEmail      param.Opt[string]        `json:"inviteEmail,omitzero"`
+	WebhookURL       param.Opt[string]        `json:"webhookURL,omitzero"`
+	About            OnboardingDataAboutParam `json:"about,omitzero"`
 	// Any of "PendingEINApplication", "DefaultApplication".
-	ApplicationType         SubmitOnboardingDataParamsApplicationType `json:"applicationType,omitzero"`
-	About                   OnboardingDataAboutParam                  `json:"about,omitzero"`
-	BusinessContactDetails  BusinessContactDetailsParam               `json:"businessContactDetails,omitzero"`
-	BusinessLegalAddress    BusinessAddressParam                      `json:"businessLegalAddress,omitzero"`
-	BusinessPhysicalAddress BusinessAddressParam                      `json:"businessPhysicalAddress,omitzero"`
-	FormationDetails        FormationDetailsParam                     `json:"formationDetails,omitzero"`
+	ApplicationType         ApplicationType             `json:"applicationType,omitzero"`
+	BusinessContactDetails  BusinessContactDetailsParam `json:"businessContactDetails,omitzero"`
+	BusinessLegalAddress    BusinessAddressParam        `json:"businessLegalAddress,omitzero"`
+	BusinessPhysicalAddress BusinessAddressParam        `json:"businessPhysicalAddress,omitzero"`
+	FormationDetails        FormationDetailsParam       `json:"formationDetails,omitzero"`
 	paramObj
 }
 
@@ -299,13 +306,6 @@ func (r SubmitOnboardingDataParams) MarshalJSON() (data []byte, err error) {
 func (r *SubmitOnboardingDataParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
-
-type SubmitOnboardingDataParamsApplicationType string
-
-const (
-	SubmitOnboardingDataParamsApplicationTypePendingEinApplication SubmitOnboardingDataParamsApplicationType = "PendingEINApplication"
-	SubmitOnboardingDataParamsApplicationTypeDefaultApplication    SubmitOnboardingDataParamsApplicationType = "DefaultApplication"
-)
 
 type SubmitOnboardingDataResponse struct {
 	// ID for this saved onboarding data
