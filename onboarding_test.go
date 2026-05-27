@@ -29,19 +29,19 @@ func TestOnboardingSubmitWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Onboarding.Submit(context.TODO(), mercury.OnboardingSubmitParams{
 		SubmitOnboardingDataParams: mercury.SubmitOnboardingDataParams{
-			BeneficialOwners: []mercury.SubmitOnboardingDataParamsBeneficialOwner{{
+			BeneficialOwners: []mercury.BeneficialOwnerParam{{
 				Address1:           mercury.String("address1"),
 				Address2:           mercury.String("address2"),
-				CitizenshipStatus:  "USCitizen",
+				CitizenshipStatus:  mercury.BeneficialOwnerCitizenshipStatusUsCitizen,
 				City:               mercury.String("city"),
 				Country:            mercury.String("country"),
 				DateOfBirth:        mercury.Time(time.Now()),
 				Email:              mercury.String("email"),
 				FirstName:          mercury.String("firstName"),
 				IdentificationBlob: mercury.String("identificationBlob"),
-				IdentificationType: "Passport",
-				IsPep:              "IsPep",
-				JobTitle:           "ChiefExecutiveOfficer",
+				IdentificationType: mercury.BeneficialOwnerIdentificationTypePassport,
+				IsPep:              mercury.BeneficialOwnerIsPepIsPep,
+				JobTitle:           mercury.BeneficialOwnerJobTitleChiefExecutiveOfficer,
 				LastName:           mercury.String("lastName"),
 				OtherJobTitle:      mercury.String("otherJobTitle"),
 				PercentOwnership:   mercury.Float(0),
@@ -52,7 +52,7 @@ func TestOnboardingSubmitWithOptionalParams(t *testing.T) {
 				State:              mercury.String("state"),
 			}},
 			Partner: "partner",
-			About: mercury.SubmitOnboardingDataParamsAbout{
+			About: mercury.OnboardingDataAboutParam{
 				CountriesOfOperations: []string{"string"},
 				CountryOfOperation:    mercury.String("countryOfOperation"),
 				Description:           mercury.String("description"),
@@ -60,8 +60,8 @@ func TestOnboardingSubmitWithOptionalParams(t *testing.T) {
 				LegalBusinessName:     mercury.String("legalBusinessName"),
 				Website:               mercury.String("website"),
 			},
-			ApplicationType: mercury.SubmitOnboardingDataParamsApplicationTypePendingEinApplication,
-			BusinessContactDetails: mercury.SubmitOnboardingDataParamsBusinessContactDetails{
+			ApplicationType: mercury.ApplicationTypePendingEinApplication,
+			BusinessContactDetails: mercury.BusinessContactDetailsParam{
 				Address1:    mercury.String("address1"),
 				Address2:    mercury.String("address2"),
 				City:        mercury.String("city"),
@@ -70,7 +70,7 @@ func TestOnboardingSubmitWithOptionalParams(t *testing.T) {
 				PostalCode:  mercury.String("postalCode"),
 				State:       mercury.String("state"),
 			},
-			BusinessLegalAddress: mercury.SubmitOnboardingDataParamsBusinessLegalAddress{
+			BusinessLegalAddress: mercury.BusinessAddressParam{
 				Address1:   mercury.String("address1"),
 				Address2:   mercury.String("address2"),
 				City:       mercury.String("city"),
@@ -78,7 +78,7 @@ func TestOnboardingSubmitWithOptionalParams(t *testing.T) {
 				PostalCode: mercury.String("postalCode"),
 				Region:     mercury.String("region"),
 			},
-			BusinessPhysicalAddress: mercury.SubmitOnboardingDataParamsBusinessPhysicalAddress{
+			BusinessPhysicalAddress: mercury.BusinessAddressParam{
 				Address1:   mercury.String("address1"),
 				Address2:   mercury.String("address2"),
 				City:       mercury.String("city"),
@@ -86,15 +86,15 @@ func TestOnboardingSubmitWithOptionalParams(t *testing.T) {
 				PostalCode: mercury.String("postalCode"),
 				Region:     mercury.String("region"),
 			},
-			FormationDetails: mercury.SubmitOnboardingDataParamsFormationDetails{
+			FormationDetails: mercury.FormationDetailsParam{
 				FederalEin:                mercury.String("12-3456789"),
 				FormationDocumentFileBlob: mercury.String("12-3456789"),
 				CompanyOriginCountry:      mercury.String("companyOriginCountry"),
-				CompanyStructure:          "CCorp",
+				CompanyStructure:          mercury.FormationDetailsCompanyStructureCCorp,
 				EinDocumentFileBlob:       mercury.String("einDocumentFileBlob"),
 				EInDocumentFileBlob:       mercury.String("eINDocumentFileBlob"),
 				ForeignBusinessNumber:     mercury.String("foreignBusinessNumber"),
-				FormationDocumentType:     "ArticlesOfIncorporation",
+				FormationDocumentType:     mercury.FormationDetailsFormationDocumentTypeArticlesOfIncorporation,
 			},
 			InviteEmail: mercury.String("inviteEmail"),
 			WebhookURL:  mercury.String("webhookURL"),
