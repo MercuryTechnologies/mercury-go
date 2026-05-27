@@ -108,7 +108,8 @@ type SubmitOnboardingDataParamsBeneficialOwner struct {
 	// Beneficial Owner's Identification File Type
 	//
 	// Any of "Passport", "DriversLicense", "StateID", "AlienRegistrationCard",
-	// "EmployeeAuthorizationDocument", "VerifiedByThirdParty".
+	// "EmployeeAuthorizationDocument", "VerifiedByThirdParty", "NationalID",
+	// "ResidencePermit", "Visa".
 	IdentificationType string `json:"identificationType,omitzero"`
 	// Beneficial Owner's pep status
 	//
@@ -138,7 +139,7 @@ func init() {
 		"citizenshipStatus", "USCitizen", "USResident", "NonResident",
 	)
 	apijson.RegisterFieldValidator[SubmitOnboardingDataParamsBeneficialOwner](
-		"identificationType", "Passport", "DriversLicense", "StateID", "AlienRegistrationCard", "EmployeeAuthorizationDocument", "VerifiedByThirdParty",
+		"identificationType", "Passport", "DriversLicense", "StateID", "AlienRegistrationCard", "EmployeeAuthorizationDocument", "VerifiedByThirdParty", "NationalID", "ResidencePermit", "Visa",
 	)
 	apijson.RegisterFieldValidator[SubmitOnboardingDataParamsBeneficialOwner](
 		"isPep", "IsPep", "IsNotPep",
