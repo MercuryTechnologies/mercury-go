@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.9.1 (2026-05-27)
+
+Full Changelog: [v0.9.0...v0.9.1](https://github.com/MercuryTechnologies/mercury-go/compare/v0.9.0...v0.9.1)
+
+### Chores
+
+* update onboarding models ([9246263](https://github.com/MercuryTechnologies/mercury-go/commit/9246263b738f7624289ddff91edf58659d9cd84d))
+* update OpenAPI spec from 3511450461ac44e86e51897029509e855d4fd7e7 ([fa7cce3](https://github.com/MercuryTechnologies/mercury-go/commit/fa7cce39ffab28704c50eadb0090101ee0cd37c2))
+* update OpenAPI spec from fa9ecd521cf1448c5b2f23cede689f99ade606b9 ([d6b9e7d](https://github.com/MercuryTechnologies/mercury-go/commit/d6b9e7d925f22e42e0c38690f10d8a87e5a10dca))
+
 ## 0.9.0 (2026-05-15)
 
 Full Changelog: [v0.8.0...v0.9.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.8.0...v0.9.0)
