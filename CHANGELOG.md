@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.10.0 (2026-05-27)
+
+Full Changelog: [v0.9.1...v0.10.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.9.1...v0.10.0)
+
+### Features
+
+* **api:** manual updates ([d461a45](https://github.com/MercuryTechnologies/mercury-go/commit/d461a45c051f300adb74c46faaffff3864a8adf2))
+* **api:** manual updates ([763d8e0](https://github.com/MercuryTechnologies/mercury-go/commit/763d8e036675bf236cdb735f005220e2fb3ca2d5))
+
 ## 0.9.1 (2026-05-27)
 
 Full Changelog: [v0.9.0...v0.9.1](https://github.com/MercuryTechnologies/mercury-go/compare/v0.9.0...v0.9.1)
