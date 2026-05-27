@@ -38,7 +38,7 @@ func NewOnboardingService(opts ...option.RequestOption) (r OnboardingService) {
 }
 
 // Submit onboarding data for applicants to pre-fill their Mercury application
-func (r *OnboardingService) Submit1(ctx context.Context, body OnboardingSubmit1Params, opts ...option.RequestOption) (res *SubmitOnboardingDataResponse, err error) {
+func (r *OnboardingService) Submit(ctx context.Context, body OnboardingSubmitParams, opts ...option.RequestOption) (res *SubmitOnboardingDataResponse, err error) {
 	opts = slices.Concat(r.options, opts)
 	path := "submit-onboarding-data"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -326,14 +326,14 @@ func (r *SubmitOnboardingDataResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type OnboardingSubmit1Params struct {
+type OnboardingSubmitParams struct {
 	SubmitOnboardingDataParams SubmitOnboardingDataParams
 	paramObj
 }
 
-func (r OnboardingSubmit1Params) MarshalJSON() (data []byte, err error) {
+func (r OnboardingSubmitParams) MarshalJSON() (data []byte, err error) {
 	return shimjson.Marshal(r.SubmitOnboardingDataParams)
 }
-func (r *OnboardingSubmit1Params) UnmarshalJSON(data []byte) error {
+func (r *OnboardingSubmitParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
