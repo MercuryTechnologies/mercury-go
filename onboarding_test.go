@@ -14,7 +14,7 @@ import (
 	"github.com/MercuryTechnologies/mercury-go/option"
 )
 
-func TestOnboardingSubmit1WithOptionalParams(t *testing.T) {
+func TestOnboardingSubmitWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,7 +27,7 @@ func TestOnboardingSubmit1WithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Onboarding.Submit1(context.TODO(), mercury.OnboardingSubmit1Params{
+	_, err := client.Onboarding.Submit(context.TODO(), mercury.OnboardingSubmitParams{
 		SubmitOnboardingDataParams: mercury.SubmitOnboardingDataParams{
 			BeneficialOwners: []mercury.BeneficialOwnerParam{{
 				Address1:           mercury.String("address1"),
