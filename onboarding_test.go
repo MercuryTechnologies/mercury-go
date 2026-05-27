@@ -60,7 +60,7 @@ func TestOnboardingSubmitWithOptionalParams(t *testing.T) {
 				LegalBusinessName:     mercury.String("legalBusinessName"),
 				Website:               mercury.String("website"),
 			},
-			ApplicationType: mercury.ApplicationTypePendingEinApplication,
+			ApplicationType: mercury.SubmitOnboardingDataParamsApplicationTypePendingEinApplication,
 			BusinessContactDetails: mercury.BusinessContactDetailsParam{
 				Address1:    mercury.String("address1"),
 				Address2:    mercury.String("address2"),
