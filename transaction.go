@@ -159,6 +159,14 @@ func (r *GlAllocation) UnmarshalJSON(data []byte) error {
 type MerchantData struct {
 	// Merchant ID for card transactions
 	ID string `json:"id" api:"nullable"`
+	// The transaction amount in the smallest unit of the merchant's currency (e.g.,
+	// cents for USD/EUR, yen for JPY, fils for BHD). For debits this is negative, for
+	// credits positive. Use 'merchantCurrency' to determine the appropriate decimal
+	// scaling: most currencies use 2 decimal places (divide by 100), but JPY uses 0
+	// (no division needed) and BHD/KWD/OMR use 3 (divide by 1000). This is useful for
+	// international transactions where the merchant charges in a currency different
+	// from the account currency. Nothing if not available.
+	Amount int64 `json:"amount" api:"nullable"`
 	// Mercury category for the merchant (e.g., "Restaurants", "Software")
 	//
 	// Any of "Other", "Advertising", "Airlines", "AlcoholAndBars",
@@ -173,11 +181,16 @@ type MerchantData struct {
 	Category MercuryCategory `json:"category" api:"nullable"`
 	// 4-digit merchant category code (MCC) for card transactions
 	CategoryCode string `json:"categoryCode" api:"nullable"`
+	// ISO 4217 currency code of the merchant's currency (e.g., "EUR", "GBP", "JPY").
+	// Nothing if not available.
+	Currency string `json:"currency" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID           respjson.Field
+		Amount       respjson.Field
 		Category     respjson.Field
 		CategoryCode respjson.Field
+		Currency     respjson.Field
 		ExtraFields  map[string]respjson.Field
 		raw          string
 	} `json:"-"`
