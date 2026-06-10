@@ -222,7 +222,8 @@ type RelatedTransactionData struct {
 	// "AtmTransactionToAtmReimbursementReversal",
 	// "AtmReimbursementReversalToAtmTransaction", "ReturnToOriginalTransaction",
 	// "OriginalTransactionToReturn", "ProvisionalCreditToReversal",
-	// "ReversalToProvisionalCredit".
+	// "ReversalToProvisionalCredit", "MerchantRefundToOriginalCharge",
+	// "OriginalChargeToMerchantRefund".
 	RelationKind RelatedTransactionDataRelationKind `json:"relationKind" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -270,6 +271,8 @@ const (
 	RelatedTransactionDataRelationKindOriginalTransactionToReturn               RelatedTransactionDataRelationKind = "OriginalTransactionToReturn"
 	RelatedTransactionDataRelationKindProvisionalCreditToReversal               RelatedTransactionDataRelationKind = "ProvisionalCreditToReversal"
 	RelatedTransactionDataRelationKindReversalToProvisionalCredit               RelatedTransactionDataRelationKind = "ReversalToProvisionalCredit"
+	RelatedTransactionDataRelationKindMerchantRefundToOriginalCharge            RelatedTransactionDataRelationKind = "MerchantRefundToOriginalCharge"
+	RelatedTransactionDataRelationKindOriginalChargeToMerchantRefund            RelatedTransactionDataRelationKind = "OriginalChargeToMerchantRefund"
 )
 
 type Transaction struct {
