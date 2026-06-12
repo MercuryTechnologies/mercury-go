@@ -60,7 +60,7 @@ func (r *InvoiceService) Update(ctx context.Context, invoiceID string, body Invo
 		err = errors.New("missing required invoiceId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("ar/invoices/%s", invoiceID)
+	path := fmt.Sprintf("ar/invoices/%s", url.PathEscape(invoiceID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err
 }
@@ -98,7 +98,7 @@ func (r *InvoiceService) Cancel(ctx context.Context, invoiceID string, opts ...o
 		err = errors.New("missing required invoiceId parameter")
 		return err
 	}
-	path := fmt.Sprintf("ar/invoices/%s/cancel", invoiceID)
+	path := fmt.Sprintf("ar/invoices/%s/cancel", url.PathEscape(invoiceID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, nil, opts...)
 	return err
 }
@@ -112,7 +112,7 @@ func (r *InvoiceService) Download(ctx context.Context, invoiceID string, opts ..
 		err = errors.New("missing required invoiceId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("ar/invoices/%s/pdf", invoiceID)
+	path := fmt.Sprintf("ar/invoices/%s/pdf", url.PathEscape(invoiceID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }
@@ -124,7 +124,7 @@ func (r *InvoiceService) Get(ctx context.Context, invoiceID string, opts ...opti
 		err = errors.New("missing required invoiceId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("ar/invoices/%s", invoiceID)
+	path := fmt.Sprintf("ar/invoices/%s", url.PathEscape(invoiceID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }

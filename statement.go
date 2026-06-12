@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"slices"
 
 	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
@@ -50,7 +51,7 @@ func (r *StatementService) Download(ctx context.Context, statementID string, opt
 		err = errors.New("missing required statementId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("statements/%s/pdf", statementID)
+	path := fmt.Sprintf("statements/%s/pdf", url.PathEscape(statementID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }

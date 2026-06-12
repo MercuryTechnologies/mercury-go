@@ -47,7 +47,7 @@ func (r *PaymentService) New(ctx context.Context, accountID string, body Payment
 		err = errors.New("missing required accountId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("account/%s/transactions", accountID)
+	path := fmt.Sprintf("account/%s/transactions", url.PathEscape(accountID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err
 }
@@ -84,7 +84,7 @@ func (r *PaymentService) Get(ctx context.Context, requestID string, opts ...opti
 		err = errors.New("missing required requestId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("request-send-money/%s", requestID)
+	path := fmt.Sprintf("request-send-money/%s", url.PathEscape(requestID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }
@@ -97,7 +97,7 @@ func (r *PaymentService) Request(ctx context.Context, accountID string, body Pay
 		err = errors.New("missing required accountId parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("account/%s/request-send-money", accountID)
+	path := fmt.Sprintf("account/%s/request-send-money", url.PathEscape(accountID))
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err
 }
