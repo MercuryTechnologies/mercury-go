@@ -113,7 +113,7 @@ type CardListResponseCardSpendLimit struct {
 	AmountCents int64 `json:"amountCents" api:"required"`
 	// Rolling window the limit applies to.
 	//
-	// Any of "daily", "weekly", "monthly".
+	// Any of "daily", "weekly", "monthly", "yearly".
 	Interval string `json:"interval" api:"required"`
 	// Maximum ATM withdrawal allowed per interval, in cents. Null for virtual cards.
 	AtmAmountCents int64 `json:"atmAmountCents" api:"nullable"`
