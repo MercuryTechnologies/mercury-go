@@ -62,7 +62,7 @@ func (r *CardService) Update(ctx context.Context, cardID string, body CardUpdate
 }
 
 // Retrieve a paginated list of cards.
-func (r *CardService) List(ctx context.Context, query CardListParams, opts ...option.RequestOption) (res *pagination.CursorIDCards[Card], err error) {
+func (r *CardService) List(ctx context.Context, query CardListParams, opts ...option.RequestOption) (res *pagination.CursorIDCardsPagination[Card], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -80,8 +80,8 @@ func (r *CardService) List(ctx context.Context, query CardListParams, opts ...op
 }
 
 // Retrieve a paginated list of cards.
-func (r *CardService) ListAutoPaging(ctx context.Context, query CardListParams, opts ...option.RequestOption) *pagination.CursorIDCardsAutoPager[Card] {
-	return pagination.NewCursorIDCardsAutoPager(r.List(ctx, query, opts...))
+func (r *CardService) ListAutoPaging(ctx context.Context, query CardListParams, opts ...option.RequestOption) *pagination.CursorIDCardsPaginationAutoPager[Card] {
+	return pagination.NewCursorIDCardsPaginationAutoPager(r.List(ctx, query, opts...))
 }
 
 // Permanently cancel a card. This action cannot be undone.

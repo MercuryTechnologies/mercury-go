@@ -1319,7 +1319,7 @@ func (r *CursorIDWebhooksAutoPager[T]) Index() int {
 	return r.run
 }
 
-type CursorIDCards[T any] struct {
+type CursorIDCardsPagination[T any] struct {
 	Cards []T `json:"cards"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1332,15 +1332,15 @@ type CursorIDCards[T any] struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r CursorIDCards[T]) RawJSON() string { return r.JSON.raw }
-func (r *CursorIDCards[T]) UnmarshalJSON(data []byte) error {
+func (r CursorIDCardsPagination[T]) RawJSON() string { return r.JSON.raw }
+func (r *CursorIDCardsPagination[T]) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // GetNextPage returns the next page as defined by this pagination style. When
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
-func (r *CursorIDCards[T]) GetNextPage() (res *CursorIDCards[T], err error) {
+func (r *CursorIDCardsPagination[T]) GetNextPage() (res *CursorIDCardsPagination[T], err error) {
 	if len(r.Cards) == 0 {
 		return nil, nil
 	}
@@ -1366,16 +1366,16 @@ func (r *CursorIDCards[T]) GetNextPage() (res *CursorIDCards[T], err error) {
 	return res, nil
 }
 
-func (r *CursorIDCards[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+func (r *CursorIDCardsPagination[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
 	if r == nil {
-		r = &CursorIDCards[T]{}
+		r = &CursorIDCardsPagination[T]{}
 	}
 	r.cfg = cfg
 	r.res = res
 }
 
-type CursorIDCardsAutoPager[T any] struct {
-	page *CursorIDCards[T]
+type CursorIDCardsPaginationAutoPager[T any] struct {
+	page *CursorIDCardsPagination[T]
 	cur  T
 	idx  int
 	run  int
@@ -1383,14 +1383,14 @@ type CursorIDCardsAutoPager[T any] struct {
 	paramObj
 }
 
-func NewCursorIDCardsAutoPager[T any](page *CursorIDCards[T], err error) *CursorIDCardsAutoPager[T] {
-	return &CursorIDCardsAutoPager[T]{
+func NewCursorIDCardsPaginationAutoPager[T any](page *CursorIDCardsPagination[T], err error) *CursorIDCardsPaginationAutoPager[T] {
+	return &CursorIDCardsPaginationAutoPager[T]{
 		page: page,
 		err:  err,
 	}
 }
 
-func (r *CursorIDCardsAutoPager[T]) Next() bool {
+func (r *CursorIDCardsPaginationAutoPager[T]) Next() bool {
 	if r.page == nil || len(r.page.Cards) == 0 {
 		return false
 	}
@@ -1407,14 +1407,14 @@ func (r *CursorIDCardsAutoPager[T]) Next() bool {
 	return true
 }
 
-func (r *CursorIDCardsAutoPager[T]) Current() T {
+func (r *CursorIDCardsPaginationAutoPager[T]) Current() T {
 	return r.cur
 }
 
-func (r *CursorIDCardsAutoPager[T]) Err() error {
+func (r *CursorIDCardsPaginationAutoPager[T]) Err() error {
 	return r.err
 }
 
-func (r *CursorIDCardsAutoPager[T]) Index() int {
+func (r *CursorIDCardsPaginationAutoPager[T]) Index() int {
 	return r.run
 }
