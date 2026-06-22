@@ -1318,3 +1318,103 @@ func (r *CursorIDWebhooksAutoPager[T]) Err() error {
 func (r *CursorIDWebhooksAutoPager[T]) Index() int {
 	return r.run
 }
+
+type CursorIDCards[T any] struct {
+	Cards []T `json:"cards"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Cards       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+	cfg *requestconfig.RequestConfig
+	res *http.Response
+}
+
+// Returns the unmodified JSON received from the API
+func (r CursorIDCards[T]) RawJSON() string { return r.JSON.raw }
+func (r *CursorIDCards[T]) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *CursorIDCards[T]) GetNextPage() (res *CursorIDCards[T], err error) {
+	if len(r.Cards) == 0 {
+		return nil, nil
+	}
+	items := r.Cards
+	if items == nil || len(items) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	value := reflect.ValueOf(items[len(items)-1])
+	field := value.FieldByName("ID")
+	err = cfg.Apply(option.WithQuery("start_after", field.Interface().(string)))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *CursorIDCards[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &CursorIDCards[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type CursorIDCardsAutoPager[T any] struct {
+	page *CursorIDCards[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+	paramObj
+}
+
+func NewCursorIDCardsAutoPager[T any](page *CursorIDCards[T], err error) *CursorIDCardsAutoPager[T] {
+	return &CursorIDCardsAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *CursorIDCardsAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.Cards) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.Cards) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.Cards) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.Cards[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *CursorIDCardsAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *CursorIDCardsAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *CursorIDCardsAutoPager[T]) Index() int {
+	return r.run
+}
