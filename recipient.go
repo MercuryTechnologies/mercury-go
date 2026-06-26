@@ -768,6 +768,7 @@ type Recipient struct {
 	DomesticWireRoutingInfo      DomesticWireRoutingInfo      `json:"domesticWireRoutingInfo" api:"nullable"`
 	ElectronicRoutingInfo        ElectronicRoutingInfo        `json:"electronicRoutingInfo" api:"nullable"`
 	InternationalWireRoutingInfo InternationalWireRoutingInfo `json:"internationalWireRoutingInfo" api:"nullable"`
+	InviteID                     string                       `json:"inviteId" api:"nullable"`
 	IsBusiness                   bool                         `json:"isBusiness" api:"nullable"`
 	Nickname                     string                       `json:"nickname" api:"nullable"`
 	RealTimePaymentRoutingInfo   RealTimePaymentRoutingInfo   `json:"realTimePaymentRoutingInfo" api:"nullable"`
@@ -787,6 +788,7 @@ type Recipient struct {
 		DomesticWireRoutingInfo      respjson.Field
 		ElectronicRoutingInfo        respjson.Field
 		InternationalWireRoutingInfo respjson.Field
+		InviteID                     respjson.Field
 		IsBusiness                   respjson.Field
 		Nickname                     respjson.Field
 		RealTimePaymentRoutingInfo   respjson.Field
