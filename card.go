@@ -334,6 +334,11 @@ type CreateCardRequestParam struct {
 	AccountID param.Opt[string] `json:"accountId,omitzero" format:"uuid"`
 	// Optional user-assigned label for the card.
 	Nickname param.Opt[string] `json:"nickname,omitzero"`
+	// The spend-management state of a card. Used both as the input at issuance time
+	// (the configuration the caller wants applied) and as the read-side response from
+	// 'CardManagement.Issuing.CardSpendManagement.getCardSpendManagement'. All of the
+	// card spend-management tables are collapsed into this single type.
+	CardSpendManagementState CreateCardRequestCardSpendManagementStateParam `json:"cardSpendManagementState,omitzero"`
 	// Spending controls to apply at issuance.
 	SpendLimit CreateCardRequestSpendLimitParam `json:"spendLimit,omitzero"`
 	paramObj
@@ -353,6 +358,44 @@ type CreateCardRequestType string
 const (
 	CreateCardRequestTypeVirtual CreateCardRequestType = "virtual"
 )
+
+// The spend-management state of a card. Used both as the input at issuance time
+// (the configuration the caller wants applied) and as the read-side response from
+// 'CardManagement.Issuing.CardSpendManagement.getCardSpendManagement'. All of the
+// card spend-management tables are collapsed into this single type.
+//
+// The property IsSingleUse is required.
+type CreateCardRequestCardSpendManagementStateParam struct {
+	// Whether this card auto-cancels itself on the first approved non-zero
+	// authorization. Must be 'False' for physical cards.
+	IsSingleUse bool `json:"isSingleUse" api:"required"`
+	// Configuration for a card managed by the agentic spend-management agent.
+	AgenticCardState CreateCardRequestCardSpendManagementStateAgenticCardStateParam `json:"agenticCardState,omitzero"`
+	paramObj
+}
+
+func (r CreateCardRequestCardSpendManagementStateParam) MarshalJSON() (data []byte, err error) {
+	type shadow CreateCardRequestCardSpendManagementStateParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CreateCardRequestCardSpendManagementStateParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Configuration for a card managed by the agentic spend-management agent.
+type CreateCardRequestCardSpendManagementStateAgenticCardStateParam struct {
+	// A dollar amount
+	ManualApprovalThreshold param.Opt[float64] `json:"manualApprovalThreshold,omitzero"`
+	paramObj
+}
+
+func (r CreateCardRequestCardSpendManagementStateAgenticCardStateParam) MarshalJSON() (data []byte, err error) {
+	type shadow CreateCardRequestCardSpendManagementStateAgenticCardStateParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CreateCardRequestCardSpendManagementStateAgenticCardStateParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // Spending controls to apply at issuance.
 //
