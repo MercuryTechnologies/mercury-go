@@ -144,6 +144,8 @@ type Invoice struct {
 	// Whether or not the invoice can be paid via credit card. Requires stripe to be
 	// setup for the Mercury account.
 	CreditCardEnabled bool `json:"creditCardEnabled" api:"required"`
+	// ISO 4217 currency code for the invoice (e.g. "USD", "EUR").
+	CurrencyCode string `json:"currencyCode" api:"required"`
 	// The customer who will receive the invoice. Use the /api/v1/ar/customers endpoint
 	// to list your customers and find the corresponding id, or create a new customer
 	// first.
@@ -196,6 +198,7 @@ type Invoice struct {
 		CcEmails               respjson.Field
 		CreatedAt              respjson.Field
 		CreditCardEnabled      respjson.Field
+		CurrencyCode           respjson.Field
 		CustomerID             respjson.Field
 		DestinationAccountID   respjson.Field
 		DueDate                respjson.Field
@@ -306,6 +309,8 @@ type InvoiceListResponse struct {
 	// Whether or not the invoice can be paid via credit card. Requires stripe to be
 	// setup for the Mercury account.
 	CreditCardEnabled bool `json:"creditCardEnabled" api:"required"`
+	// ISO 4217 currency code for the invoice (e.g. "USD", "EUR").
+	CurrencyCode string `json:"currencyCode" api:"required"`
 	// The customer who will receive the invoice. Use the /api/v1/ar/customers endpoint
 	// to list your customers and find the corresponding id, or create a new customer
 	// first.
@@ -351,6 +356,7 @@ type InvoiceListResponse struct {
 		CcEmails             respjson.Field
 		CreatedAt            respjson.Field
 		CreditCardEnabled    respjson.Field
+		CurrencyCode         respjson.Field
 		CustomerID           respjson.Field
 		DestinationAccountID respjson.Field
 		DueDate              respjson.Field
