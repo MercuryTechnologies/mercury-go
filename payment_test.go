@@ -128,6 +128,12 @@ func TestPaymentRequestWithOptionalParams(t *testing.T) {
 			RecipientID:    "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
 			ExternalMemo:   mercury.String("externalMemo"),
 			Note:           mercury.String("note"),
+			Purpose: mercury.PaymentRequestParamsPurpose{
+				Simple: mercury.PaymentRequestParamsPurposeSimple{
+					Category:       "Employee",
+					AdditionalInfo: mercury.String("additionalInfo"),
+				},
+			},
 		},
 	)
 	if err != nil {

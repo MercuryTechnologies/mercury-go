@@ -349,7 +349,8 @@ type PaymentRequestParams struct {
 	Amount float64 `json:"amount" api:"required"`
 	// Unique string identifying the transaction
 	IdempotencyKey string `json:"idempotencyKey" api:"required"`
-	// Payment method to use.
+	// Payment method to use. If domesticWire or internationalWire is used, then the
+	// purpose field is required.
 	//
 	// Any of "ach", "check", "domesticWire", "internationalWire".
 	PaymentMethod SendMoneyPaymentMethod `json:"paymentMethod,omitzero" api:"required"`
@@ -359,6 +360,9 @@ type PaymentRequestParams struct {
 	ExternalMemo param.Opt[string] `json:"externalMemo,omitzero"`
 	// Optional note
 	Note param.Opt[string] `json:"note,omitzero"`
+	// External API representation of SendMoneyPurpose. Only exposes the 'simple' field
+	// to decouple internal implementation from external API.
+	Purpose PaymentRequestParamsPurpose `json:"purpose,omitzero"`
 	paramObj
 }
 
@@ -368,6 +372,50 @@ func (r PaymentRequestParams) MarshalJSON() (data []byte, err error) {
 }
 func (r *PaymentRequestParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+// External API representation of SendMoneyPurpose. Only exposes the 'simple' field
+// to decouple internal implementation from external API.
+type PaymentRequestParamsPurpose struct {
+	Simple PaymentRequestParamsPurposeSimple `json:"simple,omitzero"`
+	paramObj
+}
+
+func (r PaymentRequestParamsPurpose) MarshalJSON() (data []byte, err error) {
+	type shadow PaymentRequestParamsPurpose
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *PaymentRequestParamsPurpose) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Category is required.
+type PaymentRequestParamsPurposeSimple struct {
+	// Payment category.
+	//
+	// Any of "Employee", "Landlord", "Vendor", "Contractor", "Subsidiary",
+	// "TransferToMyExternalAccount", "FamilyMemberOrFriend", "ForGoodsOrServices",
+	// "AngelInvestment", "SavingsOrInvestments", "Expenses", "Travel", "Other".
+	Category string `json:"category,omitzero" api:"required"`
+	// Additional information. Required for: Vendor (vendor name), Contractor
+	// (contractor name), Other (payment description). Optional for Subsidiary
+	// (subsidiary name). Not accepted for any other categories.
+	AdditionalInfo param.Opt[string] `json:"additionalInfo,omitzero"`
+	paramObj
+}
+
+func (r PaymentRequestParamsPurposeSimple) MarshalJSON() (data []byte, err error) {
+	type shadow PaymentRequestParamsPurposeSimple
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *PaymentRequestParamsPurposeSimple) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[PaymentRequestParamsPurposeSimple](
+		"category", "Employee", "Landlord", "Vendor", "Contractor", "Subsidiary", "TransferToMyExternalAccount", "FamilyMemberOrFriend", "ForGoodsOrServices", "AngelInvestment", "SavingsOrInvestments", "Expenses", "Travel", "Other",
+	)
 }
 
 type PaymentTransferParams struct {
