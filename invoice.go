@@ -407,6 +407,8 @@ type InvoiceNewParams struct {
 	// routing number for the destination account or use virtual account numbers
 	// instead. Virtual accounts are safer and are preferred in most cases.
 	UseRealAccountNumber bool `json:"useRealAccountNumber" api:"required"`
+	// ISO 4217 currency code for the invoice. Defaults to USD if not provided.
+	CurrencyCode param.Opt[string] `json:"currencyCode,omitzero"`
 	// Internal note for the invoice, visible by users in the organization but not
 	// visible to payers.
 	InternalNote param.Opt[string] `json:"internalNote,omitzero"`

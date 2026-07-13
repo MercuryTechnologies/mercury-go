@@ -46,6 +46,7 @@ func TestInvoiceNewWithOptionalParams(t *testing.T) {
 			SalesTaxRate: mercury.Float(0),
 		}},
 		UseRealAccountNumber:   true,
+		CurrencyCode:           mercury.String("currencyCode"),
 		InternalNote:           mercury.String("internalNote"),
 		InvoiceNumber:          mercury.String("invoiceNumber"),
 		PayerMemo:              mercury.String("payerMemo"),
