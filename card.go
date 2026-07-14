@@ -137,6 +137,9 @@ type Card struct {
 	ID string `json:"id" api:"required" format:"uuid"`
 	// The Mercury account this card is associated with.
 	AccountID string `json:"accountId" api:"required"`
+	// Mercury spend-category locks applied to this card, in no particular order. Empty
+	// when the card has no category restrictions.
+	CategoryLocks []MercuryCategory `json:"categoryLocks" api:"required"`
 	// Timestamp when the card was issued.
 	CreatedAt string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// Month and year the card expires.
@@ -161,6 +164,9 @@ type Card struct {
 	UpdatedAt string `json:"updatedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// Mercury User who owns the card.
 	UserID string `json:"userId" api:"required"`
+	// Information about a merchant that can be used for spend controls like merchant
+	// locking.
+	MerchantLock CardMerchantLock `json:"merchantLock" api:"nullable"`
 	// Optional user-assigned label for the card.
 	Nickname string `json:"nickname" api:"nullable"`
 	// Activation state of a physical card. Null for virtual cards.
@@ -173,6 +179,7 @@ type Card struct {
 	JSON struct {
 		ID                 respjson.Field
 		AccountID          respjson.Field
+		CategoryLocks      respjson.Field
 		CreatedAt          respjson.Field
 		Expiration         respjson.Field
 		Kind               respjson.Field
@@ -182,6 +189,7 @@ type Card struct {
 		Type               respjson.Field
 		UpdatedAt          respjson.Field
 		UserID             respjson.Field
+		MerchantLock       respjson.Field
 		Nickname           respjson.Field
 		PhysicalCardStatus respjson.Field
 		SpendLimit         respjson.Field
@@ -193,6 +201,26 @@ type Card struct {
 // Returns the unmodified JSON received from the API
 func (r Card) RawJSON() string { return r.JSON.raw }
 func (r *Card) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Information about a merchant that can be used for spend controls like merchant
+// locking.
+type CardMerchantLock struct {
+	ID   string `json:"id" api:"required" format:"uuid"`
+	Name string `json:"name" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CardMerchantLock) RawJSON() string { return r.JSON.raw }
+func (r *CardMerchantLock) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
