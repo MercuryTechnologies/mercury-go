@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.13.0 (2026-07-17)
+
+Full Changelog: [v0.12.3...v0.13.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.12.3...v0.13.0)
+
+### Features
+
+* **stlc:** configurable CI runner and private-production-repo support in workflow templates ([4cddada](https://github.com/MercuryTechnologies/mercury-go/commit/4cddada653c485c1673d0f9d2fe8487892dd94ca))
+
+
+### Chores
+
+* update OpenAPI spec from 1ab10d568b0d4090c6e3ef530b8471b1a26aff29 ([355900d](https://github.com/MercuryTechnologies/mercury-go/commit/355900dc6b0b09421c8b3eca19b73137a21153a8))
+* update OpenAPI spec from a8b82e908b7f4bca9acaa90b5e39fc3cdc00cf36 ([1312138](https://github.com/MercuryTechnologies/mercury-go/commit/1312138aa46c6caa22136d5746f20f3999d4168f))
+* update OpenAPI spec from cbbbc206ad9a63468d4ce498e294d56d53611b25 ([161b3d3](https://github.com/MercuryTechnologies/mercury-go/commit/161b3d351579394d15ed77a95863d27c28652ead))
+
 ## 0.12.3 (2026-07-08)
 
 Full Changelog: [v0.12.2...v0.12.3](https://github.com/MercuryTechnologies/mercury-go/compare/v0.12.2...v0.12.3)
