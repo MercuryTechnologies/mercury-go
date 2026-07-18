@@ -120,6 +120,19 @@ func (r *CardService) Get(ctx context.Context, cardID string, opts ...option.Req
 	return res, err
 }
 
+// Retrieve the full card number, expiration date, and CVC for a card. Available
+// for agentic cards only.
+func (r *CardService) Reveal(ctx context.Context, cardID string, opts ...option.RequestOption) (res *CardRevealResponse, err error) {
+	opts = slices.Concat(r.options, opts)
+	if cardID == "" {
+		err = errors.New("missing required cardId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("cards/%s/reveal", cardID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
 // Unfreeze a previously frozen card, restoring it to active status.
 func (r *CardService) Unfreeze(ctx context.Context, cardID string, opts ...option.RequestOption) (res *Card, err error) {
 	opts = slices.Concat(r.options, opts)
@@ -325,6 +338,31 @@ type CardListResponsePage struct {
 // Returns the unmodified JSON received from the API
 func (r CardListResponsePage) RawJSON() string { return r.JSON.raw }
 func (r *CardListResponsePage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Sensitive card details returned by the card reveal endpoint: the card's full
+// number, expiration, and CVC.
+type CardRevealResponse struct {
+	// The card's full primary account number (PAN).
+	CardNumber string `json:"cardNumber" api:"required"`
+	// The card's card verification code (CVC).
+	Cvc string `json:"cvc" api:"required"`
+	// The card's expiration date.
+	Expiration string `json:"expiration" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CardNumber  respjson.Field
+		Cvc         respjson.Field
+		Expiration  respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CardRevealResponse) RawJSON() string { return r.JSON.raw }
+func (r *CardRevealResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
