@@ -282,9 +282,9 @@ func (r *PaymentNewParamsPurpose) UnmarshalJSON(data []byte) error {
 type PaymentNewParamsPurposeSimple struct {
 	// Payment category.
 	//
-	// Any of "Employee", "Landlord", "Vendor", "Contractor", "Subsidiary",
-	// "TransferToMyExternalAccount", "FamilyMemberOrFriend", "ForGoodsOrServices",
-	// "AngelInvestment", "SavingsOrInvestments", "Expenses", "Travel", "Other".
+	// Any of "employee", "landlord", "vendor", "contractor", "subsidiary",
+	// "transferToMyExternalAccount", "familyMemberOrFriend", "forGoodsOrServices",
+	// "angelInvestment", "savingsOrInvestments", "expenses", "travel", "other".
 	Category string `json:"category,omitzero" api:"required"`
 	// Additional information. Required for: Vendor (vendor name), Contractor
 	// (contractor name), Other (payment description). Optional for Subsidiary
@@ -303,7 +303,7 @@ func (r *PaymentNewParamsPurposeSimple) UnmarshalJSON(data []byte) error {
 
 func init() {
 	apijson.RegisterFieldValidator[PaymentNewParamsPurposeSimple](
-		"category", "Employee", "Landlord", "Vendor", "Contractor", "Subsidiary", "TransferToMyExternalAccount", "FamilyMemberOrFriend", "ForGoodsOrServices", "AngelInvestment", "SavingsOrInvestments", "Expenses", "Travel", "Other",
+		"category", "employee", "landlord", "vendor", "contractor", "subsidiary", "transferToMyExternalAccount", "familyMemberOrFriend", "forGoodsOrServices", "angelInvestment", "savingsOrInvestments", "expenses", "travel", "other",
 	)
 }
 
@@ -393,9 +393,9 @@ func (r *PaymentRequestParamsPurpose) UnmarshalJSON(data []byte) error {
 type PaymentRequestParamsPurposeSimple struct {
 	// Payment category.
 	//
-	// Any of "Employee", "Landlord", "Vendor", "Contractor", "Subsidiary",
-	// "TransferToMyExternalAccount", "FamilyMemberOrFriend", "ForGoodsOrServices",
-	// "AngelInvestment", "SavingsOrInvestments", "Expenses", "Travel", "Other".
+	// Any of "employee", "landlord", "vendor", "contractor", "subsidiary",
+	// "transferToMyExternalAccount", "familyMemberOrFriend", "forGoodsOrServices",
+	// "angelInvestment", "savingsOrInvestments", "expenses", "travel", "other".
 	Category string `json:"category,omitzero" api:"required"`
 	// Additional information. Required for: Vendor (vendor name), Contractor
 	// (contractor name), Other (payment description). Optional for Subsidiary
@@ -414,7 +414,7 @@ func (r *PaymentRequestParamsPurposeSimple) UnmarshalJSON(data []byte) error {
 
 func init() {
 	apijson.RegisterFieldValidator[PaymentRequestParamsPurposeSimple](
-		"category", "Employee", "Landlord", "Vendor", "Contractor", "Subsidiary", "TransferToMyExternalAccount", "FamilyMemberOrFriend", "ForGoodsOrServices", "AngelInvestment", "SavingsOrInvestments", "Expenses", "Travel", "Other",
+		"category", "employee", "landlord", "vendor", "contractor", "subsidiary", "transferToMyExternalAccount", "familyMemberOrFriend", "forGoodsOrServices", "angelInvestment", "savingsOrInvestments", "expenses", "travel", "other",
 	)
 }
 
