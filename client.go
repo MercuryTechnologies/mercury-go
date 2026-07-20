@@ -22,8 +22,7 @@ type Client struct {
 	Customers CustomerService
 	// Manage invoices
 	Invoices InvoiceService
-	// Manage cards
-	Cards CardService
+	Cards    CardService
 	// Manage expense categories
 	Categories CategoryService
 	// Manage credit accounts
