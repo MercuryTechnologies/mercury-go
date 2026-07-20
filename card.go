@@ -20,8 +20,6 @@ import (
 	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
 )
 
-// Manage cards
-//
 // CardService contains methods and other services that help with interacting with
 // the mercury API.
 //
@@ -124,6 +122,7 @@ func (r *CardService) Get(ctx context.Context, cardID string, opts ...option.Req
 // for agentic cards only.
 func (r *CardService) Reveal(ctx context.Context, cardID string, opts ...option.RequestOption) (res *CardRevealResponse, err error) {
 	opts = slices.Concat(r.options, opts)
+	opts = append([]option.RequestOption{option.WithBaseURL("https://vault-api.mercury.com/api/v1/")}, opts...)
 	if cardID == "" {
 		err = errors.New("missing required cardId parameter")
 		return nil, err
