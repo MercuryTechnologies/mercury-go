@@ -38,7 +38,7 @@ func TestPaymentNewWithOptionalParams(t *testing.T) {
 			Note:           mercury.String("note"),
 			Purpose: mercury.PaymentNewParamsPurpose{
 				Simple: mercury.PaymentNewParamsPurposeSimple{
-					Category:       "Employee",
+					Category:       "employee",
 					AdditionalInfo: mercury.String("additionalInfo"),
 				},
 			},
@@ -130,7 +130,7 @@ func TestPaymentRequestWithOptionalParams(t *testing.T) {
 			Note:           mercury.String("note"),
 			Purpose: mercury.PaymentRequestParamsPurpose{
 				Simple: mercury.PaymentRequestParamsPurposeSimple{
-					Category:       "Employee",
+					Category:       "employee",
 					AdditionalInfo: mercury.String("additionalInfo"),
 				},
 			},

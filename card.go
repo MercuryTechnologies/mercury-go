@@ -348,8 +348,8 @@ type CardRevealResponse struct {
 	CardNumber string `json:"cardNumber" api:"required"`
 	// The card's card verification code (CVC).
 	Cvc string `json:"cvc" api:"required"`
-	// The card's expiration date.
-	Expiration string `json:"expiration" api:"required"`
+	// Month and year the card expires.
+	Expiration CardExpiration `json:"expiration" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CardNumber  respjson.Field
