@@ -305,7 +305,7 @@ type Transaction struct {
 	// "checkDeposit", "incomingInternationalWire", "treasuryTransfer",
 	// "currencyCloudReturn", "wireFee", "personalBankingSubscriptionFee",
 	// "billingEngineSubscriptionFee", "expenseReimbursement", "exogenousWireDrawdown",
-	// "other".
+	// "interestPayment", "other".
 	Kind                TransactionKind          `json:"kind" api:"required"`
 	RelatedTransactions []RelatedTransactionData `json:"relatedTransactions" api:"required"`
 	// Any of "pending", "sent", "cancelled", "failed", "reversed", "blocked".
@@ -417,6 +417,7 @@ const (
 	TransactionKindBillingEngineSubscriptionFee                  TransactionKind = "billingEngineSubscriptionFee"
 	TransactionKindExpenseReimbursement                          TransactionKind = "expenseReimbursement"
 	TransactionKindExogenousWireDrawdown                         TransactionKind = "exogenousWireDrawdown"
+	TransactionKindInterestPayment                               TransactionKind = "interestPayment"
 	TransactionKindOther                                         TransactionKind = "other"
 )
 
