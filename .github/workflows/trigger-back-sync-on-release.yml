@@ -1,0 +1,58 @@
+name: Trigger staging back-sync on release
+
+# On a published release, notify the staging repo to sync from production immediately.
+# This workflow is dispatch-only: it cannot write production or staging contents.
+#
+# Adapted from the CLI repo's trigger-back-sync-on-release.yml, but uses the
+# "Mercury OpenAPI Sync" GitHub App (App ID 4299934) to mint a short-lived
+# installation token scoped to the staging repo instead of a long-lived PAT.
+#
+# Lives on the STAGING repo but is guarded to production, so it stays dormant on
+# staging and only fires on mercury-go. It reaches production via
+# the normal promote fast-forward.
+on:
+  release:
+    types: [published]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: github.repository == 'MercuryTechnologies/mercury-go'
+    env:
+      STAGING_REPO: MercuryTechnologies/mercury-go-staging
+    steps:
+      - name: Mint GitHub App token for the staging repo
+        # See: https://github.com/organizations/MercuryTechnologies/settings/apps/mercury-openapi-sync-stainless-cli
+        # Installation token scoped to the staging repo; sending a
+        # repository_dispatch needs contents:write, which the app grants.
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: "Iv23lidIPoT2oBJKuwto" # Mercury OpenAPI Sync (Stainless CLI)
+          private-key: ${{ secrets.MERCURY_OPENAPI_SYNC_APP_PRIVATE_KEY }}
+          owner: MercuryTechnologies
+          repositories: mercury-go-staging
+
+      - name: Dispatch back-sync to staging
+        env:
+          DISPATCH_TOKEN: ${{ steps.app-token.outputs.token }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          [ -n "${DISPATCH_TOKEN:-}" ] || { echo "app token not minted" >&2; exit 1; }
+          payload=$(jq -n --arg ref "$REF_NAME" '{event_type:"prod-released",client_payload:{ref:$ref}}')
+          code=$(curl -sS -o /tmp/dispatch.txt -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer ${DISPATCH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${STAGING_REPO}/dispatches" \
+            -d "$payload")
+          if [ "$code" = "204" ]; then
+            echo "Back-sync dispatched to ${STAGING_REPO}."
+          else
+            echo "Dispatch failed (HTTP $code)" >&2; cat /tmp/dispatch.txt >&2; exit 1
+          fi
