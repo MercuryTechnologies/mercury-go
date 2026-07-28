@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"slices"
 
+	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
 	"github.com/MercuryTechnologies/mercury-go/internal/apiquery"
 	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
 	"github.com/MercuryTechnologies/mercury-go/option"
@@ -36,6 +37,14 @@ func NewCategoryService(opts ...option.RequestOption) (r CategoryService) {
 	return
 }
 
+// Create a new custom expense category for the organization.
+func (r *CategoryService) New(ctx context.Context, body CategoryNewParams, opts ...option.RequestOption) (res *CategoryData, err error) {
+	opts = slices.Concat(r.options, opts)
+	path := "categories"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return res, err
+}
+
 // Retrieve a paginated list of all available custom expense categories for the
 // organization. Supports cursor-based pagination with limit, order, start_after,
 // and end_before query parameters.
@@ -61,6 +70,26 @@ func (r *CategoryService) List(ctx context.Context, query CategoryListParams, op
 // and end_before query parameters.
 func (r *CategoryService) ListAutoPaging(ctx context.Context, query CategoryListParams, opts ...option.RequestOption) *pagination.CursorIDCategoriesAutoPager[CategoryData] {
 	return pagination.NewCursorIDCategoriesAutoPager(r.List(ctx, query, opts...))
+}
+
+type CategoryNewParams struct {
+	// Name of the category
+	Name string `json:"name" api:"required"`
+	// Whether this category is applicable to card transactions
+	VisibleForCardSpend bool `json:"visibleForCardSpend" api:"required"`
+	// Whether this category is applicable to all other transaction kinds
+	VisibleForOther bool `json:"visibleForOther" api:"required"`
+	// Whether this category is applicable to expense reimbursement transactions
+	VisibleForReimbursements bool `json:"visibleForReimbursements" api:"required"`
+	paramObj
+}
+
+func (r CategoryNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow CategoryNewParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CategoryNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type CategoryListParams struct {
