@@ -304,9 +304,6 @@ type DomesticWireRoutingInfoRawParam struct {
 	Address AddressWithoutNameParam `json:"address,omitzero" api:"required"`
 	// The routing number of the bank account to use for domestic wire payments.
 	RoutingNumber string `json:"routingNumber" api:"required"`
-	// The name of the beneficiary of the domestic wire. This is the name of the entity
-	// that will receive the domestic wire.
-	DefaultForBenefitOf param.Opt[string] `json:"defaultForBenefitOf,omitzero"`
 	paramObj
 }
 

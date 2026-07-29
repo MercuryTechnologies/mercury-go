@@ -57,8 +57,7 @@ func TestRecipientNewWithOptionalParams(t *testing.T) {
 				Region:     "region",
 				Address2:   mercury.String("address2"),
 			},
-			RoutingNumber:       "routingNumber",
-			DefaultForBenefitOf: mercury.String("defaultForBenefitOf"),
+			RoutingNumber: "routingNumber",
 		},
 		ElectronicRoutingInfo: mercury.ElectronicRoutingInfoRawParam{
 			AccountNumber: "accountNumber",
@@ -129,8 +128,7 @@ func TestRecipientUpdateWithOptionalParams(t *testing.T) {
 					Region:     "region",
 					Address2:   mercury.String("address2"),
 				},
-				RoutingNumber:       "routingNumber",
-				DefaultForBenefitOf: mercury.String("defaultForBenefitOf"),
+				RoutingNumber: "routingNumber",
 			},
 			ElectronicRoutingInfo: mercury.ElectronicRoutingInfoRawParam{
 				AccountNumber: "accountNumber",
