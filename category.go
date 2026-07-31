@@ -47,6 +47,18 @@ func (r *CategoryService) New(ctx context.Context, body CategoryNewParams, opts 
 	return res, err
 }
 
+// Update an existing custom expense category for the organization.
+func (r *CategoryService) Update(ctx context.Context, expenseCategoryID string, body CategoryUpdateParams, opts ...option.RequestOption) (res *CategoryData, err error) {
+	opts = slices.Concat(r.options, opts)
+	if expenseCategoryID == "" {
+		err = errors.New("missing required expenseCategoryId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("categories/%s", expenseCategoryID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return res, err
+}
+
 // Retrieve a paginated list of all available custom expense categories for the
 // organization. Supports cursor-based pagination with limit, order, start_after,
 // and end_before query parameters.
@@ -104,6 +116,26 @@ func (r CategoryNewParams) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *CategoryNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type CategoryUpdateParams struct {
+	// New name for the category
+	Name param.Opt[string] `json:"name,omitzero"`
+	// Whether this category is applicable to card transactions
+	VisibleForCardSpend param.Opt[bool] `json:"visibleForCardSpend,omitzero"`
+	// Whether this category is applicable to all other transaction kinds
+	VisibleForOther param.Opt[bool] `json:"visibleForOther,omitzero"`
+	// Whether this category is applicable to expense reimbursement transactions
+	VisibleForReimbursements param.Opt[bool] `json:"visibleForReimbursements,omitzero"`
+	paramObj
+}
+
+func (r CategoryUpdateParams) MarshalJSON() (data []byte, err error) {
+	type shadow CategoryUpdateParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CategoryUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
