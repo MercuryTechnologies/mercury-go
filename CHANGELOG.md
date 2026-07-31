@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.4](https://github.com/MercuryTechnologies/mercury-go/compare/v0.13.3...v0.13.4) (2026-07-31)
+
+
+### Chores
+
+* add category endpoints ([83cc5d0](https://github.com/MercuryTechnologies/mercury-go/commit/83cc5d038f61a943301d4546b6b915a695e732a5))
+
 ## [0.13.3](https://github.com/MercuryTechnologies/mercury-go/compare/v0.13.2...v0.13.3) (2026-07-27)
 
 
