@@ -4,6 +4,8 @@ package mercury
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"slices"
@@ -70,6 +72,19 @@ func (r *CategoryService) List(ctx context.Context, query CategoryListParams, op
 // and end_before query parameters.
 func (r *CategoryService) ListAutoPaging(ctx context.Context, query CategoryListParams, opts ...option.RequestOption) *pagination.CursorIDCategoriesAutoPager[CategoryData] {
 	return pagination.NewCursorIDCategoriesAutoPager(r.List(ctx, query, opts...))
+}
+
+// Delete a custom expense category for the organization.
+func (r *CategoryService) Delete(ctx context.Context, expenseCategoryID string, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if expenseCategoryID == "" {
+		err = errors.New("missing required expenseCategoryId parameter")
+		return err
+	}
+	path := fmt.Sprintf("categories/%s", expenseCategoryID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
+	return err
 }
 
 type CategoryNewParams struct {
