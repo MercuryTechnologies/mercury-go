@@ -311,6 +311,12 @@ type Transaction struct {
 	// Any of "pending", "sent", "cancelled", "failed", "reversed", "blocked".
 	Status          TransactionStatus `json:"status" api:"required"`
 	BankDescription string            `json:"bankDescription" api:"nullable"`
+	// Id of the card behind this transaction, present on card payments and refunds
+	// (debit or credit); null otherwise, including for card-related fee transactions.
+	// Fetch the card's details (kind, cardholder, last four, etc.) via the Cards API
+	// (`GET /cards/{cardId}`). Supersedes the kind-specific
+	// `details.creditCardInfo.id` / `details.debitCardInfo.id`.
+	CardID string `json:"cardId" api:"nullable" format:"uuid"`
 	// Represents an expense category for transaction classification.
 	CategoryData CategoryData `json:"categoryData" api:"nullable"`
 	// Present for check deposits and mailed checks; Nothing otherwise.
@@ -365,6 +371,7 @@ type Transaction struct {
 		RelatedTransactions        respjson.Field
 		Status                     respjson.Field
 		BankDescription            respjson.Field
+		CardID                     respjson.Field
 		CategoryData               respjson.Field
 		CheckNumber                respjson.Field
 		CounterpartyNickname       respjson.Field
@@ -459,6 +466,10 @@ func (r *TransactionMethodData) UnmarshalJSON(data []byte) error {
 }
 
 type TransactionMethodDataCreditCardInfo struct {
+	// Superseded by the flat `transaction.cardId`, which identifies the card on any
+	// card payment or refund without branching on debit vs credit. Retained for
+	// backwards compatibility; a formal (OpenAPI-level) deprecation will follow in a
+	// separate change.
 	ID            string `json:"id" api:"required" format:"uuid"`
 	PaymentMethod string `json:"paymentMethod" api:"required"`
 	Email         string `json:"email" api:"nullable"`
@@ -479,6 +490,10 @@ func (r *TransactionMethodDataCreditCardInfo) UnmarshalJSON(data []byte) error {
 }
 
 type TransactionMethodDataDebitCardInfo struct {
+	// Superseded by the flat `transaction.cardId`, which identifies the card on any
+	// card payment or refund without branching on debit vs credit. Retained for
+	// backwards compatibility; a formal (OpenAPI-level) deprecation will follow in a
+	// separate change.
 	ID string `json:"id" api:"required" format:"uuid"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
