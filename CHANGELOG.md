@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.6](https://github.com/MercuryTechnologies/mercury-go/compare/v0.13.5...v0.13.6) (2026-08-04)
+
+
+### Chores
+
+* list recipient invites ([cc220b5](https://github.com/MercuryTechnologies/mercury-go/commit/cc220b599fb9ece8c5797d1ff5cffe6a97b1b0ee))
+
 ## [0.13.5](https://github.com/MercuryTechnologies/mercury-go/compare/v0.13.4...v0.13.5) (2026-08-04)
 
 
