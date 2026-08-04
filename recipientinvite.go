@@ -37,6 +37,16 @@ func NewRecipientInviteService(opts ...option.RequestOption) (r RecipientInviteS
 	return
 }
 
+// Create an invite for a recipient to submit their payment details. Supply a
+// recipientId to invite an existing recipient; omit it to invite someone new, in
+// which case the recipient is created when the invitee completes onboarding.
+func (r *RecipientInviteService) New(ctx context.Context, body RecipientInviteNewParams, opts ...option.RequestOption) (res *RecipientInviteAPIResponse, err error) {
+	opts = slices.Concat(r.options, opts)
+	path := "recipients/invites"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return res, err
+}
+
 // Retrieve a paginated list of all recipient invites for your organization.
 // Supports filtering by status.
 func (r *RecipientInviteService) List(ctx context.Context, query RecipientInviteListParams, opts ...option.RequestOption) (res *RecipientInviteListResponse, err error) {
@@ -145,6 +155,40 @@ type RecipientInviteListResponsePage struct {
 // Returns the unmodified JSON received from the API
 func (r RecipientInviteListResponsePage) RawJSON() string { return r.JSON.raw }
 func (r *RecipientInviteListResponsePage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type RecipientInviteNewParams struct {
+	// Contact email the invite is sent to. When 'recipientId' is present, updates the
+	// recipient's contact email to this value.
+	ContactEmail string `json:"contactEmail" api:"required"`
+	// Payment methods the recipient may submit details for.
+	//
+	// Any of "ach", "check", "domesticWire", "internationalWire", "realTimePayment".
+	PaymentMethods []string `json:"paymentMethods,omitzero" api:"required"`
+	// Whether the recipient must upload a tax document.
+	RequireTaxDocument bool `json:"requireTaxDocument" api:"required"`
+	// When true, sends an Email to the invitee. When false, does not send an email to
+	// the invitee.
+	SendEmail bool `json:"sendEmail" api:"required"`
+	// Name the invite is created for. This field is required when 'recipientId' is
+	// absent. When 'recipientId' is present, this field is optional and updates the
+	// recipient's name to this value.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// Optional notes shown to the recipient.
+	Notes param.Opt[string] `json:"notes,omitzero"`
+	// Optional organization name to display on the request.
+	OrganizationNameOnRequest param.Opt[string] `json:"organizationNameOnRequest,omitzero"`
+	// ID for a Mercury account.
+	RecipientID param.Opt[string] `json:"recipientId,omitzero" format:"uuid"`
+	paramObj
+}
+
+func (r RecipientInviteNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow RecipientInviteNewParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *RecipientInviteNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
