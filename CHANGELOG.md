@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.7](https://github.com/MercuryTechnologies/mercury-go/compare/v0.13.6...v0.13.7) (2026-08-04)
+
+
+### Chores
+
+* add create invites endpoint ([01e7c4f](https://github.com/MercuryTechnologies/mercury-go/commit/01e7c4f29060fcd26edc8c470703291575e2a214))
+
 ## [0.13.6](https://github.com/MercuryTechnologies/mercury-go/compare/v0.13.5...v0.13.6) (2026-08-04)
 
 
