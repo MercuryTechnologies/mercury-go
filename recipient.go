@@ -32,6 +32,8 @@ type RecipientService struct {
 	options []option.RequestOption
 	// Manage payment recipients
 	Attachments RecipientAttachmentService
+	// Manage recipient invites
+	Invites RecipientInviteService
 }
 
 // NewRecipientService generates a new service that applies the given options to
@@ -41,6 +43,7 @@ func NewRecipientService(opts ...option.RequestOption) (r RecipientService) {
 	r = RecipientService{}
 	r.options = opts
 	r.Attachments = NewRecipientAttachmentService(opts...)
+	r.Invites = NewRecipientInviteService(opts...)
 	return
 }
 
