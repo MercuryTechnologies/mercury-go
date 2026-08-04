@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.13.5](https://github.com/MercuryTechnologies/mercury-go/compare/v0.13.4...v0.13.5) (2026-08-04)
+
+
+### Chores
+
+* add delete recipient endpoint ([364a8f3](https://github.com/MercuryTechnologies/mercury-go/commit/364a8f3b10e050646ab927fc405297eb6d349db9))
+* sync specs from MWB@v2026.08.03.70654+38c23e9 ([c8e4cd3](https://github.com/MercuryTechnologies/mercury-go/commit/c8e4cd3c3f452b320e4e012b810309bfeb470076))
+
 ## [0.13.4](https://github.com/MercuryTechnologies/mercury-go/compare/v0.13.3...v0.13.4) (2026-07-31)
 
 
