@@ -89,6 +89,20 @@ func (r *RecipientService) ListAutoPaging(ctx context.Context, query RecipientLi
 	return pagination.NewCursorIDRecipientsAutoPager(r.List(ctx, query, opts...))
 }
 
+// Delete a specific recipient by ID. Fails if the recipient is blocked by
+// scheduled payments, pending approvals, or active ACH authorizations.
+func (r *RecipientService) Delete(ctx context.Context, recipientID string, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if recipientID == "" {
+		err = errors.New("missing required recipientId parameter")
+		return err
+	}
+	path := fmt.Sprintf("recipient/%s", recipientID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
+	return err
+}
+
 // Retrieve details of a specific recipient by ID
 func (r *RecipientService) Get(ctx context.Context, recipientID string, opts ...option.RequestOption) (res *Recipient, err error) {
 	opts = slices.Concat(r.options, opts)
