@@ -4,6 +4,8 @@ package mercury
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"slices"
@@ -54,6 +56,19 @@ func (r *RecipientInviteService) List(ctx context.Context, query RecipientInvite
 	path := "recipients/invites"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return res, err
+}
+
+// Delete an active recipient invite.
+func (r *RecipientInviteService) Delete(ctx context.Context, inviteID string, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if inviteID == "" {
+		err = errors.New("missing required inviteId parameter")
+		return err
+	}
+	path := fmt.Sprintf("recipients/invites/%s", url.PathEscape(inviteID))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
+	return err
 }
 
 type RecipientInviteAPIResponse struct {
