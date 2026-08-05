@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.8](https://github.com/MercuryTechnologies/mercury-go/compare/v0.13.7...v0.13.8) (2026-08-05)
+
+
+### Chores
+
+* add delete recipient invite endpoint ([1d04e58](https://github.com/MercuryTechnologies/mercury-go/commit/1d04e58aa57c9bcf31000b4058510c62ac0f12e7))
+
 ## [0.13.7](https://github.com/MercuryTechnologies/mercury-go/compare/v0.13.6...v0.13.7) (2026-08-04)
 
 
