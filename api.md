@@ -245,6 +245,7 @@ Params Types:
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#DomesticWireRoutingInfoRawParam">DomesticWireRoutingInfoRawParam</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#ElectronicAccountType">ElectronicAccountType</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#ElectronicRoutingInfoRawParam">ElectronicRoutingInfoRawParam</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentMethod">PaymentMethod</a>
 
 Response Types:
 
@@ -256,6 +257,7 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#ElectronicAccountType">ElectronicAccountType</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#ElectronicRoutingInfo">ElectronicRoutingInfo</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InternationalWireRoutingInfo">InternationalWireRoutingInfo</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentMethod">PaymentMethod</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#RealTimePaymentRoutingInfo">RealTimePaymentRoutingInfo</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Recipient">Recipient</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SwiftBankAccountType">SwiftBankAccountType</a>

@@ -83,9 +83,7 @@ type RecipientInviteAPIResponse struct {
 	// URL where the recipient submits their payment details.
 	OnboardingURL string `json:"onboardingUrl" api:"required"`
 	// Payment methods the recipient may submit details for.
-	//
-	// Any of "ach", "check", "domesticWire", "internationalWire", "realTimePayment".
-	PaymentMethods []string `json:"paymentMethods" api:"required"`
+	PaymentMethods []PaymentMethod `json:"paymentMethods" api:"required"`
 	// Whether the recipient must upload a tax document.
 	RequireTaxDocument bool `json:"requireTaxDocument" api:"required"`
 	// Status of the invite.
@@ -178,9 +176,7 @@ type RecipientInviteNewParams struct {
 	// recipient's contact email to this value.
 	ContactEmail string `json:"contactEmail" api:"required"`
 	// Payment methods the recipient may submit details for.
-	//
-	// Any of "ach", "check", "domesticWire", "internationalWire", "realTimePayment".
-	PaymentMethods []string `json:"paymentMethods,omitzero" api:"required"`
+	PaymentMethods []PaymentMethod `json:"paymentMethods,omitzero" api:"required"`
 	// Whether the recipient must upload a tax document.
 	RequireTaxDocument bool `json:"requireTaxDocument" api:"required"`
 	// When true, sends an Email to the invitee. When false, does not send an email to

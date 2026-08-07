@@ -28,7 +28,7 @@ func TestRecipientInviteNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Recipients.Invites.New(context.TODO(), mercury.RecipientInviteNewParams{
 		ContactEmail:              "contactEmail",
-		PaymentMethods:            []string{"ach"},
+		PaymentMethods:            []mercury.PaymentMethod{mercury.PaymentMethodACH},
 		RequireTaxDocument:        true,
 		SendEmail:                 true,
 		Name:                      mercury.String("name"),

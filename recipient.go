@@ -742,6 +742,16 @@ func (r *InternationalWireRoutingInfoCorrespondentInfo) UnmarshalJSON(data []byt
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type PaymentMethod string
+
+const (
+	PaymentMethodACH               PaymentMethod = "ach"
+	PaymentMethodCheck             PaymentMethod = "check"
+	PaymentMethodDomesticWire      PaymentMethod = "domesticWire"
+	PaymentMethodInternationalWire PaymentMethod = "internationalWire"
+	PaymentMethodRealTimePayment   PaymentMethod = "realTimePayment"
+)
+
 type RealTimePaymentRoutingInfo struct {
 	AccountNumber string             `json:"accountNumber" api:"required"`
 	RoutingNumber string             `json:"routingNumber" api:"required"`
@@ -769,9 +779,9 @@ type Recipient struct {
 	ID          string                `json:"id" api:"required" format:"uuid"`
 	Attachments []RecipientAttachment `json:"attachments" api:"required"`
 	// Any of "ach", "check", "domesticWire", "internationalWire", "realTimePayment".
-	DefaultPaymentMethod RecipientDefaultPaymentMethod `json:"defaultPaymentMethod" api:"required"`
-	Emails               []string                      `json:"emails" api:"required"`
-	Name                 string                        `json:"name" api:"required"`
+	DefaultPaymentMethod PaymentMethod `json:"defaultPaymentMethod" api:"required"`
+	Emails               []string      `json:"emails" api:"required"`
+	Name                 string        `json:"name" api:"required"`
 	// Any of "active", "deleted".
 	Status                       RecipientStatus              `json:"status" api:"required"`
 	Address                      Address                      `json:"address" api:"nullable"`
@@ -816,16 +826,6 @@ func (r Recipient) RawJSON() string { return r.JSON.raw }
 func (r *Recipient) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
-
-type RecipientDefaultPaymentMethod string
-
-const (
-	RecipientDefaultPaymentMethodACH               RecipientDefaultPaymentMethod = "ach"
-	RecipientDefaultPaymentMethodCheck             RecipientDefaultPaymentMethod = "check"
-	RecipientDefaultPaymentMethodDomesticWire      RecipientDefaultPaymentMethod = "domesticWire"
-	RecipientDefaultPaymentMethodInternationalWire RecipientDefaultPaymentMethod = "internationalWire"
-	RecipientDefaultPaymentMethodRealTimePayment   RecipientDefaultPaymentMethod = "realTimePayment"
-)
 
 type RecipientStatus string
 
