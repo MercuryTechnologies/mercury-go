@@ -98,15 +98,16 @@ func TestCardListWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Cards.List(context.TODO(), mercury.CardListParams{
-		AccountID:  []string{"string"},
-		EndBefore:  mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Kind:       []string{"debit"},
-		Limit:      mercury.Int(1),
-		Order:      mercury.CardListParamsOrderAsc,
-		StartAfter: mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Status:     []string{"active"},
-		Type:       []string{"virtual"},
-		UserID:     mercury.String("userId"),
+		AccountID:   []string{"string"},
+		EndBefore:   mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		IsAgentCard: mercury.Bool(true),
+		Kind:        []string{"debit"},
+		Limit:       mercury.Int(1),
+		Order:       mercury.CardListParamsOrderAsc,
+		StartAfter:  mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Status:      []string{"active"},
+		Type:        []string{"virtual"},
+		UserID:      mercury.String("userId"),
 	})
 	if err != nil {
 		var apierr *mercury.Error

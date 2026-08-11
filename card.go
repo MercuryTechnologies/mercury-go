@@ -577,6 +577,8 @@ type CardListParams struct {
 	// will end just before this ID and work backwards. Use this for reverse pagination
 	// or to retrieve previous pages. Cannot be combined with start_after.
 	EndBefore param.Opt[string] `query:"end_before,omitzero" format:"uuid" json:"-"`
+	// Filter cards by whether they are for Agent use.
+	IsAgentCard param.Opt[bool] `query:"isAgentCard,omitzero" json:"-"`
 	// Maximum number of results to return. Allowed range: 1 to 1000. Defaults to 500
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// The ID of the card to start the page after (exclusive). When provided, results
