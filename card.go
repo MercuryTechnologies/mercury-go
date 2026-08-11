@@ -149,6 +149,9 @@ type Card struct {
 	ID string `json:"id" api:"required" format:"uuid"`
 	// The Mercury account this card is associated with.
 	AccountID string `json:"accountId" api:"required"`
+	// One entry per active budget linked to this card and cardholder. Empty under
+	// cardLimit, or when this response has no active budget for the cardholder.
+	Budgets []CardBudget `json:"budgets" api:"required"`
 	// Mercury spend-category locks applied to this card, in no particular order. Empty
 	// when the card has no category restrictions.
 	CategoryLocks []MercuryCategory `json:"categoryLocks" api:"required"`
@@ -164,6 +167,10 @@ type Card struct {
 	LastFour string `json:"lastFour" api:"required"`
 	// Cardholder name printed on the card.
 	NameOnCard string `json:"nameOnCard" api:"required"`
+	// Whether card-level limits or budgets govern this card.
+	//
+	// Any of "cardLimit", "budgets".
+	SpendLimitType CardSpendLimitType `json:"spendLimitType" api:"required"`
 	// Current lifecycle state of the card.
 	//
 	// Any of "active", "frozen", "cancelled", "inactive", "expired", "suspended".
@@ -194,12 +201,14 @@ type Card struct {
 	JSON struct {
 		ID                 respjson.Field
 		AccountID          respjson.Field
+		Budgets            respjson.Field
 		CategoryLocks      respjson.Field
 		CreatedAt          respjson.Field
 		Expiration         respjson.Field
 		Kind               respjson.Field
 		LastFour           respjson.Field
 		NameOnCard         respjson.Field
+		SpendLimitType     respjson.Field
 		Status             respjson.Field
 		Type               respjson.Field
 		UpdatedAt          respjson.Field
@@ -219,6 +228,43 @@ func (r Card) RawJSON() string { return r.JSON.raw }
 func (r *Card) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// Current-cycle limits for one budget linked to this card and cardholder.
+type CardBudget struct {
+	// Unique identifier for a budget
+	ID string `json:"id" api:"required" format:"uuid"`
+	// The cardholder's spend limit for the current budget cycle, in cents.
+	AmountCents int64 `json:"amountCents" api:"required"`
+	// Display name of the budget.
+	Name string `json:"name" api:"required"`
+	// Current-cycle limit minus recorded spend, clamped at zero, in cents.
+	// Authorization also uses cached allocations and in-flight holds, so its available
+	// amount may differ.
+	RemainingAmountCents int64 `json:"remainingAmountCents" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID                   respjson.Field
+		AmountCents          respjson.Field
+		Name                 respjson.Field
+		RemainingAmountCents respjson.Field
+		ExtraFields          map[string]respjson.Field
+		raw                  string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r CardBudget) RawJSON() string { return r.JSON.raw }
+func (r *CardBudget) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Whether card-level limits or budgets govern this card.
+type CardSpendLimitType string
+
+const (
+	CardSpendLimitTypeCardLimit CardSpendLimitType = "cardLimit"
+	CardSpendLimitTypeBudgets   CardSpendLimitType = "budgets"
+)
 
 // Information about a merchant that can be used for spend controls like merchant
 // locking.
