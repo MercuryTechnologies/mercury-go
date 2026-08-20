@@ -134,9 +134,17 @@ type SendMoneyApproval struct {
 	// Any of "pendingApproval", "approved", "rejected", "cancelled".
 	Status SendMoneyApprovalStatus `json:"status" api:"required"`
 	Memo   string                  `json:"memo" api:"nullable"`
-	// Total number of approvals required for this payment to be sent. May be null for
+	// Total number of approvals required for this payment to be sent. Omitted for
 	// older requests where the requirement is not available.
 	NumberOfApproversRequired int64 `json:"numberOfApproversRequired" api:"nullable"`
+	// True when the approval requirement recorded for this payment names the requester
+	// as its approver. Reflects the recorded requirement, not the requester's current
+	// standing, so submitting the approval can still be refused. The value persists
+	// after the request settles and says only whether the requirement names the
+	// requester; whether an approval is still outstanding is carried by
+	// numberOfApproversRequired and status. Omitted for older requests where the
+	// requirement is not available.
+	RequesterMayApprove bool `json:"requesterMayApprove" api:"nullable"`
 	// Date on which the payment is scheduled to be sent once fully approved. Null when
 	// the payment will be sent as soon as approvals are complete.
 	ScheduledSendDate time.Time `json:"scheduledSendDate" api:"nullable" format:"date"`
@@ -153,6 +161,7 @@ type SendMoneyApproval struct {
 		Status                    respjson.Field
 		Memo                      respjson.Field
 		NumberOfApproversRequired respjson.Field
+		RequesterMayApprove       respjson.Field
 		ScheduledSendDate         respjson.Field
 		ExtraFields               map[string]respjson.Field
 		raw                       string
