@@ -159,6 +159,9 @@ type Card struct {
 	CreatedAt string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// Month and year the card expires.
 	Expiration CardExpiration `json:"expiration" api:"required"`
+	// Whether the card is managed by the agentic spend-management agent. Only agent
+	// cards can have their full details revealed.
+	IsAgentCard bool `json:"isAgentCard" api:"required"`
 	// Whether the card is a debit or credit card.
 	//
 	// Any of "debit", "credit".
@@ -183,9 +186,6 @@ type Card struct {
 	UpdatedAt string `json:"updatedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// Mercury User who owns the card.
 	UserID string `json:"userId" api:"required"`
-	// Whether the card is managed by the agentic spend-management agent. Only agent
-	// cards can have their full details revealed.
-	IsAgentCard bool `json:"isAgentCard" api:"nullable"`
 	// Information about a merchant that can be used for spend controls like merchant
 	// locking.
 	MerchantLock CardMerchantLock `json:"merchantLock" api:"nullable"`
@@ -205,6 +205,7 @@ type Card struct {
 		CategoryLocks      respjson.Field
 		CreatedAt          respjson.Field
 		Expiration         respjson.Field
+		IsAgentCard        respjson.Field
 		Kind               respjson.Field
 		LastFour           respjson.Field
 		NameOnCard         respjson.Field
@@ -213,7 +214,6 @@ type Card struct {
 		Type               respjson.Field
 		UpdatedAt          respjson.Field
 		UserID             respjson.Field
-		IsAgentCard        respjson.Field
 		MerchantLock       respjson.Field
 		Nickname           respjson.Field
 		PhysicalCardStatus respjson.Field
