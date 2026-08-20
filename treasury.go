@@ -211,7 +211,9 @@ type TreasuryTransactionsResponseTransaction struct {
 	// "dividendReinvestmentPosted", "mutualFundTradeFailed", "mutualFundTradePosted",
 	// "sweepInPosted", "sweepOutPosted", "sweepReconcilePosted",
 	// "valuationChangePosted", "oemsMutualFundOrderSettled",
-	// "oemsMutualFundOrderCanceled", "oemsMutualFundOrderRejected".
+	// "oemsMutualFundOrderCanceled", "oemsMutualFundOrderRejected",
+	// "oemsFixedIncomeOrderSettled", "oemsFixedIncomeOrderCanceled",
+	// "oemsFixedIncomeOrderRejected".
 	Type              string                                         `json:"type" api:"required"`
 	AdditionalDetails string                                         `json:"additionalDetails" api:"nullable"`
 	Details           TreasuryTransactionsResponseTransactionDetails `json:"details" api:"nullable"`
