@@ -170,7 +170,7 @@ type Card struct {
 	LastFour string `json:"lastFour" api:"required"`
 	// Cardholder name printed on the card.
 	NameOnCard string `json:"nameOnCard" api:"required"`
-	// Whether card-level limits or budgets govern this card.
+	// Whether card-level limits or budgets govern purchase spending.
 	//
 	// Any of "cardLimit", "budgets".
 	SpendLimitType CardSpendLimitType `json:"spendLimitType" api:"required"`
@@ -258,7 +258,7 @@ func (r *CardBudget) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Whether card-level limits or budgets govern this card.
+// Whether card-level limits or budgets govern purchase spending.
 type CardSpendLimitType string
 
 const (
@@ -303,7 +303,8 @@ type CardSpendLimit struct {
 	//
 	// Any of "daily", "weekly", "monthly", "yearly".
 	Interval string `json:"interval" api:"required"`
-	// Maximum ATM withdrawal allowed per interval, in cents. Null for virtual cards.
+	// Maximum ATM withdrawal allowed per interval, in cents. Null for virtual cards
+	// and credit cards.
 	AtmAmountCents int64 `json:"atmAmountCents" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -527,7 +528,8 @@ type UpdateCardRequestSpendLimitParam struct {
 	//
 	// Any of "daily", "weekly", "monthly", "yearly".
 	Interval string `json:"interval,omitzero" api:"required"`
-	// Maximum ATM withdrawal allowed per interval, in cents. Null for virtual cards.
+	// Maximum ATM withdrawal allowed per interval, in cents. Null for virtual cards
+	// and credit cards.
 	AtmAmountCents param.Opt[int64] `json:"atmAmountCents,omitzero"`
 	paramObj
 }
