@@ -79,16 +79,19 @@ func (r *AccountService) Get(ctx context.Context, accountID string, opts ...opti
 
 type Account struct {
 	// ID for a Mercury account.
-	ID                string  `json:"id" api:"required" format:"uuid"`
-	AccountNumber     string  `json:"accountNumber" api:"required"`
-	AvailableBalance  float64 `json:"availableBalance" api:"required"`
-	CreatedAt         string  `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	CurrentBalance    float64 `json:"currentBalance" api:"required"`
-	DashboardLink     string  `json:"dashboardLink" api:"required"`
-	Kind              string  `json:"kind" api:"required"`
-	LegalBusinessName string  `json:"legalBusinessName" api:"required"`
-	Name              string  `json:"name" api:"required"`
-	RoutingNumber     string  `json:"routingNumber" api:"required"`
+	ID               string  `json:"id" api:"required" format:"uuid"`
+	AccountNumber    string  `json:"accountNumber" api:"required"`
+	AvailableBalance float64 `json:"availableBalance" api:"required"`
+	// Whether this account's partner bank supports sending real-time payments. Sending
+	// one also requires the recipient's routing number to be RTP-eligible.
+	CanSendRealTimePayments bool    `json:"canSendRealTimePayments" api:"required"`
+	CreatedAt               string  `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	CurrentBalance          float64 `json:"currentBalance" api:"required"`
+	DashboardLink           string  `json:"dashboardLink" api:"required"`
+	Kind                    string  `json:"kind" api:"required"`
+	LegalBusinessName       string  `json:"legalBusinessName" api:"required"`
+	Name                    string  `json:"name" api:"required"`
+	RoutingNumber           string  `json:"routingNumber" api:"required"`
 	// Any of "active", "deleted", "pending", "archived".
 	Status AccountStatus `json:"status" api:"required"`
 	// Any of "mercury", "external", "recipient".
@@ -97,22 +100,23 @@ type Account struct {
 	Nickname               string      `json:"nickname" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID                     respjson.Field
-		AccountNumber          respjson.Field
-		AvailableBalance       respjson.Field
-		CreatedAt              respjson.Field
-		CurrentBalance         respjson.Field
-		DashboardLink          respjson.Field
-		Kind                   respjson.Field
-		LegalBusinessName      respjson.Field
-		Name                   respjson.Field
-		RoutingNumber          respjson.Field
-		Status                 respjson.Field
-		Type                   respjson.Field
-		CanReceiveTransactions respjson.Field
-		Nickname               respjson.Field
-		ExtraFields            map[string]respjson.Field
-		raw                    string
+		ID                      respjson.Field
+		AccountNumber           respjson.Field
+		AvailableBalance        respjson.Field
+		CanSendRealTimePayments respjson.Field
+		CreatedAt               respjson.Field
+		CurrentBalance          respjson.Field
+		DashboardLink           respjson.Field
+		Kind                    respjson.Field
+		LegalBusinessName       respjson.Field
+		Name                    respjson.Field
+		RoutingNumber           respjson.Field
+		Status                  respjson.Field
+		Type                    respjson.Field
+		CanReceiveTransactions  respjson.Field
+		Nickname                respjson.Field
+		ExtraFields             map[string]respjson.Field
+		raw                     string
 	} `json:"-"`
 }
 

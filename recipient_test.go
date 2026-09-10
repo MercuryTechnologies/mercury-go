@@ -73,6 +73,18 @@ func TestRecipientNewWithOptionalParams(t *testing.T) {
 			RoutingNumber:         "routingNumber",
 		},
 		Nickname: mercury.String("nickname"),
+		RealTimePaymentRoutingInfo: mercury.RecipientNewParamsRealTimePaymentRoutingInfo{
+			AccountNumber: "accountNumber",
+			Address: mercury.AddressWithoutNameParam{
+				Address1:   "address1",
+				City:       "city",
+				Country:    "country",
+				PostalCode: "postalCode",
+				Region:     "region",
+				Address2:   mercury.String("address2"),
+			},
+			RoutingNumber: "routingNumber",
+		},
 	})
 	if err != nil {
 		var apierr *mercury.Error
@@ -146,6 +158,18 @@ func TestRecipientUpdateWithOptionalParams(t *testing.T) {
 			Emails:   []string{"string"},
 			Name:     mercury.String("name"),
 			Nickname: mercury.String("nickname"),
+			RealTimePaymentRoutingInfo: mercury.RecipientUpdateParamsRealTimePaymentRoutingInfo{
+				AccountNumber: "accountNumber",
+				Address: mercury.AddressWithoutNameParam{
+					Address1:   "address1",
+					City:       "city",
+					Country:    "country",
+					PostalCode: "postalCode",
+					Region:     "region",
+					Address2:   mercury.String("address2"),
+				},
+				RoutingNumber: "routingNumber",
+			},
 		},
 	)
 	if err != nil {

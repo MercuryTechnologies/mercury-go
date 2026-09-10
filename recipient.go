@@ -864,6 +864,8 @@ type RecipientNewParams struct {
 	DomesticWireRoutingInfo DomesticWireRoutingInfoRawParam `json:"domesticWireRoutingInfo,omitzero"`
 	// Information needed to send an ACH.
 	ElectronicRoutingInfo ElectronicRoutingInfoRawParam `json:"electronicRoutingInfo,omitzero"`
+	// Routing information for real-time payments.
+	RealTimePaymentRoutingInfo RecipientNewParamsRealTimePaymentRoutingInfo `json:"realTimePaymentRoutingInfo,omitzero"`
 	paramObj
 }
 
@@ -872,6 +874,27 @@ func (r RecipientNewParams) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *RecipientNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Routing information for real-time payments.
+//
+// The properties AccountNumber, Address, RoutingNumber are required.
+type RecipientNewParamsRealTimePaymentRoutingInfo struct {
+	// The account number of the bank account to use for real-time payments.
+	AccountNumber string `json:"accountNumber" api:"required"`
+	// The address of the bank account to use for real-time payments.
+	Address AddressWithoutNameParam `json:"address,omitzero" api:"required"`
+	// The routing number of the bank account to use for real-time payments.
+	RoutingNumber string `json:"routingNumber" api:"required"`
+	paramObj
+}
+
+func (r RecipientNewParamsRealTimePaymentRoutingInfo) MarshalJSON() (data []byte, err error) {
+	type shadow RecipientNewParamsRealTimePaymentRoutingInfo
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *RecipientNewParamsRealTimePaymentRoutingInfo) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -889,6 +912,8 @@ type RecipientUpdateParams struct {
 	// Information needed to send an ACH.
 	ElectronicRoutingInfo ElectronicRoutingInfoRawParam `json:"electronicRoutingInfo,omitzero"`
 	Emails                []string                      `json:"emails,omitzero"`
+	// Routing information for real-time payments.
+	RealTimePaymentRoutingInfo RecipientUpdateParamsRealTimePaymentRoutingInfo `json:"realTimePaymentRoutingInfo,omitzero"`
 	paramObj
 }
 
@@ -897,6 +922,27 @@ func (r RecipientUpdateParams) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *RecipientUpdateParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Routing information for real-time payments.
+//
+// The properties AccountNumber, Address, RoutingNumber are required.
+type RecipientUpdateParamsRealTimePaymentRoutingInfo struct {
+	// The account number of the bank account to use for real-time payments.
+	AccountNumber string `json:"accountNumber" api:"required"`
+	// The address of the bank account to use for real-time payments.
+	Address AddressWithoutNameParam `json:"address,omitzero" api:"required"`
+	// The routing number of the bank account to use for real-time payments.
+	RoutingNumber string `json:"routingNumber" api:"required"`
+	paramObj
+}
+
+func (r RecipientUpdateParamsRealTimePaymentRoutingInfo) MarshalJSON() (data []byte, err error) {
+	type shadow RecipientUpdateParamsRealTimePaymentRoutingInfo
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *RecipientUpdateParamsRealTimePaymentRoutingInfo) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

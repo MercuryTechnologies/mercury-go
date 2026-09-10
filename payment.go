@@ -121,7 +121,7 @@ type SendMoneyApproval struct {
 	Amount float64 `json:"amount" api:"required"`
 	// Time at which the payment request was created.
 	CreatedAt string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	// Any of "ach", "check", "domesticWire", "internationalWire".
+	// Any of "ach", "check", "domesticWire", "internationalWire", "realTimePayment".
 	PaymentMethod SendMoneyPaymentMethod `json:"paymentMethod" api:"required"`
 	// ID for a Mercury account.
 	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
@@ -212,6 +212,7 @@ const (
 	SendMoneyPaymentMethodCheck             SendMoneyPaymentMethod = "check"
 	SendMoneyPaymentMethodDomesticWire      SendMoneyPaymentMethod = "domesticWire"
 	SendMoneyPaymentMethodInternationalWire SendMoneyPaymentMethod = "internationalWire"
+	SendMoneyPaymentMethodRealTimePayment   SendMoneyPaymentMethod = "realTimePayment"
 )
 
 // Response for POST /api/v1/transfer endpoint. Returns both the credit and debit
@@ -241,7 +242,7 @@ type PaymentNewParams struct {
 	IdempotencyKey string `json:"idempotencyKey" api:"required"`
 	// If domesticWire is used, then the purpose field is required.
 	//
-	// Any of "ach", "check", "domesticWire".
+	// Any of "ach", "check", "domesticWire", "realTimePayment".
 	PaymentMethod PaymentNewParamsPaymentMethod `json:"paymentMethod,omitzero" api:"required"`
 	// ID for a Mercury account.
 	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
@@ -267,9 +268,10 @@ func (r *PaymentNewParams) UnmarshalJSON(data []byte) error {
 type PaymentNewParamsPaymentMethod string
 
 const (
-	PaymentNewParamsPaymentMethodACH          PaymentNewParamsPaymentMethod = "ach"
-	PaymentNewParamsPaymentMethodCheck        PaymentNewParamsPaymentMethod = "check"
-	PaymentNewParamsPaymentMethodDomesticWire PaymentNewParamsPaymentMethod = "domesticWire"
+	PaymentNewParamsPaymentMethodACH             PaymentNewParamsPaymentMethod = "ach"
+	PaymentNewParamsPaymentMethodCheck           PaymentNewParamsPaymentMethod = "check"
+	PaymentNewParamsPaymentMethodDomesticWire    PaymentNewParamsPaymentMethod = "domesticWire"
+	PaymentNewParamsPaymentMethodRealTimePayment PaymentNewParamsPaymentMethod = "realTimePayment"
 )
 
 // External API representation of SendMoneyPurpose. Only exposes the 'simple' field
@@ -361,7 +363,7 @@ type PaymentRequestParams struct {
 	// Payment method to use. If domesticWire or internationalWire is used, then the
 	// purpose field is required.
 	//
-	// Any of "ach", "check", "domesticWire", "internationalWire".
+	// Any of "ach", "check", "domesticWire", "internationalWire", "realTimePayment".
 	PaymentMethod SendMoneyPaymentMethod `json:"paymentMethod,omitzero" api:"required"`
 	// ID for a Mercury account.
 	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
