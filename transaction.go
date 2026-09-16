@@ -546,7 +546,8 @@ type TransactionListParams struct {
 	PostedEnd param.Opt[string] `query:"postedEnd,omitzero" json:"-"`
 	// Earliest postedAt date to filter for. Format: YYYY-MM-DD or an ISO 8601 string
 	PostedStart param.Opt[string] `query:"postedStart,omitzero" json:"-"`
-	// Search term to look for in transaction descriptions.
+	// Search term to look for in transaction descriptions, notes, recipient memos, and
+	// counterparty names.
 	Search param.Opt[string] `query:"search,omitzero" json:"-"`
 	// Earliest createdAt date to filter for. If not provided, it defaults to the date
 	// of your first transaction. Format: YYYY-MM-DD or an ISO 8601 string. Please note
