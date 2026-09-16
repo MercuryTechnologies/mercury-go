@@ -371,6 +371,14 @@ type PaymentRequestParams struct {
 	ExternalMemo param.Opt[string] `json:"externalMemo,omitzero"`
 	// Optional note
 	Note param.Opt[string] `json:"note,omitzero"`
+	// Who pays intermediary bank fees on a USD international wire. Pass 'ours' so the
+	// recipient receives the full amount (Mercury charges a $15 fee), or 'shared' to
+	// split those fees. If omitted on a USD international wire, this defaults to
+	// 'ours'. Do not include this field for other payment methods or accounts that are
+	// not charged international-wire fees.
+	//
+	// Any of "ours", "shared".
+	ChargeType PaymentRequestParamsChargeType `json:"chargeType,omitzero"`
 	// External API representation of SendMoneyPurpose. Only exposes the 'simple' field
 	// to decouple internal implementation from external API.
 	Purpose PaymentRequestParamsPurpose `json:"purpose,omitzero"`
@@ -384,6 +392,18 @@ func (r PaymentRequestParams) MarshalJSON() (data []byte, err error) {
 func (r *PaymentRequestParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// Who pays intermediary bank fees on a USD international wire. Pass 'ours' so the
+// recipient receives the full amount (Mercury charges a $15 fee), or 'shared' to
+// split those fees. If omitted on a USD international wire, this defaults to
+// 'ours'. Do not include this field for other payment methods or accounts that are
+// not charged international-wire fees.
+type PaymentRequestParamsChargeType string
+
+const (
+	PaymentRequestParamsChargeTypeOurs   PaymentRequestParamsChargeType = "ours"
+	PaymentRequestParamsChargeTypeShared PaymentRequestParamsChargeType = "shared"
+)
 
 // External API representation of SendMoneyPurpose. Only exposes the 'simple' field
 // to decouple internal implementation from external API.
