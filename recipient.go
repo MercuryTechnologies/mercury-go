@@ -335,16 +335,21 @@ func (r *DomesticWireRoutingInfoRawParam) UnmarshalJSON(data []byte) error {
 type ElectronicAccountType string
 
 const (
-	ElectronicAccountTypeBusinessChecking ElectronicAccountType = "businessChecking"
-	ElectronicAccountTypeBusinessSavings  ElectronicAccountType = "businessSavings"
-	ElectronicAccountTypePersonalChecking ElectronicAccountType = "personalChecking"
-	ElectronicAccountTypePersonalSavings  ElectronicAccountType = "personalSavings"
+	ElectronicAccountTypeBusinessChecking      ElectronicAccountType = "businessChecking"
+	ElectronicAccountTypeBusinessSavings       ElectronicAccountType = "businessSavings"
+	ElectronicAccountTypePersonalChecking      ElectronicAccountType = "personalChecking"
+	ElectronicAccountTypePersonalSavings       ElectronicAccountType = "personalSavings"
+	ElectronicAccountTypeBusinessGeneralLedger ElectronicAccountType = "businessGeneralLedger"
+	ElectronicAccountTypePersonalGeneralLedger ElectronicAccountType = "personalGeneralLedger"
+	ElectronicAccountTypeBusinessLoan          ElectronicAccountType = "businessLoan"
+	ElectronicAccountTypePersonalLoan          ElectronicAccountType = "personalLoan"
 )
 
 type ElectronicRoutingInfo struct {
 	AccountNumber string `json:"accountNumber" api:"required"`
 	// Any of "businessChecking", "businessSavings", "personalChecking",
-	// "personalSavings".
+	// "personalSavings", "businessGeneralLedger", "personalGeneralLedger",
+	// "businessLoan", "personalLoan".
 	ElectronicAccountType ElectronicAccountType `json:"electronicAccountType" api:"required"`
 	RoutingNumber         string                `json:"routingNumber" api:"required"`
 	Address               AddressWithoutName    `json:"address" api:"nullable"`
@@ -378,7 +383,8 @@ type ElectronicRoutingInfoRawParam struct {
 	// The type of bank account to use for ACH payments.
 	//
 	// Any of "businessChecking", "businessSavings", "personalChecking",
-	// "personalSavings".
+	// "personalSavings", "businessGeneralLedger", "personalGeneralLedger",
+	// "businessLoan", "personalLoan".
 	ElectronicAccountType ElectronicAccountType `json:"electronicAccountType,omitzero" api:"required"`
 	// The routing number of the bank account to use for ACH payments.
 	RoutingNumber string `json:"routingNumber" api:"required"`
