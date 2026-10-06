@@ -510,11 +510,12 @@ func (r *TransactionMethodDataDebitCardInfo) UnmarshalJSON(data []byte) error {
 }
 
 type TransactionUpdateParams struct {
+	// Category update action. Omit field to keep current category, send null to clear
+	// category, send an ID to set category.
+	CategoryID param.Opt[string] `json:"categoryId,omitzero" format:"uuid"`
 	// Note update action. Omit field to keep current note, send null or empty string
 	// to clear note, send text to set note.
-	Note param.Opt[string] `json:"note,omitzero" api:"required"`
-	// ID for the category
-	CategoryID string `json:"categoryId" api:"required" format:"uuid"`
+	Note param.Opt[string] `json:"note,omitzero"`
 	paramObj
 }
 

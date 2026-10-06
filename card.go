@@ -499,12 +499,10 @@ func init() {
 
 // At least one updateable field must be provided; requests where every field is
 // the same are rejected.
-//
-// The property Nickname is required.
 type UpdateCardRequestParam struct {
 	// Nickname update action. Omit the field to keep the current nickname, send null
 	// or an empty/whitespace-only string to clear it, or send a string to set it.
-	Nickname param.Opt[string] `json:"nickname,omitzero" api:"required"`
+	Nickname param.Opt[string] `json:"nickname,omitzero"`
 	// Spending controls applied to a card
 	SpendLimit UpdateCardRequestSpendLimitParam `json:"spendLimit,omitzero"`
 	paramObj

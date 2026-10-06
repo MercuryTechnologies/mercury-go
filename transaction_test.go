@@ -13,7 +13,7 @@ import (
 	"github.com/MercuryTechnologies/mercury-go/option"
 )
 
-func TestTransactionUpdate(t *testing.T) {
+func TestTransactionUpdateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -30,7 +30,7 @@ func TestTransactionUpdate(t *testing.T) {
 		context.TODO(),
 		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
 		mercury.TransactionUpdateParams{
-			CategoryID: "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+			CategoryID: mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			Note:       mercury.String("note"),
 		},
 	)

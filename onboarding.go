@@ -201,18 +201,17 @@ func (r *BusinessContactDetailsParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The properties FederalEin, FormationDocumentFileBlob are required.
 type FormationDetailsParam struct {
+	CompanyOriginCountry param.Opt[string] `json:"companyOriginCountry,omitzero"`
+	EinDocumentFileBlob  param.Opt[string] `json:"einDocumentFileBlob,omitzero"`
+	EInDocumentFileBlob  param.Opt[string] `json:"eINDocumentFileBlob,omitzero"`
 	// Field should be null (no value), 'Pending' (value will be provided at a later
 	// date), or a valid value
-	FederalEin param.Opt[string] `json:"federalEin,omitzero" api:"required"`
+	FederalEin            param.Opt[string] `json:"federalEin,omitzero"`
+	ForeignBusinessNumber param.Opt[string] `json:"foreignBusinessNumber,omitzero"`
 	// Field should be null (no value), 'Pending' (value will be provided at a later
 	// date), or a valid value
-	FormationDocumentFileBlob param.Opt[string] `json:"formationDocumentFileBlob,omitzero" api:"required"`
-	CompanyOriginCountry      param.Opt[string] `json:"companyOriginCountry,omitzero"`
-	EinDocumentFileBlob       param.Opt[string] `json:"einDocumentFileBlob,omitzero"`
-	EInDocumentFileBlob       param.Opt[string] `json:"eINDocumentFileBlob,omitzero"`
-	ForeignBusinessNumber     param.Opt[string] `json:"foreignBusinessNumber,omitzero"`
+	FormationDocumentFileBlob param.Opt[string] `json:"formationDocumentFileBlob,omitzero"`
 	// Any of "CCorp", "LLC", "LLP", "NonProfit", "Partnership",
 	// "ProfessionalAssociation", "ProfessionalCorporation", "SCorp",
 	// "GeneralPartnership", "LimitedPartnership", "JointVenture",
