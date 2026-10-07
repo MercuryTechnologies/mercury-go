@@ -88,7 +88,7 @@ type RecipientInviteAPIResponse struct {
 	RequireTaxDocument bool `json:"requireTaxDocument" api:"required"`
 	// Status of the invite.
 	//
-	// Any of "created", "completed", "expired".
+	// Any of "created", "completed", "expired", "declined".
 	Status RecipientInviteAPIResponseStatus `json:"status" api:"required"`
 	// When the invite expires, if it has an expiry.
 	ExpiresAt string `json:"expiresAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
@@ -127,6 +127,7 @@ const (
 	RecipientInviteAPIResponseStatusCreated   RecipientInviteAPIResponseStatus = "created"
 	RecipientInviteAPIResponseStatusCompleted RecipientInviteAPIResponseStatus = "completed"
 	RecipientInviteAPIResponseStatusExpired   RecipientInviteAPIResponseStatus = "expired"
+	RecipientInviteAPIResponseStatusDeclined  RecipientInviteAPIResponseStatus = "declined"
 )
 
 // API response for listing recipient invites with pagination.
@@ -220,7 +221,7 @@ type RecipientInviteListParams struct {
 	//
 	// Any of "asc", "desc".
 	Order RecipientInviteListParamsOrder `query:"order,omitzero" json:"-"`
-	// Any of "created", "completed", "expired".
+	// Any of "created", "completed", "expired", "declined".
 	Status RecipientInviteListParamsStatus `query:"status,omitzero" json:"-"`
 	paramObj
 }
@@ -248,4 +249,5 @@ const (
 	RecipientInviteListParamsStatusCreated   RecipientInviteListParamsStatus = "created"
 	RecipientInviteListParamsStatusCompleted RecipientInviteListParamsStatus = "completed"
 	RecipientInviteListParamsStatusExpired   RecipientInviteListParamsStatus = "expired"
+	RecipientInviteListParamsStatusDeclined  RecipientInviteListParamsStatus = "declined"
 )
