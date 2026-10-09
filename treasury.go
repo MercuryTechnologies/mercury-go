@@ -213,7 +213,7 @@ type TreasuryTransactionsResponseTransaction struct {
 	// "valuationChangePosted", "oemsMutualFundOrderSettled",
 	// "oemsMutualFundOrderCanceled", "oemsMutualFundOrderRejected",
 	// "oemsFixedIncomeOrderSettled", "oemsFixedIncomeOrderCanceled",
-	// "oemsFixedIncomeOrderRejected".
+	// "oemsFixedIncomeOrderRejected", "couponPosted", "couponCanceled".
 	Type              string                                         `json:"type" api:"required"`
 	AdditionalDetails string                                         `json:"additionalDetails" api:"nullable"`
 	Details           TreasuryTransactionsResponseTransactionDetails `json:"details" api:"nullable"`
