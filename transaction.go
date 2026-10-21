@@ -137,15 +137,22 @@ type GlAllocation struct {
 	Amount float64 `json:"amount" api:"required"`
 	// The name of the GL code from the connected accounting integration
 	GlCodeName string `json:"glCodeName" api:"required"`
+	// The name of the class from the connected accounting integration, if assigned
+	ClassName string `json:"className" api:"nullable"`
+	// The name of the department from the connected accounting integration, if
+	// assigned
+	DepartmentName string `json:"departmentName" api:"nullable"`
 	// Optional user-provided description for this allocation
 	Description string `json:"description" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Amount      respjson.Field
-		GlCodeName  respjson.Field
-		Description respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		Amount         respjson.Field
+		GlCodeName     respjson.Field
+		ClassName      respjson.Field
+		DepartmentName respjson.Field
+		Description    respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
 	} `json:"-"`
 }
 
