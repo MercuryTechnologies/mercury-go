@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.13.12](https://github.com/MercuryTechnologies/mercury-go/compare/v0.13.11...v0.13.12) (2026-10-22)
+
+
+### Chores
+
+* sync specs from MWB@v2026.08.20.72471+2bc94ee ([8312050](https://github.com/MercuryTechnologies/mercury-go/commit/83120501a883d412e97d1b9306261bed5a9f52a7))
+* sync specs from MWB@v2026.08.20.72556+6ef5be5 ([1e1aa13](https://github.com/MercuryTechnologies/mercury-go/commit/1e1aa132d8983ad3e55d82511034e52e84ea6f1e))
+* sync specs from MWB@v2026.08.20.72568+87b9d43 ([996c611](https://github.com/MercuryTechnologies/mercury-go/commit/996c6115ca85e8ef173809da35fe639df001e919))
+* sync specs from MWB@v2026.09.10.74738+5f50e5e ([5a856b3](https://github.com/MercuryTechnologies/mercury-go/commit/5a856b33e20d6d4e6362aa0114adc7ddf0bcb5b4))
+* sync specs from MWB@v2026.09.10.74766+11a9647 ([3163862](https://github.com/MercuryTechnologies/mercury-go/commit/3163862247a857ef30ec526bc2e717aa1dc28fda))
+* sync specs from MWB@v2026.09.16.75327+05c54d0 ([a97b58c](https://github.com/MercuryTechnologies/mercury-go/commit/a97b58c2ce47b82022f350e8dbc15e67fb23a073))
+* sync specs from MWB@v2026.09.16.75423+8209397 ([639b55e](https://github.com/MercuryTechnologies/mercury-go/commit/639b55e3a5d24980b0d6b5d9106dbb130fd77b55))
+* sync specs from MWB@v2026.09.29.76252+2cadb24 ([af0fffe](https://github.com/MercuryTechnologies/mercury-go/commit/af0fffe831dd69fde7ab5bd466821cec85851382))
+* sync specs from MWB@v2026.10.06.76944+76cbcc2 ([81c877a](https://github.com/MercuryTechnologies/mercury-go/commit/81c877a30abe62bcdaf6e6deef018f529d01953c))
+* sync specs from MWB@v2026.10.07.77129+82cf208 ([0d89fd0](https://github.com/MercuryTechnologies/mercury-go/commit/0d89fd0b53020f332c50afcac494ac5a9e074df8))
+* sync specs from MWB@v2026.10.09.77581+b535f4f ([4828a2a](https://github.com/MercuryTechnologies/mercury-go/commit/4828a2a73ba775408b167e7c64eb37ab3c4a1991))
+* sync specs from MWB@v2026.10.13.77712+b36cf72 ([b40144c](https://github.com/MercuryTechnologies/mercury-go/commit/b40144c87af7ce27fd6fc50e31b12378d7be9468))
+* sync specs from MWB@v2026.10.21.78798+bf0a467 ([cffac84](https://github.com/MercuryTechnologies/mercury-go/commit/cffac84763a3824adabc62adbf1a6869ed5c02a2))
+* sync specs from MWB@v2026.10.22.79082+c8e8513 ([19c7b5c](https://github.com/MercuryTechnologies/mercury-go/commit/19c7b5ccf70e9cd835fc5bdd05455ff5b2eb9c92))
+
 ## [0.13.11](https://github.com/MercuryTechnologies/mercury-go/compare/v0.13.10...v0.13.11) (2026-08-12)
 
 
