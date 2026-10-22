@@ -40,9 +40,10 @@ func NewStatementAccountService(opts ...option.RequestOption) (r StatementAccoun
 	return
 }
 
-// Retrieve a paginated list of monthly statements for a specific account. Supports
-// cursor-based pagination with limit, order, start_after, and end_before query
-// parameters, as well as date range filtering with start and end parameters.
+// Retrieve a paginated list of monthly statements for a depository account. For IO
+// credit accounts, use getCreditAccountStatements. Supports cursor-based
+// pagination with limit, order, start_after, and end_before query parameters, as
+// well as date range filtering with start and end parameters.
 func (r *StatementAccountService) List(ctx context.Context, accountID string, query StatementAccountListParams, opts ...option.RequestOption) (res *pagination.CursorIDAccountStatements[StatementAccountListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.options, opts)
@@ -64,9 +65,10 @@ func (r *StatementAccountService) List(ctx context.Context, accountID string, qu
 	return res, nil
 }
 
-// Retrieve a paginated list of monthly statements for a specific account. Supports
-// cursor-based pagination with limit, order, start_after, and end_before query
-// parameters, as well as date range filtering with start and end parameters.
+// Retrieve a paginated list of monthly statements for a depository account. For IO
+// credit accounts, use getCreditAccountStatements. Supports cursor-based
+// pagination with limit, order, start_after, and end_before query parameters, as
+// well as date range filtering with start and end parameters.
 func (r *StatementAccountService) ListAutoPaging(ctx context.Context, accountID string, query StatementAccountListParams, opts ...option.RequestOption) *pagination.CursorIDAccountStatementsAutoPager[StatementAccountListResponse] {
 	return pagination.NewCursorIDAccountStatementsAutoPager(r.List(ctx, accountID, query, opts...))
 }
