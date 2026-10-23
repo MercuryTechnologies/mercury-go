@@ -316,8 +316,11 @@ type Transaction struct {
 	Kind                TransactionKind          `json:"kind" api:"required"`
 	RelatedTransactions []RelatedTransactionData `json:"relatedTransactions" api:"required"`
 	// Any of "pending", "sent", "cancelled", "failed", "reversed", "blocked".
-	Status          TransactionStatus `json:"status" api:"required"`
-	BankDescription string            `json:"bankDescription" api:"nullable"`
+	Status TransactionStatus `json:"status" api:"required"`
+	// A transaction's accounting review and sync status, for the accounting
+	// integration connected to the organization (e.g. QuickBooks, Xero, NetSuite).
+	AccountingStatus TransactionAccountingStatus `json:"accountingStatus" api:"nullable"`
+	BankDescription  string                      `json:"bankDescription" api:"nullable"`
 	// Id of the card behind this transaction, present on card payments and refunds
 	// (debit or credit); null otherwise, including for card-related fee transactions.
 	// Fetch the card's details (kind, cardholder, last four, etc.) via the Cards API
@@ -377,6 +380,7 @@ type Transaction struct {
 		Kind                       respjson.Field
 		RelatedTransactions        respjson.Field
 		Status                     respjson.Field
+		AccountingStatus           respjson.Field
 		BankDescription            respjson.Field
 		CardID                     respjson.Field
 		CategoryData               respjson.Field
@@ -445,6 +449,53 @@ const (
 	TransactionStatusReversed  TransactionStatus = "reversed"
 	TransactionStatusBlocked   TransactionStatus = "blocked"
 )
+
+// A transaction's accounting review and sync status, for the accounting
+// integration connected to the organization (e.g. QuickBooks, Xero, NetSuite).
+type TransactionAccountingStatus struct {
+	// Current review and sync status of the transaction. pending: not reviewed or
+	// synced yet, including transactions with no accounting activity. reviewed: marked
+	// as reviewed and ready to sync. syncing: a sync has started but not finished.
+	// synced: synced successfully. errored: the sync failed. excluded: excluded from
+	// accounting sync. When more than one applies, the first of excluded, errored,
+	// synced, syncing and reviewed wins.
+	//
+	// Any of "pending", "reviewed", "syncing", "synced", "errored", "excluded".
+	Status string `json:"status" api:"required"`
+	// When the sync of the transaction to the accounting integration failed. Null if
+	// it has not failed.
+	ErroredAt string `json:"erroredAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	// When the transaction was excluded from accounting sync. Null if it is not
+	// excluded.
+	ExcludedAt string `json:"excludedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	// When the transaction was last marked as reviewed. Null if it has not been
+	// reviewed.
+	ReviewedAt string `json:"reviewedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	// When the transaction finished syncing to the accounting integration
+	// successfully. Null if it has not finished syncing.
+	SyncedAt string `json:"syncedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	// When a sync of the transaction to the accounting integration was started. This
+	// is the start of the sync, not its completion (see syncedAt). Null if no sync has
+	// been started.
+	SyncStartedAt string `json:"syncStartedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Status        respjson.Field
+		ErroredAt     respjson.Field
+		ExcludedAt    respjson.Field
+		ReviewedAt    respjson.Field
+		SyncedAt      respjson.Field
+		SyncStartedAt respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TransactionAccountingStatus) RawJSON() string { return r.JSON.raw }
+func (r *TransactionAccountingStatus) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 type TransactionMethodData struct {
 	Address                      AddressData                         `json:"address" api:"nullable"`
