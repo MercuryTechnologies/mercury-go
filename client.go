@@ -34,6 +34,7 @@ type Client struct {
 	Payments PaymentService
 	// Manage SAFE (Simple Agreement for Future Equity) requests
 	Safes SafeService
+	Spend SpendService
 	// Download account statements
 	Statements StatementService
 	// Manage treasury accounts and transactions
@@ -91,6 +92,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Org = NewOrgService(opts...)
 	r.Payments = NewPaymentService(opts...)
 	r.Safes = NewSafeService(opts...)
+	r.Spend = NewSpendService(opts...)
 	r.Statements = NewStatementService(opts...)
 	r.Treasury = NewTreasuryService(opts...)
 	r.Users = NewUserService(opts...)
