@@ -14,6 +14,7 @@ import (
 	"github.com/MercuryTechnologies/mercury-go/internal/apiquery"
 	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
 	"github.com/MercuryTechnologies/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go/packages/pagination"
 	"github.com/MercuryTechnologies/mercury-go/packages/param"
 	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
 )
@@ -51,11 +52,27 @@ func (r *RecipientInviteService) New(ctx context.Context, body RecipientInviteNe
 
 // Retrieve a paginated list of all recipient invites for your organization.
 // Supports filtering by status.
-func (r *RecipientInviteService) List(ctx context.Context, query RecipientInviteListParams, opts ...option.RequestOption) (res *RecipientInviteListResponse, err error) {
+func (r *RecipientInviteService) List(ctx context.Context, query RecipientInviteListParams, opts ...option.RequestOption) (res *pagination.CursorIDRecipientInvites[RecipientInviteAPIResponse], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "recipients/invites"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return res, err
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieve a paginated list of all recipient invites for your organization.
+// Supports filtering by status.
+func (r *RecipientInviteService) ListAutoPaging(ctx context.Context, query RecipientInviteListParams, opts ...option.RequestOption) *pagination.CursorIDRecipientInvitesAutoPager[RecipientInviteAPIResponse] {
+	return pagination.NewCursorIDRecipientInvitesAutoPager(r.List(ctx, query, opts...))
 }
 
 // Delete an active recipient invite.
@@ -129,48 +146,6 @@ const (
 	RecipientInviteAPIResponseStatusExpired   RecipientInviteAPIResponseStatus = "expired"
 	RecipientInviteAPIResponseStatusDeclined  RecipientInviteAPIResponseStatus = "declined"
 )
-
-// API response for listing recipient invites with pagination.
-type RecipientInviteListResponse struct {
-	// List of invites in the current page.
-	Invites []RecipientInviteAPIResponse `json:"invites" api:"required"`
-	// Pagination cursors (inviteId) for navigating to next/previous pages.
-	Page RecipientInviteListResponsePage `json:"page" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Invites     respjson.Field
-		Page        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r RecipientInviteListResponse) RawJSON() string { return r.JSON.raw }
-func (r *RecipientInviteListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Pagination cursors (inviteId) for navigating to next/previous pages.
-type RecipientInviteListResponsePage struct {
-	// ID for the invite
-	NextPage string `json:"nextPage"`
-	// ID for the invite
-	PreviousPage string `json:"previousPage"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		NextPage     respjson.Field
-		PreviousPage respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r RecipientInviteListResponsePage) RawJSON() string { return r.JSON.raw }
-func (r *RecipientInviteListResponsePage) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 type RecipientInviteNewParams struct {
 	// Contact email the invite is sent to. When 'recipientId' is present, updates the
