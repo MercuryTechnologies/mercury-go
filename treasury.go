@@ -69,30 +69,15 @@ func (r *TreasuryService) ListAutoPaging(ctx context.Context, query TreasuryList
 }
 
 // Retrieve paginated treasury transactions for a specific treasury account.
-func (r *TreasuryService) Transactions(ctx context.Context, treasuryID string, query TreasuryTransactionsParams, opts ...option.RequestOption) (res *pagination.CursorTreasuryTransactions[TreasuryTransactionsResponse], err error) {
-	var raw *http.Response
+func (r *TreasuryService) Transactions(ctx context.Context, treasuryID string, query TreasuryTransactionsParams, opts ...option.RequestOption) (res *TreasuryTransactionsResponse, err error) {
 	opts = slices.Concat(r.options, opts)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if treasuryID == "" {
 		err = errors.New("missing required treasuryId parameter")
 		return nil, err
 	}
 	path := fmt.Sprintf("treasury/%s/transactions", treasuryID)
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Retrieve paginated treasury transactions for a specific treasury account.
-func (r *TreasuryService) TransactionsAutoPaging(ctx context.Context, treasuryID string, query TreasuryTransactionsParams, opts ...option.RequestOption) *pagination.CursorTreasuryTransactionsAutoPager[TreasuryTransactionsResponse] {
-	return pagination.NewCursorTreasuryTransactionsAutoPager(r.Transactions(ctx, treasuryID, query, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return res, err
 }
 
 type TreasuryListResponse struct {
@@ -186,8 +171,29 @@ func (r *TreasuryListResponseNetReturnDividend) UnmarshalJSON(data []byte) error
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Treasury transaction data for external API consumption
+// Response type for treasury transactions API endpoint
 type TreasuryTransactionsResponse struct {
+	// List of treasury transactions in the response
+	Transactions []TreasuryTransactionsResponseTransaction `json:"transactions" api:"required"`
+	// Pagination cursor for retrieving next batch of transactions
+	Cursor int64 `json:"cursor" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Transactions respjson.Field
+		Cursor       respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TreasuryTransactionsResponse) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryTransactionsResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Treasury transaction data for external API consumption
+type TreasuryTransactionsResponseTransaction struct {
 	// ID for this treasury transaction
 	ID string `json:"id" api:"required" format:"uuid"`
 	// ID for a Mercury account.
@@ -209,10 +215,10 @@ type TreasuryTransactionsResponse struct {
 	// "oemsFixedIncomeOrderSettled", "oemsFixedIncomeOrderCanceled",
 	// "oemsFixedIncomeOrderRejected", "couponPosted", "couponCanceled",
 	// "maturityPosted", "maturityCanceled".
-	Type              TreasuryTransactionsResponseType    `json:"type" api:"required"`
-	AdditionalDetails string                              `json:"additionalDetails" api:"nullable"`
-	Details           TreasuryTransactionsResponseDetails `json:"details" api:"nullable"`
-	Security          string                              `json:"security" api:"nullable"`
+	Type              string                                         `json:"type" api:"required"`
+	AdditionalDetails string                                         `json:"additionalDetails" api:"nullable"`
+	Details           TreasuryTransactionsResponseTransactionDetails `json:"details" api:"nullable"`
+	Security          string                                         `json:"security" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                respjson.Field
@@ -231,54 +237,12 @@ type TreasuryTransactionsResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TreasuryTransactionsResponse) RawJSON() string { return r.JSON.raw }
-func (r *TreasuryTransactionsResponse) UnmarshalJSON(data []byte) error {
+func (r TreasuryTransactionsResponseTransaction) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryTransactionsResponseTransaction) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type TreasuryTransactionsResponseType string
-
-const (
-	TreasuryTransactionsResponseTypeDepositCanceled              TreasuryTransactionsResponseType = "depositCanceled"
-	TreasuryTransactionsResponseTypeDepositComplete              TreasuryTransactionsResponseType = "depositComplete"
-	TreasuryTransactionsResponseTypeDepositFailed                TreasuryTransactionsResponseType = "depositFailed"
-	TreasuryTransactionsResponseTypeDepositReturned              TreasuryTransactionsResponseType = "depositReturned"
-	TreasuryTransactionsResponseTypeMercuryFeePosted             TreasuryTransactionsResponseType = "mercuryFeePosted"
-	TreasuryTransactionsResponseTypeMercuryFeeFailed             TreasuryTransactionsResponseType = "mercuryFeeFailed"
-	TreasuryTransactionsResponseTypeMercuryFeeRefunded           TreasuryTransactionsResponseType = "mercuryFeeRefunded"
-	TreasuryTransactionsResponseTypeMercuryFeeCanceled           TreasuryTransactionsResponseType = "mercuryFeeCanceled"
-	TreasuryTransactionsResponseTypeWithdrawalPosted             TreasuryTransactionsResponseType = "withdrawalPosted"
-	TreasuryTransactionsResponseTypeWithdrawalFailed             TreasuryTransactionsResponseType = "withdrawalFailed"
-	TreasuryTransactionsResponseTypeWithdrawalCanceled           TreasuryTransactionsResponseType = "withdrawalCanceled"
-	TreasuryTransactionsResponseTypeWithdrawalReturned           TreasuryTransactionsResponseType = "withdrawalReturned"
-	TreasuryTransactionsResponseTypeRevertTxn                    TreasuryTransactionsResponseType = "revertTxn"
-	TreasuryTransactionsResponseTypeInterestPosted               TreasuryTransactionsResponseType = "interestPosted"
-	TreasuryTransactionsResponseTypeInterestCanceled             TreasuryTransactionsResponseType = "interestCanceled"
-	TreasuryTransactionsResponseTypeManualAmendmentPosted        TreasuryTransactionsResponseType = "manualAmendmentPosted"
-	TreasuryTransactionsResponseTypeMercuryCreditPosted          TreasuryTransactionsResponseType = "mercuryCreditPosted"
-	TreasuryTransactionsResponseTypeMercuryCreditFailed          TreasuryTransactionsResponseType = "mercuryCreditFailed"
-	TreasuryTransactionsResponseTypeDividendPosted               TreasuryTransactionsResponseType = "dividendPosted"
-	TreasuryTransactionsResponseTypeDividendCanceled             TreasuryTransactionsResponseType = "dividendCanceled"
-	TreasuryTransactionsResponseTypeDividendReinvestmentPosted   TreasuryTransactionsResponseType = "dividendReinvestmentPosted"
-	TreasuryTransactionsResponseTypeMutualFundTradeFailed        TreasuryTransactionsResponseType = "mutualFundTradeFailed"
-	TreasuryTransactionsResponseTypeMutualFundTradePosted        TreasuryTransactionsResponseType = "mutualFundTradePosted"
-	TreasuryTransactionsResponseTypeSweepInPosted                TreasuryTransactionsResponseType = "sweepInPosted"
-	TreasuryTransactionsResponseTypeSweepOutPosted               TreasuryTransactionsResponseType = "sweepOutPosted"
-	TreasuryTransactionsResponseTypeSweepReconcilePosted         TreasuryTransactionsResponseType = "sweepReconcilePosted"
-	TreasuryTransactionsResponseTypeValuationChangePosted        TreasuryTransactionsResponseType = "valuationChangePosted"
-	TreasuryTransactionsResponseTypeOemsMutualFundOrderSettled   TreasuryTransactionsResponseType = "oemsMutualFundOrderSettled"
-	TreasuryTransactionsResponseTypeOemsMutualFundOrderCanceled  TreasuryTransactionsResponseType = "oemsMutualFundOrderCanceled"
-	TreasuryTransactionsResponseTypeOemsMutualFundOrderRejected  TreasuryTransactionsResponseType = "oemsMutualFundOrderRejected"
-	TreasuryTransactionsResponseTypeOemsFixedIncomeOrderSettled  TreasuryTransactionsResponseType = "oemsFixedIncomeOrderSettled"
-	TreasuryTransactionsResponseTypeOemsFixedIncomeOrderCanceled TreasuryTransactionsResponseType = "oemsFixedIncomeOrderCanceled"
-	TreasuryTransactionsResponseTypeOemsFixedIncomeOrderRejected TreasuryTransactionsResponseType = "oemsFixedIncomeOrderRejected"
-	TreasuryTransactionsResponseTypeCouponPosted                 TreasuryTransactionsResponseType = "couponPosted"
-	TreasuryTransactionsResponseTypeCouponCanceled               TreasuryTransactionsResponseType = "couponCanceled"
-	TreasuryTransactionsResponseTypeMaturityPosted               TreasuryTransactionsResponseType = "maturityPosted"
-	TreasuryTransactionsResponseTypeMaturityCanceled             TreasuryTransactionsResponseType = "maturityCanceled"
-)
-
-type TreasuryTransactionsResponseDetails struct {
+type TreasuryTransactionsResponseTransactionDetails struct {
 	CreditDescription string `json:"creditDescription" api:"nullable"`
 	// ID for a Mercury account.
 	DepositCounterpartyID      string `json:"depositCounterpartyId" api:"nullable" format:"uuid"`
@@ -305,8 +269,8 @@ type TreasuryTransactionsResponseDetails struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r TreasuryTransactionsResponseDetails) RawJSON() string { return r.JSON.raw }
-func (r *TreasuryTransactionsResponseDetails) UnmarshalJSON(data []byte) error {
+func (r TreasuryTransactionsResponseTransactionDetails) RawJSON() string { return r.JSON.raw }
+func (r *TreasuryTransactionsResponseTransactionDetails) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
