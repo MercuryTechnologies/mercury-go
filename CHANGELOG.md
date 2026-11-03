@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.14.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.13.12...v0.14.0) (2026-11-03)
+
+
+### Features
+
+* **stainless:** paginate recipient invites and treasury transactions ([0e705ea](https://github.com/MercuryTechnologies/mercury-go/commit/0e705ea9bc587d3ef905c5194dce82f1878671fc))
+
+
+### Chores
+
+* sync specs from MWB@v2026.10.23.79198+f8bc1a3 ([fdbefae](https://github.com/MercuryTechnologies/mercury-go/commit/fdbefaeeb67f3dbce69a33c9a1ed9502e0f5a17c))
+
 ## [0.13.12](https://github.com/MercuryTechnologies/mercury-go/compare/v0.13.11...v0.13.12) (2026-10-22)
 
 
