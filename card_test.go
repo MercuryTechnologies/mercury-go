@@ -32,7 +32,10 @@ func TestCardNewWithOptionalParams(t *testing.T) {
 			Type:      mercury.CreateCardRequestTypeVirtual,
 			UserID:    "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
 			AccountID: mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			Nickname:  mercury.String("nickname"),
+			CardConfiguration: mercury.CreateCardRequestCardConfigurationParam{
+				SingleUse: true,
+			},
+			Nickname: mercury.String("nickname"),
 			SpendLimit: mercury.CreateCardRequestSpendLimitParam{
 				AmountCents: 0,
 				Interval:    "daily",
@@ -101,6 +104,7 @@ func TestCardListWithOptionalParams(t *testing.T) {
 		AccountID:   []string{"string"},
 		EndBefore:   mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		IsAgentCard: mercury.Bool(true),
+		IsSingleUse: mercury.Bool(true),
 		Kind:        []string{"debit"},
 		Limit:       mercury.Int(1),
 		Order:       mercury.CardListParamsOrderAsc,

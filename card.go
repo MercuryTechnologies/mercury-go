@@ -162,6 +162,9 @@ type Card struct {
 	// Whether the card is managed by the agentic spend-management agent. Only agent
 	// cards can have their full details revealed.
 	IsAgentCard bool `json:"isAgentCard" api:"required"`
+	// Whether the card closes automatically after its first approved purchase. A used
+	// single-use card reports a @singleUseConsumed@ status.
+	IsSingleUse bool `json:"isSingleUse" api:"required"`
 	// Whether the card is a debit or credit card.
 	//
 	// Any of "debit", "credit".
@@ -176,7 +179,8 @@ type Card struct {
 	SpendLimitType CardSpendLimitType `json:"spendLimitType" api:"required"`
 	// Current lifecycle state of the card.
 	//
-	// Any of "active", "frozen", "cancelled", "inactive", "expired", "suspended".
+	// Any of "active", "frozen", "cancelled", "inactive", "expired", "suspended",
+	// "singleUseConsumed".
 	Status CardStatus `json:"status" api:"required"`
 	// Whether the card is virtual (digital-only) or physical (printed, supports ATM).
 	//
@@ -206,6 +210,7 @@ type Card struct {
 		CreatedAt          respjson.Field
 		Expiration         respjson.Field
 		IsAgentCard        respjson.Field
+		IsSingleUse        respjson.Field
 		Kind               respjson.Field
 		LastFour           respjson.Field
 		NameOnCard         respjson.Field
@@ -419,12 +424,13 @@ func (r *CardRevealResponse) UnmarshalJSON(data []byte) error {
 type CardStatus string
 
 const (
-	CardStatusActive    CardStatus = "active"
-	CardStatusFrozen    CardStatus = "frozen"
-	CardStatusCancelled CardStatus = "cancelled"
-	CardStatusInactive  CardStatus = "inactive"
-	CardStatusExpired   CardStatus = "expired"
-	CardStatusSuspended CardStatus = "suspended"
+	CardStatusActive            CardStatus = "active"
+	CardStatusFrozen            CardStatus = "frozen"
+	CardStatusCancelled         CardStatus = "cancelled"
+	CardStatusInactive          CardStatus = "inactive"
+	CardStatusExpired           CardStatus = "expired"
+	CardStatusSuspended         CardStatus = "suspended"
+	CardStatusSingleUseConsumed CardStatus = "singleUseConsumed"
 )
 
 type CardType string
@@ -450,6 +456,9 @@ type CreateCardRequestParam struct {
 	AccountID param.Opt[string] `json:"accountId,omitzero" format:"uuid"`
 	// Optional user-assigned label for the card.
 	Nickname param.Opt[string] `json:"nickname,omitzero"`
+	// The configuration of a card. Used both as the read-side response alongside
+	// @cardConfiguration@ and as an alternative input at issuance time.
+	CardConfiguration CreateCardRequestCardConfigurationParam `json:"cardConfiguration,omitzero"`
 	// Spending controls to apply at issuance.
 	SpendLimit CreateCardRequestSpendLimitParam `json:"spendLimit,omitzero"`
 	paramObj
@@ -469,6 +478,25 @@ type CreateCardRequestType string
 const (
 	CreateCardRequestTypeVirtual CreateCardRequestType = "virtual"
 )
+
+// The configuration of a card. Used both as the read-side response alongside
+// @cardConfiguration@ and as an alternative input at issuance time.
+//
+// The property SingleUse is required.
+type CreateCardRequestCardConfigurationParam struct {
+	// Whether this card auto-cancels itself on the first approved non-zero
+	// authorization. Must be 'False' for physical cards.
+	SingleUse bool `json:"singleUse" api:"required"`
+	paramObj
+}
+
+func (r CreateCardRequestCardConfigurationParam) MarshalJSON() (data []byte, err error) {
+	type shadow CreateCardRequestCardConfigurationParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *CreateCardRequestCardConfigurationParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // Spending controls to apply at issuance.
 //
@@ -579,6 +607,8 @@ type CardListParams struct {
 	EndBefore param.Opt[string] `query:"end_before,omitzero" format:"uuid" json:"-"`
 	// Filter cards by whether they are for Agent use.
 	IsAgentCard param.Opt[bool] `query:"isAgentCard,omitzero" json:"-"`
+	// Filter cards by whether they are Single-use
+	IsSingleUse param.Opt[bool] `query:"isSingleUse,omitzero" json:"-"`
 	// Maximum number of results to return. Allowed range: 1 to 1000. Defaults to 500
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// The ID of the card to start the page after (exclusive). When provided, results
@@ -600,7 +630,8 @@ type CardListParams struct {
 	Order CardListParamsOrder `query:"order,omitzero" json:"-"`
 	// Filter cards by one or more statuses.
 	//
-	// Any of "active", "frozen", "cancelled", "inactive", "expired", "suspended".
+	// Any of "active", "frozen", "cancelled", "inactive", "expired", "suspended",
+	// "singleUseConsumed".
 	Status []string `query:"status,omitzero" json:"-"`
 	// Filter cards by type (virtual or physical).
 	//
