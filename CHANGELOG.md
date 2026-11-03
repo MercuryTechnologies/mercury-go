@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.1](https://github.com/MercuryTechnologies/mercury-go/compare/v0.14.0...v0.14.1) (2026-11-03)
+
+
+### Chores
+
+* sync specs from MWB@v2026.11.03.80920+bac334b ([0456c64](https://github.com/MercuryTechnologies/mercury-go/commit/0456c64013ddbbdbfd921802497dd6d9f31e69be))
+
 ## [0.14.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.13.12...v0.14.0) (2026-11-03)
 
 
