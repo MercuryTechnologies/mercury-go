@@ -88,6 +88,18 @@ func (r *RecipientInviteService) Delete(ctx context.Context, inviteID string, op
 	return err
 }
 
+// Retrieve details of a specific recipient invite by ID.
+func (r *RecipientInviteService) Get(ctx context.Context, inviteID string, opts ...option.RequestOption) (res *RecipientInviteAPIResponse, err error) {
+	opts = slices.Concat(r.options, opts)
+	if inviteID == "" {
+		err = errors.New("missing required inviteId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("recipients/invites/%s", url.PathEscape(inviteID))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
 type RecipientInviteAPIResponse struct {
 	// ID for the invite
 	ID string `json:"id" api:"required"`
