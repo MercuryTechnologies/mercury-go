@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.14.1...v0.15.0) (2026-11-05)
+
+
+### Features
+
+* **stainless:** add recipients.invites.get ([342d71f](https://github.com/MercuryTechnologies/mercury-go/commit/342d71fdc4d4939c506010382d1a6ab8131b2540))
+
 ## [0.14.1](https://github.com/MercuryTechnologies/mercury-go/compare/v0.14.0...v0.14.1) (2026-11-03)
 
 
