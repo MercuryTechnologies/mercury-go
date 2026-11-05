@@ -16,6 +16,8 @@ type SpendService struct {
 	options []option.RequestOption
 	// Manage Spend Management budgets
 	Budgets SpendBudgetService
+	// Manage Spend Management receipts
+	Receipts SpendReceiptService
 }
 
 // NewSpendService generates a new service that applies the given options to each
@@ -25,5 +27,6 @@ func NewSpendService(opts ...option.RequestOption) (r SpendService) {
 	r = SpendService{}
 	r.options = opts
 	r.Budgets = NewSpendBudgetService(opts...)
+	r.Receipts = NewSpendReceiptService(opts...)
 	return
 }
