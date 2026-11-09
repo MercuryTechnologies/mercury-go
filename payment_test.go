@@ -30,12 +30,13 @@ func TestPaymentNewWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
 		mercury.PaymentNewParams{
-			Amount:         0.01,
-			IdempotencyKey: "idempotencyKey",
-			PaymentMethod:  mercury.PaymentNewParamsPaymentMethodACH,
-			RecipientID:    "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-			ExternalMemo:   mercury.String("externalMemo"),
-			Note:           mercury.String("note"),
+			Amount:                 0.01,
+			IdempotencyKey:         "idempotencyKey",
+			PaymentMethod:          mercury.PaymentNewParamsPaymentMethodACH,
+			RecipientID:            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+			DuplicateCheckOverride: mercury.Bool(true),
+			ExternalMemo:           mercury.String("externalMemo"),
+			Note:                   mercury.String("note"),
 			Purpose: mercury.PaymentNewParamsPurpose{
 				Simple: mercury.PaymentNewParamsPurposeSimple{
 					Category:       "employee",
@@ -122,13 +123,14 @@ func TestPaymentRequestWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
 		mercury.PaymentRequestParams{
-			Amount:         0.01,
-			IdempotencyKey: "idempotencyKey",
-			PaymentMethod:  mercury.SendMoneyPaymentMethodACH,
-			RecipientID:    "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-			ChargeType:     mercury.PaymentRequestParamsChargeTypeOurs,
-			ExternalMemo:   mercury.String("externalMemo"),
-			Note:           mercury.String("note"),
+			Amount:                 0.01,
+			IdempotencyKey:         "idempotencyKey",
+			PaymentMethod:          mercury.SendMoneyPaymentMethodACH,
+			RecipientID:            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+			ChargeType:             mercury.PaymentRequestParamsChargeTypeOurs,
+			DuplicateCheckOverride: mercury.Bool(true),
+			ExternalMemo:           mercury.String("externalMemo"),
+			Note:                   mercury.String("note"),
 			Purpose: mercury.PaymentRequestParamsPurpose{
 				Simple: mercury.PaymentRequestParamsPurposeSimple{
 					Category:       "employee",

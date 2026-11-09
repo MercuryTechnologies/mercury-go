@@ -246,6 +246,11 @@ type PaymentNewParams struct {
 	PaymentMethod PaymentNewParamsPaymentMethod `json:"paymentMethod,omitzero" api:"required"`
 	// ID for a Mercury account.
 	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
+	// Set to true to skip the duplicate payment check. By default, payments are
+	// blocked if the same account sent the same amount to the same recipient with the
+	// same payment method in the last 24 hours, even when the idempotency key is
+	// different. Use this field only when you intentionally send a repeat payment.
+	DuplicateCheckOverride param.Opt[bool] `json:"duplicateCheckOverride,omitzero"`
 	// Optional external memo
 	ExternalMemo param.Opt[string] `json:"externalMemo,omitzero"`
 	// Optional note
@@ -367,6 +372,13 @@ type PaymentRequestParams struct {
 	PaymentMethod SendMoneyPaymentMethod `json:"paymentMethod,omitzero" api:"required"`
 	// ID for a Mercury account.
 	RecipientID string `json:"recipientId" api:"required" format:"uuid"`
+	// Set to true to skip the duplicate payment check. By default, payments are
+	// blocked if the same account sent the same amount to the same recipient with the
+	// same payment method in the last 24 hours, even when the idempotency key is
+	// different. Use this field only when you intentionally send a repeat payment. The
+	// check occurs when you create the request. When an approver approves the request,
+	// the check does not occur again.
+	DuplicateCheckOverride param.Opt[bool] `json:"duplicateCheckOverride,omitzero"`
 	// Optional external memo
 	ExternalMemo param.Opt[string] `json:"externalMemo,omitzero"`
 	// Optional note
