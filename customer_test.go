@@ -28,15 +28,15 @@ func TestCustomerNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Customers.New(context.TODO(), mercury.CustomerNewParams{
 		Email: "email",
-		Name:  "name",
+		Name:  "x",
 		Address: mercury.AddressInputParam{
-			Address1:   "address1",
-			City:       "city",
+			Address1:   "x",
+			City:       "x",
 			Country:    "country",
 			Name:       "name",
-			PostalCode: "postalCode",
+			PostalCode: "x",
 			Region:     "region",
-			Address2:   mercury.String("address2"),
+			Address2:   mercury.String("x"),
 		},
 	})
 	if err != nil {
@@ -66,16 +66,16 @@ func TestCustomerUpdateWithOptionalParams(t *testing.T) {
 		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
 		mercury.CustomerUpdateParams{
 			Email:              "email",
-			Name:               "name",
+			Name:               "x",
 			ResendOpenInvoices: true,
 			Address: mercury.AddressInputParam{
-				Address1:   "address1",
-				City:       "city",
+				Address1:   "x",
+				City:       "x",
 				Country:    "country",
 				Name:       "name",
-				PostalCode: "postalCode",
+				PostalCode: "x",
 				Region:     "region",
-				Address2:   mercury.String("address2"),
+				Address2:   mercury.String("x"),
 			},
 		},
 	)

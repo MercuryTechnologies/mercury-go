@@ -28,7 +28,7 @@ func TestRecipientNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Recipients.New(context.TODO(), mercury.RecipientNewParams{
 		Emails: []string{"string"},
-		Name:   "name",
+		Name:   "x",
 		Address: mercury.AddressDataParam{
 			Address1:   "address1",
 			City:       "city",
@@ -156,7 +156,7 @@ func TestRecipientUpdateWithOptionalParams(t *testing.T) {
 				RoutingNumber:         "routingNumber",
 			},
 			Emails:   []string{"string"},
-			Name:     mercury.String("name"),
+			Name:     mercury.String("x"),
 			Nickname: mercury.String("nickname"),
 			RealTimePaymentRoutingInfo: mercury.RecipientUpdateParamsRealTimePaymentRoutingInfo{
 				AccountNumber: "accountNumber",

@@ -31,9 +31,9 @@ func TestRecipientInviteNewWithOptionalParams(t *testing.T) {
 		PaymentMethods:            []mercury.PaymentMethod{mercury.PaymentMethodACH},
 		RequireTaxDocument:        true,
 		SendEmail:                 true,
-		Name:                      mercury.String("name"),
-		Notes:                     mercury.String("notes"),
-		OrganizationNameOnRequest: mercury.String("organizationNameOnRequest"),
+		Name:                      mercury.String("x"),
+		Notes:                     mercury.String("x"),
+		OrganizationNameOnRequest: mercury.String("x"),
 		RecipientID:               mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {

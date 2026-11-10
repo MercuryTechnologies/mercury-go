@@ -32,7 +32,7 @@ func TestSpendBudgetNewWithOptionalParams(t *testing.T) {
 		AmountPerUserPerPeriod: mercury.Float(0),
 		Description:            mercury.String("description"),
 		EndDate:                mercury.Time(time.Now()),
-		Name:                   mercury.String("name"),
+		Name:                   mercury.String("x"),
 		StartDate:              mercury.Time(time.Now()),
 		IdempotencyKey:         mercury.String("Idempotency-Key"),
 	})
@@ -66,7 +66,7 @@ func TestSpendBudgetUpdateWithOptionalParams(t *testing.T) {
 			Description:            mercury.String("description"),
 			EndDate:                mercury.Time(time.Now()),
 			Frequency:              mercury.BudgetFrequencyOneTime,
-			Name:                   mercury.String("name"),
+			Name:                   mercury.String("x"),
 			StartDate:              mercury.Time(time.Now()),
 			IdempotencyKey:         mercury.String("Idempotency-Key"),
 		},

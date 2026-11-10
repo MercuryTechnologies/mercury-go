@@ -56,7 +56,7 @@ func TestSpendReceiptNewUploadURLWithOptionalParams(t *testing.T) {
 		option.WithAPIKey("My API Key"),
 	)
 	_, err := client.Spend.Receipts.NewUploadURL(context.TODO(), mercury.SpendReceiptNewUploadURLParams{
-		FileName:       "fileName",
+		FileName:       "x",
 		IdempotencyKey: mercury.String("Idempotency-Key"),
 	})
 	if err != nil {
