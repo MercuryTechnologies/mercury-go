@@ -129,6 +129,11 @@ type Receipt struct {
 	FileName  string `json:"fileName" api:"required"`
 	// Any of "pending", "matched", "unmatched", "notAttempted", "failed".
 	Status ReceiptStatus `json:"status" api:"required"`
+	// Why processing failed when `status` is `failed`; absent when no reason was
+	// recorded.
+	//
+	// Any of "fileNotSupported", "fileTooSmall", "fileTooLarge", "unexpected".
+	FailureReason ReceiptFailureReason `json:"failureReason" api:"nullable"`
 	// ID for this transaction
 	MatchedTransactionID string `json:"matchedTransactionId" api:"nullable" format:"uuid"`
 	// When Mercury began processing the direct upload; absent until matching starts.
@@ -139,6 +144,7 @@ type Receipt struct {
 		CreatedAt            respjson.Field
 		FileName             respjson.Field
 		Status               respjson.Field
+		FailureReason        respjson.Field
 		MatchedTransactionID respjson.Field
 		UploadedAt           respjson.Field
 		ExtraFields          map[string]respjson.Field
@@ -151,6 +157,17 @@ func (r Receipt) RawJSON() string { return r.JSON.raw }
 func (r *Receipt) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// Why processing failed when `status` is `failed`; absent when no reason was
+// recorded.
+type ReceiptFailureReason string
+
+const (
+	ReceiptFailureReasonFileNotSupported ReceiptFailureReason = "fileNotSupported"
+	ReceiptFailureReasonFileTooSmall     ReceiptFailureReason = "fileTooSmall"
+	ReceiptFailureReasonFileTooLarge     ReceiptFailureReason = "fileTooLarge"
+	ReceiptFailureReasonUnexpected       ReceiptFailureReason = "unexpected"
+)
 
 type ReceiptStatus string
 
