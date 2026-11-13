@@ -73,6 +73,27 @@ func (r *StatementAccountService) ListAutoPaging(ctx context.Context, accountID 
 	return pagination.NewCursorIDAccountStatementsAutoPager(r.List(ctx, accountID, query, opts...))
 }
 
+type AccountStatementTransaction struct {
+	// ID for this transaction
+	ID        string `json:"id" api:"required" format:"uuid"`
+	CreatedAt string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	PostedAt  string `json:"postedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		CreatedAt   respjson.Field
+		PostedAt    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AccountStatementTransaction) RawJSON() string { return r.JSON.raw }
+func (r *AccountStatementTransaction) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type StatementAccountListResponse struct {
 	// ID for the account statement
 	ID                  string  `json:"id" api:"required" format:"uuid"`
@@ -82,11 +103,11 @@ type StatementAccountListResponse struct {
 	DownloadURL         string  `json:"downloadUrl" api:"required"`
 	EndDate             string  `json:"endDate" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
 	// A dollar amount
-	EndingBalance float64                                   `json:"endingBalance" api:"required"`
-	RoutingNumber string                                    `json:"routingNumber" api:"required"`
-	StartDate     string                                    `json:"startDate" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	Transactions  []StatementAccountListResponseTransaction `json:"transactions" api:"required"`
-	Ein           string                                    `json:"ein" api:"nullable"`
+	EndingBalance float64                       `json:"endingBalance" api:"required"`
+	RoutingNumber string                        `json:"routingNumber" api:"required"`
+	StartDate     string                        `json:"startDate" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	Transactions  []AccountStatementTransaction `json:"transactions" api:"required"`
+	Ein           string                        `json:"ein" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                  respjson.Field
@@ -108,27 +129,6 @@ type StatementAccountListResponse struct {
 // Returns the unmodified JSON received from the API
 func (r StatementAccountListResponse) RawJSON() string { return r.JSON.raw }
 func (r *StatementAccountListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type StatementAccountListResponseTransaction struct {
-	// ID for this transaction
-	ID        string `json:"id" api:"required" format:"uuid"`
-	CreatedAt string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	PostedAt  string `json:"postedAt" api:"nullable" format:"yyyy-mm-ddThh:MM:ssZ"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		CreatedAt   respjson.Field
-		PostedAt    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r StatementAccountListResponseTransaction) RawJSON() string { return r.JSON.raw }
-func (r *StatementAccountListResponseTransaction) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

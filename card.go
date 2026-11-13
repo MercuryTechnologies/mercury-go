@@ -4,6 +4,7 @@ package mercury
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -192,15 +193,15 @@ type Card struct {
 	UserID string `json:"userId" api:"required"`
 	// Information about a merchant that can be used for spend controls like merchant
 	// locking.
-	MerchantLock CardMerchantLock `json:"merchantLock" api:"nullable"`
+	MerchantLock MerchantInfo `json:"merchantLock" api:"nullable"`
 	// Optional user-assigned label for the card.
 	Nickname string `json:"nickname" api:"nullable"`
 	// Activation state of a physical card. Null for virtual cards.
 	//
 	// Any of "inactive", "active", "locked".
-	PhysicalCardStatus CardPhysicalCardStatus `json:"physicalCardStatus" api:"nullable"`
+	PhysicalCardStatus PhysicalCardStatus `json:"physicalCardStatus" api:"nullable"`
 	// Spending controls applied to a card
-	SpendLimit CardSpendLimit `json:"spendLimit" api:"nullable"`
+	SpendLimit SpendLimit `json:"spendLimit" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                 respjson.Field
@@ -271,62 +272,6 @@ const (
 	CardSpendLimitTypeBudgets   CardSpendLimitType = "budgets"
 )
 
-// Information about a merchant that can be used for spend controls like merchant
-// locking.
-type CardMerchantLock struct {
-	ID   string `json:"id" api:"required" format:"uuid"`
-	Name string `json:"name" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Name        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r CardMerchantLock) RawJSON() string { return r.JSON.raw }
-func (r *CardMerchantLock) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Activation state of a physical card. Null for virtual cards.
-type CardPhysicalCardStatus string
-
-const (
-	CardPhysicalCardStatusInactive CardPhysicalCardStatus = "inactive"
-	CardPhysicalCardStatusActive   CardPhysicalCardStatus = "active"
-	CardPhysicalCardStatusLocked   CardPhysicalCardStatus = "locked"
-)
-
-// Spending controls applied to a card
-type CardSpendLimit struct {
-	// Maximum total spend allowed per interval, in cents.
-	AmountCents int64 `json:"amountCents" api:"required"`
-	// Rolling window the limit applies to.
-	//
-	// Any of "daily", "weekly", "monthly", "yearly".
-	Interval string `json:"interval" api:"required"`
-	// Maximum ATM withdrawal allowed per interval, in cents. Null for virtual cards
-	// and credit cards.
-	AtmAmountCents int64 `json:"atmAmountCents" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		AmountCents    respjson.Field
-		Interval       respjson.Field
-		AtmAmountCents respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r CardSpendLimit) RawJSON() string { return r.JSON.raw }
-func (r *CardSpendLimit) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Month and year the card expires.
 type CardExpiration struct {
 	// Calendar month.
@@ -395,6 +340,13 @@ func (r CardListResponsePage) RawJSON() string { return r.JSON.raw }
 func (r *CardListResponsePage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type CardNetwork string
+
+const (
+	CardNetworkVisa       CardNetwork = "visa"
+	CardNetworkMastercard CardNetwork = "mastercard"
+)
 
 // Sensitive card details returned by the card reveal endpoint: the card's full
 // number, expiration, and CVC.
@@ -507,7 +459,7 @@ type CreateCardRequestSpendLimitParam struct {
 	// Rolling window the limit applies to.
 	//
 	// Any of "daily", "weekly", "monthly", "yearly".
-	Interval string `json:"interval,omitzero" api:"required"`
+	Interval SpendLimitInterval `json:"interval,omitzero" api:"required"`
 	paramObj
 }
 
@@ -519,11 +471,102 @@ func (r *CreateCardRequestSpendLimitParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func init() {
-	apijson.RegisterFieldValidator[CreateCardRequestSpendLimitParam](
-		"interval", "daily", "weekly", "monthly", "yearly",
-	)
+// Information about a merchant that can be used for spend controls like merchant
+// locking.
+type MerchantInfo struct {
+	ID   string `json:"id" api:"required" format:"uuid"`
+	Name string `json:"name" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
 }
+
+// Returns the unmodified JSON received from the API
+func (r MerchantInfo) RawJSON() string { return r.JSON.raw }
+func (r *MerchantInfo) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type PhysicalCardStatus string
+
+const (
+	PhysicalCardStatusInactive PhysicalCardStatus = "inactive"
+	PhysicalCardStatusActive   PhysicalCardStatus = "active"
+	PhysicalCardStatusLocked   PhysicalCardStatus = "locked"
+)
+
+// Spending controls applied to a card
+type SpendLimit struct {
+	// Maximum total spend allowed per interval, in cents.
+	AmountCents int64 `json:"amountCents" api:"required"`
+	// Rolling window the limit applies to.
+	//
+	// Any of "daily", "weekly", "monthly", "yearly".
+	Interval SpendLimitInterval `json:"interval" api:"required"`
+	// Maximum ATM withdrawal allowed per interval, in cents. Null for virtual cards
+	// and credit cards.
+	AtmAmountCents int64 `json:"atmAmountCents" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		AmountCents    respjson.Field
+		Interval       respjson.Field
+		AtmAmountCents respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r SpendLimit) RawJSON() string { return r.JSON.raw }
+func (r *SpendLimit) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToParam converts this SpendLimit to a SpendLimitParam.
+//
+// Warning: the fields of the param type will not be present. ToParam should only
+// be used at the last possible moment before sending a request. Test for this with
+// SpendLimitParam.Overrides()
+func (r SpendLimit) ToParam() SpendLimitParam {
+	return param.Override[SpendLimitParam](json.RawMessage(r.RawJSON()))
+}
+
+// Spending controls applied to a card
+//
+// The properties AmountCents, Interval are required.
+type SpendLimitParam struct {
+	// Maximum total spend allowed per interval, in cents.
+	AmountCents int64 `json:"amountCents" api:"required"`
+	// Rolling window the limit applies to.
+	//
+	// Any of "daily", "weekly", "monthly", "yearly".
+	Interval SpendLimitInterval `json:"interval,omitzero" api:"required"`
+	// Maximum ATM withdrawal allowed per interval, in cents. Null for virtual cards
+	// and credit cards.
+	AtmAmountCents param.Opt[int64] `json:"atmAmountCents,omitzero"`
+	paramObj
+}
+
+func (r SpendLimitParam) MarshalJSON() (data []byte, err error) {
+	type shadow SpendLimitParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *SpendLimitParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type SpendLimitInterval string
+
+const (
+	SpendLimitIntervalDaily   SpendLimitInterval = "daily"
+	SpendLimitIntervalWeekly  SpendLimitInterval = "weekly"
+	SpendLimitIntervalMonthly SpendLimitInterval = "monthly"
+	SpendLimitIntervalYearly  SpendLimitInterval = "yearly"
+)
 
 // At least one updateable field must be provided; requests where every field is
 // the same are rejected.
@@ -532,7 +575,7 @@ type UpdateCardRequestParam struct {
 	// or an empty/whitespace-only string to clear it, or send a string to set it.
 	Nickname param.Opt[string] `json:"nickname,omitzero"`
 	// Spending controls applied to a card
-	SpendLimit UpdateCardRequestSpendLimitParam `json:"spendLimit,omitzero"`
+	SpendLimit SpendLimitParam `json:"spendLimit,omitzero"`
 	paramObj
 }
 
@@ -542,36 +585,6 @@ func (r UpdateCardRequestParam) MarshalJSON() (data []byte, err error) {
 }
 func (r *UpdateCardRequestParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-// Spending controls applied to a card
-//
-// The properties AmountCents, Interval are required.
-type UpdateCardRequestSpendLimitParam struct {
-	// Maximum total spend allowed per interval, in cents.
-	AmountCents int64 `json:"amountCents" api:"required"`
-	// Rolling window the limit applies to.
-	//
-	// Any of "daily", "weekly", "monthly", "yearly".
-	Interval string `json:"interval,omitzero" api:"required"`
-	// Maximum ATM withdrawal allowed per interval, in cents. Null for virtual cards
-	// and credit cards.
-	AtmAmountCents param.Opt[int64] `json:"atmAmountCents,omitzero"`
-	paramObj
-}
-
-func (r UpdateCardRequestSpendLimitParam) MarshalJSON() (data []byte, err error) {
-	type shadow UpdateCardRequestSpendLimitParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *UpdateCardRequestSpendLimitParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[UpdateCardRequestSpendLimitParam](
-		"interval", "daily", "weekly", "monthly", "yearly",
-	)
 }
 
 type CardNewParams struct {

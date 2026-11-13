@@ -29,6 +29,7 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#LineItemData">LineItemData</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentLinkStatus">PaymentLinkStatus</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceListResponse">InvoiceListResponse</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceGetPaymentsResponse">InvoiceGetPaymentsResponse</a>
 
 Methods:
 
@@ -38,6 +39,7 @@ Methods:
 - <code title="post /ar/invoices/{invoiceId}/cancel">client.Invoices.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceService.Cancel">Cancel</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, invoiceID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 - <code title="get /ar/invoices/{invoiceId}/pdf">client.Invoices.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceService.Download">Download</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, invoiceID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*http.Response, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /ar/invoices/{invoiceId}">client.Invoices.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, invoiceID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Invoice">Invoice</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /ar/invoices/{invoiceId}/payments">client.Invoices.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceService.GetPayments">GetPayments</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, invoiceID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceGetPaymentsResponse">InvoiceGetPaymentsResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ## Attachments
 
@@ -51,12 +53,27 @@ Methods:
 - <code title="get /ar/invoices/{invoiceId}/attachments">client.Invoices.Attachments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceAttachmentService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, invoiceID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceAttachmentListResponse">InvoiceAttachmentListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /ar/attachments/{attachmentId}">client.Invoices.Attachments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceAttachmentService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, attachmentID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Attachment">Attachment</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
+### Products
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#APIV1ArProductResponseData">APIV1ArProductResponseData</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceAttachmentProductListResponse">InvoiceAttachmentProductListResponse</a>
+
+Methods:
+
+- <code title="post /ar/products">client.Invoices.Attachments.Products.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceAttachmentProductService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceAttachmentProductNewParams">InvoiceAttachmentProductNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#APIV1ArProductResponseData">APIV1ArProductResponseData</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /ar/products">client.Invoices.Attachments.Products.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceAttachmentProductService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceAttachmentProductListParams">InvoiceAttachmentProductListParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceAttachmentProductListResponse">InvoiceAttachmentProductListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="delete /ar/products/{productId}">client.Invoices.Attachments.Products.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvoiceAttachmentProductService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, productID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+
 # Cards
 
 Params Types:
 
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CardKind">CardKind</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CreateCardRequestParam">CreateCardRequestParam</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendLimitParam">SpendLimitParam</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendLimitInterval">SpendLimitInterval</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#UpdateCardRequestParam">UpdateCardRequestParam</a>
 
 Response Types:
@@ -65,9 +82,14 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CardExpiration">CardExpiration</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CardKind">CardKind</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CardListResponse">CardListResponse</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CardNetwork">CardNetwork</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CardRevealResponse">CardRevealResponse</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CardStatus">CardStatus</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CardType">CardType</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#MerchantInfo">MerchantInfo</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PhysicalCardStatus">PhysicalCardStatus</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendLimit">SpendLimit</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendLimitInterval">SpendLimitInterval</a>
 
 Methods:
 
@@ -94,10 +116,12 @@ Methods:
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CreditListResponse">CreditListResponse</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CreditGetStatementsResponse">CreditGetStatementsResponse</a>
 
 Methods:
 
 - <code title="get /credit">client.Credit.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CreditService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CreditListResponse">CreditListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /credit/{accountId}/statements">client.Credit.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CreditService.GetStatements">GetStatements</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, accountID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CreditGetStatementsParams">CreditGetStatementsParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CreditGetStatementsResponse">CreditGetStatementsResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Events
 
@@ -124,12 +148,16 @@ Methods:
 
 Params Types:
 
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PostTransactionSendMoneyPurposeParam">PostTransactionSendMoneyPurposeParam</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyPaymentMethod">SendMoneyPaymentMethod</a>
 
 Response Types:
 
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentApprovalReview">PaymentApprovalReview</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#ReviewRequestStatus">ReviewRequestStatus</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyApproval">SendMoneyApproval</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyPaymentMethod">SendMoneyPaymentMethod</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentGetTransactionsResponse">PaymentGetTransactionsResponse</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentTransferResponse">PaymentTransferResponse</a>
 
 Methods:
@@ -138,6 +166,7 @@ Methods:
 - <code title="get /request-send-money">client.Payments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentListParams">PaymentListParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination#CursorIDRequestSendMoney">CursorIDRequestSendMoney</a>[<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyApproval">SendMoneyApproval</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /request-send-money/{requestId}">client.Payments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, requestID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyApproval">SendMoneyApproval</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /account/{accountId}/request-send-money">client.Payments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentService.Request">Request</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, accountID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentRequestParams">PaymentRequestParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SendMoneyApproval">SendMoneyApproval</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /account/{accountId}/transactions">client.Payments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentService.GetTransactions">GetTransactions</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, accountID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentGetTransactionsParams">PaymentGetTransactionsParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentGetTransactionsResponse">PaymentGetTransactionsResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /transfer">client.Payments.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentService.Transfer">Transfer</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentTransferParams">PaymentTransferParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentTransferResponse">PaymentTransferResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Safes
@@ -200,6 +229,32 @@ Methods:
 - <code title="get /spend/receipts/{receiptId}">client.Spend.Receipts.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReceiptService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, receiptID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Receipt">Receipt</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /spend/receipts/{receiptId}/match">client.Spend.Receipts.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReceiptService.Match">Match</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, receiptID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReceiptMatchParams">SpendReceiptMatchParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 
+## Reimbursements
+
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#APIV1CreateReimbursementRequestParam">APIV1CreateReimbursementRequestParam</a>
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#APIV1CreateReimbursementResponse">APIV1CreateReimbursementResponse</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#APIV1ReimbursementAttachment">APIV1ReimbursementAttachment</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#ReimbursementPaymentStatus">ReimbursementPaymentStatus</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#ReimbursementReviewStatus">ReimbursementReviewStatus</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementGetResponse">SpendReimbursementGetResponse</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementListResponse">SpendReimbursementListResponse</a>
+
+Methods:
+
+- <code title="post /spend/reimbursements">client.Spend.Reimbursements.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementNewParams">SpendReimbursementNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#APIV1CreateReimbursementResponse">APIV1CreateReimbursementResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /spend/reimbursements/{reimbursementId}">client.Spend.Reimbursements.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, reimbursementID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementGetResponse">SpendReimbursementGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="put /spend/reimbursements/{reimbursementId}">client.Spend.Reimbursements.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, reimbursementID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementUpdateParams">SpendReimbursementUpdateParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#APIV1CreateReimbursementResponse">APIV1CreateReimbursementResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /spend/reimbursements">client.Spend.Reimbursements.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementListParams">SpendReimbursementListParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementListResponse">SpendReimbursementListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /spend/reimbursements/{reimbursementId}/approve">client.Spend.Reimbursements.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementService.Approve">Approve</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, reimbursementID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementApproveParams">SpendReimbursementApproveParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+- <code title="post /spend/reimbursements/{reimbursementId}/cancel">client.Spend.Reimbursements.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementService.Cancel">Cancel</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, reimbursementID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementCancelParams">SpendReimbursementCancelParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+- <code title="post /spend/reimbursements/{reimbursementId}/deny">client.Spend.Reimbursements.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementService.Deny">Deny</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, reimbursementID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementDenyParams">SpendReimbursementDenyParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+- <code title="post /spend/reimbursements/{reimbursementId}/mark-paid">client.Spend.Reimbursements.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementService.MarkPaid">MarkPaid</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, reimbursementID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SpendReimbursementMarkPaidParams">SpendReimbursementMarkPaidParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
+
 # Statements
 
 Methods:
@@ -210,6 +265,7 @@ Methods:
 
 Response Types:
 
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountStatementTransaction">AccountStatementTransaction</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#StatementAccountListResponse">StatementAccountListResponse</a>
 
 Methods:
@@ -251,9 +307,16 @@ Methods:
 
 # Webhooks
 
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#ResourceField">ResourceField</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#WebhookEventType">WebhookEventType</a>
+
 Response Types:
 
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#ResourceField">ResourceField</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Webhook">Webhook</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#WebhookEventType">WebhookEventType</a>
 
 Methods:
 
@@ -272,11 +335,16 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountStatus">AccountStatus</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#CategoryData">CategoryData</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#MercuryCategory">MercuryCategory</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#TransactionKind">TransactionKind</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#TransactionStatus">TransactionStatus</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountGetCardsResponse">AccountGetCardsResponse</a>
 
 Methods:
 
+- <code title="get /account/{accountId}/transaction/{transactionId}">client.Accounts.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, transactionID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountGetParams">AccountGetParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Transaction">Transaction</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /accounts">client.Accounts.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountListParams">AccountListParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination#CursorIDAccounts">CursorIDAccounts</a>[<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Account">Account</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /account/{accountId}">client.Accounts.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, accountID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#Account">Account</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /account/{accountId}/cards">client.Accounts.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountService.GetCards">GetCards</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, accountID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AccountGetCardsResponse">AccountGetCardsResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Recipients
 
@@ -289,6 +357,7 @@ Params Types:
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#ElectronicAccountType">ElectronicAccountType</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#ElectronicRoutingInfoRawParam">ElectronicRoutingInfoRawParam</a>
 - <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#PaymentMethod">PaymentMethod</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#RealTimePaymentRoutingInfoRawParam">RealTimePaymentRoutingInfoRawParam</a>
 
 Response Types:
 
@@ -385,3 +454,49 @@ Response Types:
 Methods:
 
 - <code title="post /submit-onboarding-data">client.Onboarding.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#OnboardingService.Apply">Apply</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#OnboardingApplyParams">OnboardingApplyParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#SubmitOnboardingDataResponse">SubmitOnboardingDataResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+# AutoTransferRules
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AutoTransferRuleGetAutoTransferRulesResponse">AutoTransferRuleGetAutoTransferRulesResponse</a>
+
+Methods:
+
+- <code title="get /auto-transfer-rules">client.AutoTransferRules.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AutoTransferRuleService.GetAutoTransferRules">GetAutoTransferRules</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AutoTransferRuleGetAutoTransferRulesParams">AutoTransferRuleGetAutoTransferRulesParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#AutoTransferRuleGetAutoTransferRulesResponse">AutoTransferRuleGetAutoTransferRulesResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+# Invest
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvestActivityStatus">InvestActivityStatus</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvestListResponse">InvestListResponse</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvestGetActivityResponse">InvestGetActivityResponse</a>
+
+Methods:
+
+- <code title="get /invest">client.Invest.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvestService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvestListParams">InvestListParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go/packages/pagination#CursorIDAccounts">CursorIDAccounts</a>[<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvestListResponse">InvestListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /invest/{investId}/activity">client.Invest.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvestService.GetActivity">GetActivity</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, investID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#InvestGetActivityResponse">InvestGetActivityResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+# Merchants
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#MerchantListResponse">MerchantListResponse</a>
+
+Methods:
+
+- <code title="get /merchants">client.Merchants.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#MerchantService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#MerchantListParams">MerchantListParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#MerchantListResponse">MerchantListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+# RequestTransfer
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#TransferMoneyApprovalRequestResponse">TransferMoneyApprovalRequestResponse</a>
+- <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#RequestTransferGetRequestTransferResponse">RequestTransferGetRequestTransferResponse</a>
+
+Methods:
+
+- <code title="get /request-transfer/{requestId}">client.RequestTransfer.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#RequestTransferService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, requestID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#TransferMoneyApprovalRequestResponse">TransferMoneyApprovalRequestResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /request-transfer">client.RequestTransfer.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#RequestTransferService.RequestTransfer">RequestTransfer</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#RequestTransferRequestTransferParams">RequestTransferRequestTransferParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#TransferMoneyApprovalRequestResponse">TransferMoneyApprovalRequestResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /request-transfer">client.RequestTransfer.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#RequestTransferService.GetRequestTransfer">GetRequestTransfer</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#RequestTransferGetRequestTransferParams">RequestTransferGetRequestTransferParams</a>) (\*<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go">mercury</a>.<a href="https://pkg.go.dev/github.com/MercuryTechnologies/mercury-go#RequestTransferGetRequestTransferResponse">RequestTransferGetRequestTransferResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>

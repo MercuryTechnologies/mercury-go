@@ -51,6 +51,14 @@ type Client struct {
 	Transactions TransactionService
 	// Endpoints for partner onboarding integration
 	Onboarding OnboardingService
+	// Retrieve auto-transfer rules
+	AutoTransferRules AutoTransferRuleService
+	// Retrieve Invest accounts and their activity
+	Invest InvestService
+	// List merchants available for spend controls
+	Merchants MerchantService
+	// Manage transfer approval requests
+	RequestTransfer RequestTransferService
 }
 
 // DefaultClientOptions read from the environment (MERCURY_API_KEY,
@@ -101,6 +109,10 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Recipients = NewRecipientService(opts...)
 	r.Transactions = NewTransactionService(opts...)
 	r.Onboarding = NewOnboardingService(opts...)
+	r.AutoTransferRules = NewAutoTransferRuleService(opts...)
+	r.Invest = NewInvestService(opts...)
+	r.Merchants = NewMerchantService(opts...)
+	r.RequestTransfer = NewRequestTransferService(opts...)
 
 	return
 }

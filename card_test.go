@@ -38,7 +38,7 @@ func TestCardNewWithOptionalParams(t *testing.T) {
 			Nickname: mercury.String("nickname"),
 			SpendLimit: mercury.CreateCardRequestSpendLimitParam{
 				AmountCents: 0,
-				Interval:    "daily",
+				Interval:    mercury.SpendLimitIntervalDaily,
 			},
 		},
 	})
@@ -70,9 +70,9 @@ func TestCardUpdateWithOptionalParams(t *testing.T) {
 		mercury.CardUpdateParams{
 			UpdateCardRequest: mercury.UpdateCardRequestParam{
 				Nickname: mercury.String("nickname"),
-				SpendLimit: mercury.UpdateCardRequestSpendLimitParam{
+				SpendLimit: mercury.SpendLimitParam{
 					AmountCents:    0,
-					Interval:       "daily",
+					Interval:       mercury.SpendLimitIntervalDaily,
 					AtmAmountCents: mercury.Int(0),
 				},
 			},

@@ -128,6 +128,40 @@ func (r *WebhookService) Verify(ctx context.Context, webhookEndpointID string, b
 	return err
 }
 
+type ResourceField string
+
+const (
+	ResourceFieldTransactionAmount                 ResourceField = "transaction.amount"
+	ResourceFieldTransactionBankDescription        ResourceField = "transaction.bankDescription"
+	ResourceFieldTransactionCategoryData           ResourceField = "transaction.categoryData"
+	ResourceFieldTransactionCustomCategory         ResourceField = "transaction.customCategory"
+	ResourceFieldTransactionCustomCategoryID       ResourceField = "transaction.customCategory.id"
+	ResourceFieldTransactionCustomCategoryName     ResourceField = "transaction.customCategory.name"
+	ResourceFieldTransactionMercuryCategory        ResourceField = "transaction.mercuryCategory"
+	ResourceFieldTransactionEstimatedDeliveryDate  ResourceField = "transaction.estimatedDeliveryDate"
+	ResourceFieldTransactionExternalMemo           ResourceField = "transaction.externalMemo"
+	ResourceFieldTransactionFailedAt               ResourceField = "transaction.failedAt"
+	ResourceFieldTransactionNote                   ResourceField = "transaction.note"
+	ResourceFieldTransactionPostedAt               ResourceField = "transaction.postedAt"
+	ResourceFieldTransactionReasonForFailure       ResourceField = "transaction.reasonForFailure"
+	ResourceFieldTransactionStatus                 ResourceField = "transaction.status"
+	ResourceFieldCheckingAccountAvailableBalance   ResourceField = "checkingAccount.availableBalance"
+	ResourceFieldCheckingAccountCurrentBalance     ResourceField = "checkingAccount.currentBalance"
+	ResourceFieldCheckingAccountInFlightBalance    ResourceField = "checkingAccount.inFlightBalance"
+	ResourceFieldSavingsAccountAvailableBalance    ResourceField = "savingsAccount.availableBalance"
+	ResourceFieldSavingsAccountCurrentBalance      ResourceField = "savingsAccount.currentBalance"
+	ResourceFieldSavingsAccountInFlightBalance     ResourceField = "savingsAccount.inFlightBalance"
+	ResourceFieldTreasuryAccountAvailableBalance   ResourceField = "treasuryAccount.availableBalance"
+	ResourceFieldTreasuryAccountCurrentBalance     ResourceField = "treasuryAccount.currentBalance"
+	ResourceFieldTreasuryAccountInFlightBalance    ResourceField = "treasuryAccount.inFlightBalance"
+	ResourceFieldInvestmentAccountAvailableBalance ResourceField = "investmentAccount.availableBalance"
+	ResourceFieldInvestmentAccountCurrentBalance   ResourceField = "investmentAccount.currentBalance"
+	ResourceFieldInvestmentAccountInFlightBalance  ResourceField = "investmentAccount.inFlightBalance"
+	ResourceFieldCreditAccountAvailableBalance     ResourceField = "creditAccount.availableBalance"
+	ResourceFieldCreditAccountCurrentBalance       ResourceField = "creditAccount.currentBalance"
+	ResourceFieldCreditAccountInFlightBalance      ResourceField = "creditAccount.inFlightBalance"
+)
+
 // Webhook configuration details
 type Webhook struct {
 	// ID for the webhook
@@ -147,30 +181,10 @@ type Webhook struct {
 	URL string `json:"url" api:"required"`
 	// Optional array of event types this webhook is subscribed to. Nothing means all
 	// events.
-	//
-	// Any of "transaction.created", "transaction.updated",
-	// "checkingAccount.balance.updated", "savingsAccount.balance.updated",
-	// "treasuryAccount.balance.updated", "investmentAccount.balance.updated",
-	// "creditAccount.balance.updated".
-	EventTypes []string `json:"eventTypes" api:"nullable"`
+	EventTypes []WebhookEventType `json:"eventTypes" api:"nullable"`
 	// Optional array of resource field paths to filter events by. Nothing means no
 	// filtering.
-	//
-	// Any of "transaction.amount", "transaction.bankDescription",
-	// "transaction.categoryData", "transaction.customCategory",
-	// "transaction.customCategory.id", "transaction.customCategory.name",
-	// "transaction.mercuryCategory", "transaction.estimatedDeliveryDate",
-	// "transaction.externalMemo", "transaction.failedAt", "transaction.note",
-	// "transaction.postedAt", "transaction.reasonForFailure", "transaction.status",
-	// "checkingAccount.availableBalance", "checkingAccount.currentBalance",
-	// "checkingAccount.inFlightBalance", "savingsAccount.availableBalance",
-	// "savingsAccount.currentBalance", "savingsAccount.inFlightBalance",
-	// "treasuryAccount.availableBalance", "treasuryAccount.currentBalance",
-	// "treasuryAccount.inFlightBalance", "investmentAccount.availableBalance",
-	// "investmentAccount.currentBalance", "investmentAccount.inFlightBalance",
-	// "creditAccount.availableBalance", "creditAccount.currentBalance",
-	// "creditAccount.inFlightBalance".
-	FilterPaths []string `json:"filterPaths" api:"nullable"`
+	FilterPaths []ResourceField `json:"filterPaths" api:"nullable"`
 	// Webhook signing secret. Only returned on creation (POST), not on GET or UPDATE
 	// operations.
 	Secret string `json:"secret" api:"nullable"`
@@ -207,36 +221,28 @@ const (
 	WebhookStatusDisabled WebhookStatus = "disabled"
 )
 
+type WebhookEventType string
+
+const (
+	WebhookEventTypeTransactionCreated              WebhookEventType = "transaction.created"
+	WebhookEventTypeTransactionUpdated              WebhookEventType = "transaction.updated"
+	WebhookEventTypeCheckingAccountBalanceUpdated   WebhookEventType = "checkingAccount.balance.updated"
+	WebhookEventTypeSavingsAccountBalanceUpdated    WebhookEventType = "savingsAccount.balance.updated"
+	WebhookEventTypeTreasuryAccountBalanceUpdated   WebhookEventType = "treasuryAccount.balance.updated"
+	WebhookEventTypeInvestmentAccountBalanceUpdated WebhookEventType = "investmentAccount.balance.updated"
+	WebhookEventTypeCreditAccountBalanceUpdated     WebhookEventType = "creditAccount.balance.updated"
+)
+
 type WebhookNewParams struct {
 	// The URL to which webhook events will be delivered
 	URL string `json:"url" api:"required"`
 	// Optional array of event types to subscribe to. Nothing means subscribe to all
 	// event types.
-	//
-	// Any of "transaction.created", "transaction.updated",
-	// "checkingAccount.balance.updated", "savingsAccount.balance.updated",
-	// "treasuryAccount.balance.updated", "investmentAccount.balance.updated",
-	// "creditAccount.balance.updated".
-	EventTypes []string `json:"eventTypes,omitzero"`
+	EventTypes []WebhookEventType `json:"eventTypes,omitzero"`
 	// Optional array of resource field paths to filter events by. When specified,
 	// webhook events will only be sent when one of these fields changes. Nothing means
 	// no filtering (all events are sent).
-	//
-	// Any of "transaction.amount", "transaction.bankDescription",
-	// "transaction.categoryData", "transaction.customCategory",
-	// "transaction.customCategory.id", "transaction.customCategory.name",
-	// "transaction.mercuryCategory", "transaction.estimatedDeliveryDate",
-	// "transaction.externalMemo", "transaction.failedAt", "transaction.note",
-	// "transaction.postedAt", "transaction.reasonForFailure", "transaction.status",
-	// "checkingAccount.availableBalance", "checkingAccount.currentBalance",
-	// "checkingAccount.inFlightBalance", "savingsAccount.availableBalance",
-	// "savingsAccount.currentBalance", "savingsAccount.inFlightBalance",
-	// "treasuryAccount.availableBalance", "treasuryAccount.currentBalance",
-	// "treasuryAccount.inFlightBalance", "investmentAccount.availableBalance",
-	// "investmentAccount.currentBalance", "investmentAccount.inFlightBalance",
-	// "creditAccount.availableBalance", "creditAccount.currentBalance",
-	// "creditAccount.inFlightBalance".
-	FilterPaths []string `json:"filterPaths,omitzero"`
+	FilterPaths []ResourceField `json:"filterPaths,omitzero"`
 	paramObj
 }
 
@@ -253,31 +259,11 @@ type WebhookUpdateParams struct {
 	URL param.Opt[string] `json:"url,omitzero"`
 	// Event types to subscribe to. Send null to subscribe to all event types. Send an
 	// array to subscribe to specific types. Omit to leave unchanged.
-	//
-	// Any of "transaction.created", "transaction.updated",
-	// "checkingAccount.balance.updated", "savingsAccount.balance.updated",
-	// "treasuryAccount.balance.updated", "investmentAccount.balance.updated",
-	// "creditAccount.balance.updated".
-	EventTypes []string `json:"eventTypes,omitzero"`
+	EventTypes []WebhookEventType `json:"eventTypes,omitzero"`
 	// Resource field paths to filter events by. When specified, webhook events will
 	// only be sent when one of these fields changes. Send null for no filtering. Send
 	// an array to filter by specific fields. Omit to leave unchanged.
-	//
-	// Any of "transaction.amount", "transaction.bankDescription",
-	// "transaction.categoryData", "transaction.customCategory",
-	// "transaction.customCategory.id", "transaction.customCategory.name",
-	// "transaction.mercuryCategory", "transaction.estimatedDeliveryDate",
-	// "transaction.externalMemo", "transaction.failedAt", "transaction.note",
-	// "transaction.postedAt", "transaction.reasonForFailure", "transaction.status",
-	// "checkingAccount.availableBalance", "checkingAccount.currentBalance",
-	// "checkingAccount.inFlightBalance", "savingsAccount.availableBalance",
-	// "savingsAccount.currentBalance", "savingsAccount.inFlightBalance",
-	// "treasuryAccount.availableBalance", "treasuryAccount.currentBalance",
-	// "treasuryAccount.inFlightBalance", "investmentAccount.availableBalance",
-	// "investmentAccount.currentBalance", "investmentAccount.inFlightBalance",
-	// "creditAccount.availableBalance", "creditAccount.currentBalance",
-	// "creditAccount.inFlightBalance".
-	FilterPaths []string `json:"filterPaths,omitzero"`
+	FilterPaths []ResourceField `json:"filterPaths,omitzero"`
 	// Webhook status. Only 'active' and 'paused' values are allowed. Omit to leave
 	// unchanged.
 	//
@@ -347,7 +333,7 @@ type WebhookVerifyParams struct {
 	// "checkingAccount.balance.updated", "savingsAccount.balance.updated",
 	// "treasuryAccount.balance.updated", "investmentAccount.balance.updated",
 	// "creditAccount.balance.updated".
-	EventType WebhookVerifyParamsEventType `json:"eventType,omitzero"`
+	EventType WebhookEventType `json:"eventType,omitzero"`
 	paramObj
 }
 
@@ -358,16 +344,3 @@ func (r WebhookVerifyParams) MarshalJSON() (data []byte, err error) {
 func (r *WebhookVerifyParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
-
-// Optional event type to test. If not specified, defaults to transaction.created.
-type WebhookVerifyParamsEventType string
-
-const (
-	WebhookVerifyParamsEventTypeTransactionCreated              WebhookVerifyParamsEventType = "transaction.created"
-	WebhookVerifyParamsEventTypeTransactionUpdated              WebhookVerifyParamsEventType = "transaction.updated"
-	WebhookVerifyParamsEventTypeCheckingAccountBalanceUpdated   WebhookVerifyParamsEventType = "checkingAccount.balance.updated"
-	WebhookVerifyParamsEventTypeSavingsAccountBalanceUpdated    WebhookVerifyParamsEventType = "savingsAccount.balance.updated"
-	WebhookVerifyParamsEventTypeTreasuryAccountBalanceUpdated   WebhookVerifyParamsEventType = "treasuryAccount.balance.updated"
-	WebhookVerifyParamsEventTypeInvestmentAccountBalanceUpdated WebhookVerifyParamsEventType = "investmentAccount.balance.updated"
-	WebhookVerifyParamsEventTypeCreditAccountBalanceUpdated     WebhookVerifyParamsEventType = "creditAccount.balance.updated"
-)

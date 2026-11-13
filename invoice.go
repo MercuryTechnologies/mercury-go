@@ -129,6 +129,20 @@ func (r *InvoiceService) Get(ctx context.Context, invoiceID string, opts ...opti
 	return res, err
 }
 
+// Retrieve the payments applied to an invoice, oldest first. Each payment shows
+// the amount, the date it was applied, and where the money came from: a Mercury
+// transaction, a card payment, or a payment received outside Mercury.
+func (r *InvoiceService) GetPayments(ctx context.Context, invoiceID string, opts ...option.RequestOption) (res *InvoiceGetPaymentsResponse, err error) {
+	opts = slices.Concat(r.options, opts)
+	if invoiceID == "" {
+		err = errors.New("missing required invoiceId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("ar/invoices/%s/payments", invoiceID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
 // The response type for an invoice in the api.
 type Invoice struct {
 	// ID for the invoice.
@@ -378,6 +392,161 @@ type InvoiceListResponse struct {
 // Returns the unmodified JSON received from the API
 func (r InvoiceListResponse) RawJSON() string { return r.JSON.raw }
 func (r *InvoiceListResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The payments applied to an invoice, oldest first. Payments that were removed
+// from the invoice are not included.
+type InvoiceGetPaymentsResponse struct {
+	// The payments applied to the invoice.
+	Payments []InvoiceGetPaymentsResponsePayment `json:"payments" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Payments    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r InvoiceGetPaymentsResponse) RawJSON() string { return r.JSON.raw }
+func (r *InvoiceGetPaymentsResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A payment applied to an invoice. Exactly one of @transaction@, @cardCharge@, or
+// @manual@ is present, matching @type@.
+type InvoiceGetPaymentsResponsePayment struct {
+	// ID for the invoice payment.
+	ID string `json:"id" api:"required" format:"uuid"`
+	// A positive dollar amount with at least 1 cent.
+	Amount float64 `json:"amount" api:"required"`
+	// The date the payment was applied to the invoice. For payments marked as paid or
+	// matched in Mercury, the date entered then; otherwise the date Mercury received
+	// the payment.
+	AppliedDate time.Time `json:"appliedDate" api:"required" format:"date"`
+	// When the payment was recorded.
+	CreatedAt string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	// ISO 4217 currency code of the amount. Always "USD".
+	CurrencyCode string `json:"currencyCode" api:"required"`
+	// Where the money for the payment came from.
+	//
+	// Any of "transaction", "cardCharge", "manual".
+	Type string `json:"type" api:"required"`
+	// Details of a card payment made by your customer through the invoice.
+	CardCharge InvoiceGetPaymentsResponsePaymentCardCharge `json:"cardCharge" api:"nullable"`
+	// Details of a payment received outside Mercury and marked as paid.
+	Manual InvoiceGetPaymentsResponsePaymentManual `json:"manual" api:"nullable"`
+	// Details of a payment made by a transaction in one of your Mercury accounts.
+	Transaction InvoiceGetPaymentsResponsePaymentTransaction `json:"transaction" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID           respjson.Field
+		Amount       respjson.Field
+		AppliedDate  respjson.Field
+		CreatedAt    respjson.Field
+		CurrencyCode respjson.Field
+		Type         respjson.Field
+		CardCharge   respjson.Field
+		Manual       respjson.Field
+		Transaction  respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r InvoiceGetPaymentsResponsePayment) RawJSON() string { return r.JSON.raw }
+func (r *InvoiceGetPaymentsResponsePayment) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Details of a card payment made by your customer through the invoice.
+type InvoiceGetPaymentsResponsePaymentCardCharge struct {
+	// The brand of the card that was charged.
+	//
+	// Any of "amex", "cartesBancaires", "diners", "discover", "eftposAu", "girocard",
+	// "jaywan", "jcb", "link", "mastercard", "troy", "unionpay", "visa", "unknown".
+	Brand string `json:"brand" api:"required"`
+	// The last 4 digits of the card that was charged.
+	Last4 string `json:"last4" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Brand       respjson.Field
+		Last4       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r InvoiceGetPaymentsResponsePaymentCardCharge) RawJSON() string { return r.JSON.raw }
+func (r *InvoiceGetPaymentsResponsePaymentCardCharge) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Details of a payment received outside Mercury and marked as paid.
+type InvoiceGetPaymentsResponsePaymentManual struct {
+	// How the payment was made.
+	//
+	// Any of "cash", "check", "card", "other".
+	Method string `json:"method" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Method      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r InvoiceGetPaymentsResponsePaymentManual) RawJSON() string { return r.JSON.raw }
+func (r *InvoiceGetPaymentsResponsePaymentManual) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Details of a payment made by a transaction in one of your Mercury accounts.
+type InvoiceGetPaymentsResponsePaymentTransaction struct {
+	// ID for this transaction
+	ID string `json:"id" api:"required" format:"uuid"`
+	// The name of the party that sent the money.
+	CounterpartyName string `json:"counterpartyName" api:"required"`
+	// The kind of the transaction that paid the invoice.
+	//
+	// Any of "externalTransfer", "internalTransfer", "outgoingPayment",
+	// "creditCardCredit", "creditCardTransaction", "debitCardCredit",
+	// "debitCardTransaction", "cardInternationalTransactionFee",
+	// "cardInternationalTransactionFeeRebate",
+	// "cardInternationalTransactionFeeReversal",
+	// "cardInternationalTransactionFeeRebateReversal", "incomingDomesticWire",
+	// "checkDeposit", "incomingInternationalWire", "treasuryTransfer",
+	// "currencyCloudReturn", "wireFee", "personalBankingSubscriptionFee",
+	// "billingEngineSubscriptionFee", "expenseReimbursement", "exogenousWireDrawdown",
+	// "interestPayment", "other".
+	Kind TransactionKind `json:"kind" api:"required"`
+	// Whether the transaction was matched to the invoice automatically or by a user.
+	//
+	// Any of "automatic", "manual".
+	MatchedBy string `json:"matchedBy" api:"required"`
+	// The status of the transaction that paid the invoice.
+	//
+	// Any of "pending", "sent", "cancelled", "failed", "reversed", "blocked".
+	Status TransactionStatus `json:"status" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID               respjson.Field
+		CounterpartyName respjson.Field
+		Kind             respjson.Field
+		MatchedBy        respjson.Field
+		Status           respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r InvoiceGetPaymentsResponsePaymentTransaction) RawJSON() string { return r.JSON.raw }
+func (r *InvoiceGetPaymentsResponsePaymentTransaction) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

@@ -73,7 +73,7 @@ func TestRecipientNewWithOptionalParams(t *testing.T) {
 			RoutingNumber:         "routingNumber",
 		},
 		Nickname: mercury.String("nickname"),
-		RealTimePaymentRoutingInfo: mercury.RecipientNewParamsRealTimePaymentRoutingInfo{
+		RealTimePaymentRoutingInfo: mercury.RealTimePaymentRoutingInfoRawParam{
 			AccountNumber: "accountNumber",
 			Address: mercury.AddressWithoutNameParam{
 				Address1:   "address1",
@@ -158,7 +158,7 @@ func TestRecipientUpdateWithOptionalParams(t *testing.T) {
 			Emails:   []string{"string"},
 			Name:     mercury.String("x"),
 			Nickname: mercury.String("nickname"),
-			RealTimePaymentRoutingInfo: mercury.RecipientUpdateParamsRealTimePaymentRoutingInfo{
+			RealTimePaymentRoutingInfo: mercury.RealTimePaymentRoutingInfoRawParam{
 				AccountNumber: "accountNumber",
 				Address: mercury.AddressWithoutNameParam{
 					Address1:   "address1",

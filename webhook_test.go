@@ -28,8 +28,8 @@ func TestWebhookNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Webhooks.New(context.TODO(), mercury.WebhookNewParams{
 		URL:         "url",
-		EventTypes:  []string{"transaction.created"},
-		FilterPaths: []string{"transaction.amount"},
+		EventTypes:  []mercury.WebhookEventType{mercury.WebhookEventTypeTransactionCreated},
+		FilterPaths: []mercury.ResourceField{mercury.ResourceFieldTransactionAmount},
 	})
 	if err != nil {
 		var apierr *mercury.Error
@@ -57,8 +57,8 @@ func TestWebhookUpdateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
 		mercury.WebhookUpdateParams{
-			EventTypes:  []string{"transaction.created"},
-			FilterPaths: []string{"transaction.amount"},
+			EventTypes:  []mercury.WebhookEventType{mercury.WebhookEventTypeTransactionCreated},
+			FilterPaths: []mercury.ResourceField{mercury.ResourceFieldTransactionAmount},
 			Status:      mercury.WebhookUpdateParamsStatusActive,
 			URL:         mercury.String("url"),
 		},
@@ -164,7 +164,7 @@ func TestWebhookVerifyWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
 		mercury.WebhookVerifyParams{
-			EventType: mercury.WebhookVerifyParamsEventTypeTransactionCreated,
+			EventType: mercury.WebhookEventTypeTransactionCreated,
 		},
 	)
 	if err != nil {

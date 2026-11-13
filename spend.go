@@ -18,6 +18,13 @@ type SpendService struct {
 	Budgets SpendBudgetService
 	// Manage Spend Management receipts
 	Receipts SpendReceiptService
+	// Manage Spend Management reimbursements. Automated access is permitted, including
+	// from apps and AI agents. You're responsible for your API tokens and for the apps
+	// and agents that use them. See
+	// [Getting Started](https://docs.mercury.com/docs/getting-started) and sections 2
+	// (Our Proprietary Rights) and 3.2 (Third-Party AI and Connected Services) of the
+	// [Terms of Use](https://mercury.com/legal/terms).
+	Reimbursements SpendReimbursementService
 }
 
 // NewSpendService generates a new service that applies the given options to each
@@ -28,5 +35,6 @@ func NewSpendService(opts ...option.RequestOption) (r SpendService) {
 	r.options = opts
 	r.Budgets = NewSpendBudgetService(opts...)
 	r.Receipts = NewSpendReceiptService(opts...)
+	r.Reimbursements = NewSpendReimbursementService(opts...)
 	return
 }

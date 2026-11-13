@@ -37,8 +37,8 @@ func TestPaymentNewWithOptionalParams(t *testing.T) {
 			DuplicateCheckOverride: mercury.Bool(true),
 			ExternalMemo:           mercury.String("externalMemo"),
 			Note:                   mercury.String("note"),
-			Purpose: mercury.PaymentNewParamsPurpose{
-				Simple: mercury.PaymentNewParamsPurposeSimple{
+			Purpose: mercury.PostTransactionSendMoneyPurposeParam{
+				Simple: mercury.PostTransactionSendMoneyPurposeSimpleParam{
 					Category:       "employee",
 					AdditionalInfo: mercury.String("additionalInfo"),
 				},
@@ -131,12 +131,50 @@ func TestPaymentRequestWithOptionalParams(t *testing.T) {
 			DuplicateCheckOverride: mercury.Bool(true),
 			ExternalMemo:           mercury.String("externalMemo"),
 			Note:                   mercury.String("note"),
-			Purpose: mercury.PaymentRequestParamsPurpose{
-				Simple: mercury.PaymentRequestParamsPurposeSimple{
+			Purpose: mercury.PostTransactionSendMoneyPurposeParam{
+				Simple: mercury.PostTransactionSendMoneyPurposeSimpleParam{
 					Category:       "employee",
 					AdditionalInfo: mercury.String("additionalInfo"),
 				},
 			},
+		},
+	)
+	if err != nil {
+		var apierr *mercury.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestPaymentGetTransactionsWithOptionalParams(t *testing.T) {
+	t.Skip("Mock server tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := mercury.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithAPIKey("My API Key"),
+	)
+	_, err := client.Payments.GetTransactions(
+		context.TODO(),
+		"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+		mercury.PaymentGetTransactionsParams{
+			CategoryID:      mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			End:             mercury.String("end"),
+			Limit:           mercury.Int(1),
+			MercuryCategory: mercury.String("mercuryCategory"),
+			Offset:          mercury.Int(0),
+			Order:           mercury.PaymentGetTransactionsParamsOrderAsc,
+			RequestID:       mercury.String("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			Search:          mercury.String("search"),
+			Start:           mercury.String("start"),
+			Status:          mercury.PaymentGetTransactionsParamsStatusPending,
 		},
 	)
 	if err != nil {

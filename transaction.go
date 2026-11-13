@@ -411,45 +411,6 @@ func (r *Transaction) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type TransactionKind string
-
-const (
-	TransactionKindExternalTransfer                              TransactionKind = "externalTransfer"
-	TransactionKindInternalTransfer                              TransactionKind = "internalTransfer"
-	TransactionKindOutgoingPayment                               TransactionKind = "outgoingPayment"
-	TransactionKindCreditCardCredit                              TransactionKind = "creditCardCredit"
-	TransactionKindCreditCardTransaction                         TransactionKind = "creditCardTransaction"
-	TransactionKindDebitCardCredit                               TransactionKind = "debitCardCredit"
-	TransactionKindDebitCardTransaction                          TransactionKind = "debitCardTransaction"
-	TransactionKindCardInternationalTransactionFee               TransactionKind = "cardInternationalTransactionFee"
-	TransactionKindCardInternationalTransactionFeeRebate         TransactionKind = "cardInternationalTransactionFeeRebate"
-	TransactionKindCardInternationalTransactionFeeReversal       TransactionKind = "cardInternationalTransactionFeeReversal"
-	TransactionKindCardInternationalTransactionFeeRebateReversal TransactionKind = "cardInternationalTransactionFeeRebateReversal"
-	TransactionKindIncomingDomesticWire                          TransactionKind = "incomingDomesticWire"
-	TransactionKindCheckDeposit                                  TransactionKind = "checkDeposit"
-	TransactionKindIncomingInternationalWire                     TransactionKind = "incomingInternationalWire"
-	TransactionKindTreasuryTransfer                              TransactionKind = "treasuryTransfer"
-	TransactionKindCurrencyCloudReturn                           TransactionKind = "currencyCloudReturn"
-	TransactionKindWireFee                                       TransactionKind = "wireFee"
-	TransactionKindPersonalBankingSubscriptionFee                TransactionKind = "personalBankingSubscriptionFee"
-	TransactionKindBillingEngineSubscriptionFee                  TransactionKind = "billingEngineSubscriptionFee"
-	TransactionKindExpenseReimbursement                          TransactionKind = "expenseReimbursement"
-	TransactionKindExogenousWireDrawdown                         TransactionKind = "exogenousWireDrawdown"
-	TransactionKindInterestPayment                               TransactionKind = "interestPayment"
-	TransactionKindOther                                         TransactionKind = "other"
-)
-
-type TransactionStatus string
-
-const (
-	TransactionStatusPending   TransactionStatus = "pending"
-	TransactionStatusSent      TransactionStatus = "sent"
-	TransactionStatusCancelled TransactionStatus = "cancelled"
-	TransactionStatusFailed    TransactionStatus = "failed"
-	TransactionStatusReversed  TransactionStatus = "reversed"
-	TransactionStatusBlocked   TransactionStatus = "blocked"
-)
-
 // A transaction's accounting review and sync status, for the accounting
 // integration connected to the organization (e.g. QuickBooks, Xero, NetSuite).
 type TransactionAccountingStatus struct {

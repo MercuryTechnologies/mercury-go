@@ -40,6 +40,22 @@ func NewAccountService(opts ...option.RequestOption) (r AccountService) {
 	return
 }
 
+// Get transaction by ID
+func (r *AccountService) Get(ctx context.Context, transactionID string, query AccountGetParams, opts ...option.RequestOption) (res *Transaction, err error) {
+	opts = slices.Concat(r.options, opts)
+	if query.AccountID == "" {
+		err = errors.New("missing required accountId parameter")
+		return nil, err
+	}
+	if transactionID == "" {
+		err = errors.New("missing required transactionId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("account/%s/transaction/%s", query.AccountID, transactionID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
 // Retrieve a paginated list of accounts. Supports cursor-based pagination with
 // limit, order, start_after, and end_before query parameters.
 func (r *AccountService) List(ctx context.Context, query AccountListParams, opts ...option.RequestOption) (res *pagination.CursorIDAccounts[Account], err error) {
@@ -73,6 +89,18 @@ func (r *AccountService) Get(ctx context.Context, accountID string, opts ...opti
 		return nil, err
 	}
 	path := fmt.Sprintf("account/%s", accountID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
+// Retrieve all debit and credit cards associated with a specific account.
+func (r *AccountService) GetCards(ctx context.Context, accountID string, opts ...option.RequestOption) (res *AccountGetCardsResponse, err error) {
+	opts = slices.Concat(r.options, opts)
+	if accountID == "" {
+		err = errors.New("missing required accountId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("account/%s/cards", accountID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }
@@ -216,6 +244,111 @@ const (
 	MercuryCategoryUtilities            MercuryCategory = "Utilities"
 	MercuryCategoryVehicleExpenses      MercuryCategory = "VehicleExpenses"
 )
+
+type TransactionKind string
+
+const (
+	TransactionKindExternalTransfer                              TransactionKind = "externalTransfer"
+	TransactionKindInternalTransfer                              TransactionKind = "internalTransfer"
+	TransactionKindOutgoingPayment                               TransactionKind = "outgoingPayment"
+	TransactionKindCreditCardCredit                              TransactionKind = "creditCardCredit"
+	TransactionKindCreditCardTransaction                         TransactionKind = "creditCardTransaction"
+	TransactionKindDebitCardCredit                               TransactionKind = "debitCardCredit"
+	TransactionKindDebitCardTransaction                          TransactionKind = "debitCardTransaction"
+	TransactionKindCardInternationalTransactionFee               TransactionKind = "cardInternationalTransactionFee"
+	TransactionKindCardInternationalTransactionFeeRebate         TransactionKind = "cardInternationalTransactionFeeRebate"
+	TransactionKindCardInternationalTransactionFeeReversal       TransactionKind = "cardInternationalTransactionFeeReversal"
+	TransactionKindCardInternationalTransactionFeeRebateReversal TransactionKind = "cardInternationalTransactionFeeRebateReversal"
+	TransactionKindIncomingDomesticWire                          TransactionKind = "incomingDomesticWire"
+	TransactionKindCheckDeposit                                  TransactionKind = "checkDeposit"
+	TransactionKindIncomingInternationalWire                     TransactionKind = "incomingInternationalWire"
+	TransactionKindTreasuryTransfer                              TransactionKind = "treasuryTransfer"
+	TransactionKindCurrencyCloudReturn                           TransactionKind = "currencyCloudReturn"
+	TransactionKindWireFee                                       TransactionKind = "wireFee"
+	TransactionKindPersonalBankingSubscriptionFee                TransactionKind = "personalBankingSubscriptionFee"
+	TransactionKindBillingEngineSubscriptionFee                  TransactionKind = "billingEngineSubscriptionFee"
+	TransactionKindExpenseReimbursement                          TransactionKind = "expenseReimbursement"
+	TransactionKindExogenousWireDrawdown                         TransactionKind = "exogenousWireDrawdown"
+	TransactionKindInterestPayment                               TransactionKind = "interestPayment"
+	TransactionKindOther                                         TransactionKind = "other"
+)
+
+type TransactionStatus string
+
+const (
+	TransactionStatusPending   TransactionStatus = "pending"
+	TransactionStatusSent      TransactionStatus = "sent"
+	TransactionStatusCancelled TransactionStatus = "cancelled"
+	TransactionStatusFailed    TransactionStatus = "failed"
+	TransactionStatusReversed  TransactionStatus = "reversed"
+	TransactionStatusBlocked   TransactionStatus = "blocked"
+)
+
+type AccountGetCardsResponse struct {
+	Cards []AccountGetCardsResponseCard `json:"cards" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Cards       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AccountGetCardsResponse) RawJSON() string { return r.JSON.raw }
+func (r *AccountGetCardsResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Deprecated account card representation, used by the @/v1/account\/:id\/cards@
+// endpoint.
+type AccountGetCardsResponseCard struct {
+	CardID         string `json:"cardId" api:"required"`
+	CreatedAt      string `json:"createdAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	LastFourDigits string `json:"lastFourDigits" api:"required"`
+	NameOnCard     string `json:"nameOnCard" api:"required"`
+	// Any of "visa", "mastercard".
+	Network CardNetwork `json:"network" api:"required"`
+	// Spending controls applied to a card
+	SpendLimit SpendLimit `json:"spendLimit" api:"required"`
+	// Any of "active", "frozen", "cancelled", "inactive", "expired", "suspended",
+	// "singleUseConsumed".
+	Status CardStatus `json:"status" api:"required"`
+	// Any of "virtual", "physical".
+	Type      CardType `json:"type" api:"required"`
+	UpdatedAt string   `json:"updatedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	UserID    string   `json:"userId" api:"required"`
+	// Any of "inactive", "active", "locked".
+	PhysicalCardStatus PhysicalCardStatus `json:"physicalCardStatus" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CardID             respjson.Field
+		CreatedAt          respjson.Field
+		LastFourDigits     respjson.Field
+		NameOnCard         respjson.Field
+		Network            respjson.Field
+		SpendLimit         respjson.Field
+		Status             respjson.Field
+		Type               respjson.Field
+		UpdatedAt          respjson.Field
+		UserID             respjson.Field
+		PhysicalCardStatus respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AccountGetCardsResponseCard) RawJSON() string { return r.JSON.raw }
+func (r *AccountGetCardsResponseCard) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type AccountGetParams struct {
+	// ID for a Mercury account.
+	AccountID string `path:"accountId" api:"required" format:"uuid" json:"-"`
+	paramObj
+}
 
 type AccountListParams struct {
 	// The ID of the account to end the page before (exclusive). When provided, results

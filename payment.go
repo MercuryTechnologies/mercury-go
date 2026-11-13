@@ -102,6 +102,19 @@ func (r *PaymentService) Request(ctx context.Context, accountID string, body Pay
 	return res, err
 }
 
+// Retrieve a paginated list of transactions for a specific account. Supports
+// filtering by date range, status, and search terms.
+func (r *PaymentService) GetTransactions(ctx context.Context, accountID string, query PaymentGetTransactionsParams, opts ...option.RequestOption) (res *PaymentGetTransactionsResponse, err error) {
+	opts = slices.Concat(r.options, opts)
+	if accountID == "" {
+		err = errors.New("missing required accountId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("account/%s/transactions", accountID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	return res, err
+}
+
 // Transfer funds between two accounts within the same organization. Supports
 // transfers between depository accounts (checking/savings), from a depository
 // account to a treasury/investment account, and from a treasury/investment account
@@ -112,6 +125,88 @@ func (r *PaymentService) Transfer(ctx context.Context, body PaymentTransferParam
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return res, err
 }
+
+type PaymentApprovalReview struct {
+	ReviewedAt string `json:"reviewedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
+	// ID for the user
+	ReviewerUserID string `json:"reviewerUserId" api:"required" format:"uuid"`
+	// Any of "approved", "rejected".
+	Status PaymentApprovalReviewStatus `json:"status" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ReviewedAt     respjson.Field
+		ReviewerUserID respjson.Field
+		Status         respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PaymentApprovalReview) RawJSON() string { return r.JSON.raw }
+func (r *PaymentApprovalReview) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type PaymentApprovalReviewStatus string
+
+const (
+	PaymentApprovalReviewStatusApproved PaymentApprovalReviewStatus = "approved"
+	PaymentApprovalReviewStatusRejected PaymentApprovalReviewStatus = "rejected"
+)
+
+// External API representation of SendMoneyPurpose. Only exposes the 'simple' field
+// to decouple internal implementation from external API.
+type PostTransactionSendMoneyPurposeParam struct {
+	Simple PostTransactionSendMoneyPurposeSimpleParam `json:"simple,omitzero"`
+	paramObj
+}
+
+func (r PostTransactionSendMoneyPurposeParam) MarshalJSON() (data []byte, err error) {
+	type shadow PostTransactionSendMoneyPurposeParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *PostTransactionSendMoneyPurposeParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Category is required.
+type PostTransactionSendMoneyPurposeSimpleParam struct {
+	// Payment category.
+	//
+	// Any of "employee", "landlord", "vendor", "contractor", "subsidiary",
+	// "transferToMyExternalAccount", "familyMemberOrFriend", "forGoodsOrServices",
+	// "angelInvestment", "savingsOrInvestments", "expenses", "travel", "other".
+	Category string `json:"category,omitzero" api:"required"`
+	// Additional information. Required for: Vendor (vendor name), Contractor
+	// (contractor name), Other (payment description). Optional for Subsidiary
+	// (subsidiary name). Not accepted for any other categories.
+	AdditionalInfo param.Opt[string] `json:"additionalInfo,omitzero"`
+	paramObj
+}
+
+func (r PostTransactionSendMoneyPurposeSimpleParam) MarshalJSON() (data []byte, err error) {
+	type shadow PostTransactionSendMoneyPurposeSimpleParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *PostTransactionSendMoneyPurposeSimpleParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[PostTransactionSendMoneyPurposeSimpleParam](
+		"category", "employee", "landlord", "vendor", "contractor", "subsidiary", "transferToMyExternalAccount", "familyMemberOrFriend", "forGoodsOrServices", "angelInvestment", "savingsOrInvestments", "expenses", "travel", "other",
+	)
+}
+
+type ReviewRequestStatus string
+
+const (
+	ReviewRequestStatusPendingApproval ReviewRequestStatus = "pendingApproval"
+	ReviewRequestStatusApproved        ReviewRequestStatus = "approved"
+	ReviewRequestStatusRejected        ReviewRequestStatus = "rejected"
+	ReviewRequestStatusCancelled       ReviewRequestStatus = "cancelled"
+)
 
 // A pending or completed approval request for a Mercury payment.
 type SendMoneyApproval struct {
@@ -130,10 +225,10 @@ type SendMoneyApproval struct {
 	RequestID         string `json:"requestId" api:"required"`
 	// Approval decisions recorded against this request, ordered from oldest to most
 	// recent.
-	Reviews []SendMoneyApprovalReview `json:"reviews" api:"required"`
+	Reviews []PaymentApprovalReview `json:"reviews" api:"required"`
 	// Any of "pendingApproval", "approved", "rejected", "cancelled".
-	Status SendMoneyApprovalStatus `json:"status" api:"required"`
-	Memo   string                  `json:"memo" api:"nullable"`
+	Status ReviewRequestStatus `json:"status" api:"required"`
+	Memo   string              `json:"memo" api:"nullable"`
 	// Total number of approvals required for this payment to be sent. Omitted for
 	// older requests where the requirement is not available.
 	NumberOfApproversRequired int64 `json:"numberOfApproversRequired" api:"nullable"`
@@ -174,37 +269,6 @@ func (r *SendMoneyApproval) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type SendMoneyApprovalReview struct {
-	ReviewedAt string `json:"reviewedAt" api:"required" format:"yyyy-mm-ddThh:MM:ssZ"`
-	// ID for the user
-	ReviewerUserID string `json:"reviewerUserId" api:"required" format:"uuid"`
-	// Any of "approved", "rejected".
-	Status string `json:"status" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ReviewedAt     respjson.Field
-		ReviewerUserID respjson.Field
-		Status         respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r SendMoneyApprovalReview) RawJSON() string { return r.JSON.raw }
-func (r *SendMoneyApprovalReview) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type SendMoneyApprovalStatus string
-
-const (
-	SendMoneyApprovalStatusPendingApproval SendMoneyApprovalStatus = "pendingApproval"
-	SendMoneyApprovalStatusApproved        SendMoneyApprovalStatus = "approved"
-	SendMoneyApprovalStatusRejected        SendMoneyApprovalStatus = "rejected"
-	SendMoneyApprovalStatusCancelled       SendMoneyApprovalStatus = "cancelled"
-)
-
 type SendMoneyPaymentMethod string
 
 const (
@@ -214,6 +278,24 @@ const (
 	SendMoneyPaymentMethodInternationalWire SendMoneyPaymentMethod = "internationalWire"
 	SendMoneyPaymentMethodRealTimePayment   SendMoneyPaymentMethod = "realTimePayment"
 )
+
+type PaymentGetTransactionsResponse struct {
+	Total        int64         `json:"total" api:"required"`
+	Transactions []Transaction `json:"transactions" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Total        respjson.Field
+		Transactions respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r PaymentGetTransactionsResponse) RawJSON() string { return r.JSON.raw }
+func (r *PaymentGetTransactionsResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // Response for POST /api/v1/transfer endpoint. Returns both the credit and debit
 // transactions for the transfer (depository, treasury, or investment).
@@ -257,7 +339,7 @@ type PaymentNewParams struct {
 	Note param.Opt[string] `json:"note,omitzero"`
 	// External API representation of SendMoneyPurpose. Only exposes the 'simple' field
 	// to decouple internal implementation from external API.
-	Purpose PaymentNewParamsPurpose `json:"purpose,omitzero"`
+	Purpose PostTransactionSendMoneyPurposeParam `json:"purpose,omitzero"`
 	paramObj
 }
 
@@ -278,50 +360,6 @@ const (
 	PaymentNewParamsPaymentMethodDomesticWire    PaymentNewParamsPaymentMethod = "domesticWire"
 	PaymentNewParamsPaymentMethodRealTimePayment PaymentNewParamsPaymentMethod = "realTimePayment"
 )
-
-// External API representation of SendMoneyPurpose. Only exposes the 'simple' field
-// to decouple internal implementation from external API.
-type PaymentNewParamsPurpose struct {
-	Simple PaymentNewParamsPurposeSimple `json:"simple,omitzero"`
-	paramObj
-}
-
-func (r PaymentNewParamsPurpose) MarshalJSON() (data []byte, err error) {
-	type shadow PaymentNewParamsPurpose
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *PaymentNewParamsPurpose) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The property Category is required.
-type PaymentNewParamsPurposeSimple struct {
-	// Payment category.
-	//
-	// Any of "employee", "landlord", "vendor", "contractor", "subsidiary",
-	// "transferToMyExternalAccount", "familyMemberOrFriend", "forGoodsOrServices",
-	// "angelInvestment", "savingsOrInvestments", "expenses", "travel", "other".
-	Category string `json:"category,omitzero" api:"required"`
-	// Additional information. Required for: Vendor (vendor name), Contractor
-	// (contractor name), Other (payment description). Optional for Subsidiary
-	// (subsidiary name). Not accepted for any other categories.
-	AdditionalInfo param.Opt[string] `json:"additionalInfo,omitzero"`
-	paramObj
-}
-
-func (r PaymentNewParamsPurposeSimple) MarshalJSON() (data []byte, err error) {
-	type shadow PaymentNewParamsPurposeSimple
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *PaymentNewParamsPurposeSimple) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[PaymentNewParamsPurposeSimple](
-		"category", "employee", "landlord", "vendor", "contractor", "subsidiary", "transferToMyExternalAccount", "familyMemberOrFriend", "forGoodsOrServices", "angelInvestment", "savingsOrInvestments", "expenses", "travel", "other",
-	)
-}
 
 type PaymentListParams struct {
 	// ID for a Mercury account.
@@ -393,7 +431,7 @@ type PaymentRequestParams struct {
 	ChargeType PaymentRequestParamsChargeType `json:"chargeType,omitzero"`
 	// External API representation of SendMoneyPurpose. Only exposes the 'simple' field
 	// to decouple internal implementation from external API.
-	Purpose PaymentRequestParamsPurpose `json:"purpose,omitzero"`
+	Purpose PostTransactionSendMoneyPurposeParam `json:"purpose,omitzero"`
 	paramObj
 }
 
@@ -417,49 +455,62 @@ const (
 	PaymentRequestParamsChargeTypeShared PaymentRequestParamsChargeType = "shared"
 )
 
-// External API representation of SendMoneyPurpose. Only exposes the 'simple' field
-// to decouple internal implementation from external API.
-type PaymentRequestParamsPurpose struct {
-	Simple PaymentRequestParamsPurposeSimple `json:"simple,omitzero"`
-	paramObj
-}
-
-func (r PaymentRequestParamsPurpose) MarshalJSON() (data []byte, err error) {
-	type shadow PaymentRequestParamsPurpose
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *PaymentRequestParamsPurpose) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The property Category is required.
-type PaymentRequestParamsPurposeSimple struct {
-	// Payment category.
+type PaymentGetTransactionsParams struct {
+	// UUID of a custom category. Can be returned from /categories endpoint.
+	CategoryID param.Opt[string] `query:"categoryId,omitzero" format:"uuid" json:"-"`
+	// Latest date to filter transactions. If not provided, defaults to the current
+	// date. Format: YYYY-MM-DD or ISO 8601 string
+	End param.Opt[string] `query:"end,omitzero" json:"-"`
+	// Maximum number of results to return. Allowed range: 1 to 1000. Defaults to 1000
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Name of mercuryCategory you want to filter on. Merchant Type in the UI.
+	MercuryCategory param.Opt[string] `query:"mercuryCategory,omitzero" json:"-"`
+	// Number of results to skip for pagination
+	Offset param.Opt[int64] `query:"offset,omitzero" json:"-"`
+	// ID returned from /account/:id/request-send-money
+	RequestID param.Opt[string] `query:"requestId,omitzero" format:"uuid" json:"-"`
+	// Search term to filter transactions by description, note, recipient memo, or
+	// counterparty name
+	Search param.Opt[string] `query:"search,omitzero" json:"-"`
+	// Earliest date to filter transactions. If not provided, defaults to 30 days
+	// before the current date. Format: YYYY-MM-DD or ISO 8601 string
+	Start param.Opt[string] `query:"start,omitzero" json:"-"`
+	// Sort order. Can be 'asc' or 'desc'. Defaults to 'desc'
 	//
-	// Any of "employee", "landlord", "vendor", "contractor", "subsidiary",
-	// "transferToMyExternalAccount", "familyMemberOrFriend", "forGoodsOrServices",
-	// "angelInvestment", "savingsOrInvestments", "expenses", "travel", "other".
-	Category string `json:"category,omitzero" api:"required"`
-	// Additional information. Required for: Vendor (vendor name), Contractor
-	// (contractor name), Other (payment description). Optional for Subsidiary
-	// (subsidiary name). Not accepted for any other categories.
-	AdditionalInfo param.Opt[string] `json:"additionalInfo,omitzero"`
+	// Any of "asc", "desc".
+	Order PaymentGetTransactionsParamsOrder `query:"order,omitzero" json:"-"`
+	// Any of "pending", "sent", "cancelled", "failed", "reversed", "blocked".
+	Status PaymentGetTransactionsParamsStatus `query:"status,omitzero" json:"-"`
 	paramObj
 }
 
-func (r PaymentRequestParamsPurposeSimple) MarshalJSON() (data []byte, err error) {
-	type shadow PaymentRequestParamsPurposeSimple
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *PaymentRequestParamsPurposeSimple) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+// URLQuery serializes [PaymentGetTransactionsParams]'s query parameters as
+// `url.Values`.
+func (r PaymentGetTransactionsParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }
 
-func init() {
-	apijson.RegisterFieldValidator[PaymentRequestParamsPurposeSimple](
-		"category", "employee", "landlord", "vendor", "contractor", "subsidiary", "transferToMyExternalAccount", "familyMemberOrFriend", "forGoodsOrServices", "angelInvestment", "savingsOrInvestments", "expenses", "travel", "other",
-	)
-}
+// Sort order. Can be 'asc' or 'desc'. Defaults to 'desc'
+type PaymentGetTransactionsParamsOrder string
+
+const (
+	PaymentGetTransactionsParamsOrderAsc  PaymentGetTransactionsParamsOrder = "asc"
+	PaymentGetTransactionsParamsOrderDesc PaymentGetTransactionsParamsOrder = "desc"
+)
+
+type PaymentGetTransactionsParamsStatus string
+
+const (
+	PaymentGetTransactionsParamsStatusPending   PaymentGetTransactionsParamsStatus = "pending"
+	PaymentGetTransactionsParamsStatusSent      PaymentGetTransactionsParamsStatus = "sent"
+	PaymentGetTransactionsParamsStatusCancelled PaymentGetTransactionsParamsStatus = "cancelled"
+	PaymentGetTransactionsParamsStatusFailed    PaymentGetTransactionsParamsStatus = "failed"
+	PaymentGetTransactionsParamsStatusReversed  PaymentGetTransactionsParamsStatus = "reversed"
+	PaymentGetTransactionsParamsStatusBlocked   PaymentGetTransactionsParamsStatus = "blocked"
+)
 
 type PaymentTransferParams struct {
 	// A positive dollar amount with at least 1 cent.
