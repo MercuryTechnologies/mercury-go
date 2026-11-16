@@ -40,22 +40,6 @@ func NewAccountService(opts ...option.RequestOption) (r AccountService) {
 	return
 }
 
-// Get transaction by ID
-func (r *AccountService) Get(ctx context.Context, transactionID string, query AccountGetParams, opts ...option.RequestOption) (res *Transaction, err error) {
-	opts = slices.Concat(r.options, opts)
-	if query.AccountID == "" {
-		err = errors.New("missing required accountId parameter")
-		return nil, err
-	}
-	if transactionID == "" {
-		err = errors.New("missing required transactionId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("account/%s/transaction/%s", query.AccountID, transactionID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return res, err
-}
-
 // Retrieve a paginated list of accounts. Supports cursor-based pagination with
 // limit, order, start_after, and end_before query parameters.
 func (r *AccountService) List(ctx context.Context, query AccountListParams, opts ...option.RequestOption) (res *pagination.CursorIDAccounts[Account], err error) {
@@ -89,6 +73,22 @@ func (r *AccountService) Get(ctx context.Context, accountID string, opts ...opti
 		return nil, err
 	}
 	path := fmt.Sprintf("account/%s", accountID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
+// Get transaction by ID
+func (r *AccountService) GetTransaction(ctx context.Context, transactionID string, query AccountGetTransactionParams, opts ...option.RequestOption) (res *Transaction, err error) {
+	opts = slices.Concat(r.options, opts)
+	if query.AccountID == "" {
+		err = errors.New("missing required accountId parameter")
+		return nil, err
+	}
+	if transactionID == "" {
+		err = errors.New("missing required transactionId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("account/%s/transaction/%s", query.AccountID, transactionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return res, err
 }
@@ -344,12 +344,6 @@ func (r *AccountGetCardsResponseCard) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type AccountGetParams struct {
-	// ID for a Mercury account.
-	AccountID string `path:"accountId" api:"required" format:"uuid" json:"-"`
-	paramObj
-}
-
 type AccountListParams struct {
 	// The ID of the account to end the page before (exclusive). When provided, results
 	// will end just before this ID and work backwards. Use this for reverse pagination
@@ -384,3 +378,9 @@ const (
 	AccountListParamsOrderAsc  AccountListParamsOrder = "asc"
 	AccountListParamsOrderDesc AccountListParamsOrder = "desc"
 )
+
+type AccountGetTransactionParams struct {
+	// ID for a Mercury account.
+	AccountID string `path:"accountId" api:"required" format:"uuid" json:"-"`
+	paramObj
+}

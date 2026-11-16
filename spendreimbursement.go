@@ -13,9 +13,9 @@ import (
 
 	"github.com/MercuryTechnologies/mercury-go/internal/apijson"
 	"github.com/MercuryTechnologies/mercury-go/internal/apiquery"
-	shimjson "github.com/MercuryTechnologies/mercury-go/internal/encoding/json"
 	"github.com/MercuryTechnologies/mercury-go/internal/requestconfig"
 	"github.com/MercuryTechnologies/mercury-go/option"
+	"github.com/MercuryTechnologies/mercury-go/packages/pagination"
 	"github.com/MercuryTechnologies/mercury-go/packages/param"
 	"github.com/MercuryTechnologies/mercury-go/packages/respjson"
 )
@@ -48,7 +48,7 @@ func NewSpendReimbursementService(opts ...option.RequestOption) (r SpendReimburs
 
 // Submit a new reimbursement as the token's user. Only that user can edit or
 // cancel it. Returns the new reimbursement id.
-func (r *SpendReimbursementService) New(ctx context.Context, params SpendReimbursementNewParams, opts ...option.RequestOption) (res *APIV1CreateReimbursementResponse, err error) {
+func (r *SpendReimbursementService) New(ctx context.Context, params SpendReimbursementNewParams, opts ...option.RequestOption) (res *ReimbursementIDResponse, err error) {
 	if !param.IsOmitted(params.IdempotencyKey) {
 		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
 	}
@@ -58,24 +58,9 @@ func (r *SpendReimbursementService) New(ctx context.Context, params SpendReimbur
 	return res, err
 }
 
-// Retrieve details of a specific reimbursement by its id, including its review and
-// payment status. Attachments include an id, a file name, and a presigned download
-// URL. The URL expires after 24 hours. Request the reimbursement again for a new
-// URL.
-func (r *SpendReimbursementService) Get(ctx context.Context, reimbursementID string, opts ...option.RequestOption) (res *SpendReimbursementGetResponse, err error) {
-	opts = slices.Concat(r.options, opts)
-	if reimbursementID == "" {
-		err = errors.New("missing required reimbursementId parameter")
-		return nil, err
-	}
-	path := fmt.Sprintf("spend/reimbursements/%s", reimbursementID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return res, err
-}
-
 // Replace the fields of an existing reimbursement. Only reimbursements still in
 // review can be edited.
-func (r *SpendReimbursementService) Update(ctx context.Context, reimbursementID string, params SpendReimbursementUpdateParams, opts ...option.RequestOption) (res *APIV1CreateReimbursementResponse, err error) {
+func (r *SpendReimbursementService) Update(ctx context.Context, reimbursementID string, params SpendReimbursementUpdateParams, opts ...option.RequestOption) (res *ReimbursementIDResponse, err error) {
 	if !param.IsOmitted(params.IdempotencyKey) {
 		opts = append(opts, option.WithHeader("Idempotency-Key", fmt.Sprintf("%v", params.IdempotencyKey.Value)))
 	}
@@ -95,11 +80,31 @@ func (r *SpendReimbursementService) Update(ctx context.Context, reimbursementID 
 // expires after 24 hours. Request the reimbursement again for a new URL. Supports
 // cursor-based pagination with limit, order, start_at, start_after, and end_before
 // query parameters.
-func (r *SpendReimbursementService) List(ctx context.Context, query SpendReimbursementListParams, opts ...option.RequestOption) (res *SpendReimbursementListResponse, err error) {
+func (r *SpendReimbursementService) List(ctx context.Context, query SpendReimbursementListParams, opts ...option.RequestOption) (res *pagination.CursorIDReimbursements[ReimbursementListItem], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "spend/reimbursements"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return res, err
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Retrieve a paginated list of reimbursements for the organization ordered by
+// creation time, ascending (oldest first) by default. Each reimbursement includes
+// its attachments, with an id, a file name, and a presigned download URL. The URL
+// expires after 24 hours. Request the reimbursement again for a new URL. Supports
+// cursor-based pagination with limit, order, start_at, start_after, and end_before
+// query parameters.
+func (r *SpendReimbursementService) ListAutoPaging(ctx context.Context, query SpendReimbursementListParams, opts ...option.RequestOption) *pagination.CursorIDReimbursementsAutoPager[ReimbursementListItem] {
+	return pagination.NewCursorIDReimbursementsAutoPager(r.List(ctx, query, opts...))
 }
 
 // Approve a submitted reimbursement. The token's user needs the "Reimbursement
@@ -162,6 +167,21 @@ func (r *SpendReimbursementService) Deny(ctx context.Context, reimbursementID st
 	return err
 }
 
+// Retrieve details of a specific reimbursement by its id, including its review and
+// payment status. Attachments include an id, a file name, and a presigned download
+// URL. The URL expires after 24 hours. Request the reimbursement again for a new
+// URL.
+func (r *SpendReimbursementService) Get(ctx context.Context, reimbursementID string, opts ...option.RequestOption) (res *Reimbursement, err error) {
+	opts = slices.Concat(r.options, opts)
+	if reimbursementID == "" {
+		err = errors.New("missing required reimbursementId parameter")
+		return nil, err
+	}
+	path := fmt.Sprintf("spend/reimbursements/%s", reimbursementID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
+}
+
 // Record that the submitter was paid outside Mercury, for example by check or
 // payroll. Mercury won’t pay the reimbursement, and its payment status reads as
 // paidOutsideMercury. Denied or canceled reimbursements, and ones with a Mercury
@@ -183,121 +203,15 @@ func (r *SpendReimbursementService) MarkPaid(ctx context.Context, reimbursementI
 	return err
 }
 
-// Create a reimbursement (a regular, non-mileage expense).
-//
-// The properties Amount, Currency, DatePaidFor, MerchantName are required.
-type APIV1CreateReimbursementRequestParam struct {
-	// The positive amount spent.
-	Amount float64 `json:"amount" api:"required"`
-	// The currency the money was spent in (e.g. "USD").
-	Currency string `json:"currency" api:"required"`
-	// When the money was actually spent.
-	DatePaidFor time.Time `json:"datePaidFor" api:"required" format:"date"`
-	// Where the money was spent, e.g. "Starbucks".
-	MerchantName string `json:"merchantName" api:"required"`
-	// ID for the category
-	CategoryID param.Opt[string] `json:"categoryId,omitzero" format:"uuid"`
-	Notes      param.Opt[string] `json:"notes,omitzero"`
-	paramObj
-}
-
-func (r APIV1CreateReimbursementRequestParam) MarshalJSON() (data []byte, err error) {
-	type shadow APIV1CreateReimbursementRequestParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *APIV1CreateReimbursementRequestParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The stable id of a freshly created reimbursement; GET it for the full view.
-type APIV1CreateReimbursementResponse struct {
-	// ID for the expense
-	ID string `json:"id" api:"required" format:"uuid"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r APIV1CreateReimbursementResponse) RawJSON() string { return r.JSON.raw }
-func (r *APIV1CreateReimbursementResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A file linked to a reimbursement.
-type APIV1ReimbursementAttachment struct {
-	// ID for the expense attachment
-	ID       string `json:"id" api:"required" format:"uuid"`
-	FileName string `json:"fileName" api:"required"`
-	// Presigned download URL. Expires after 24 hours. Request the reimbursement again
-	// for a new URL.
-	URL string `json:"url" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		FileName    respjson.Field
-		URL         respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r APIV1ReimbursementAttachment) RawJSON() string { return r.JSON.raw }
-func (r *APIV1ReimbursementAttachment) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Payout state, separate from review.
-//
-//   - `pending`: no payout in progress. The reimbursement isn't approved yet, or
-//     it's approved and waiting for a payout batch. A canceled payout, or one
-//     Mercury retries automatically, also returns to `pending`.
-//   - `initiated`: the payout is in progress.
-//   - `paid`: the payout completed.
-//   - `failed`: the payout failed. Mercury retries in a later batch once the
-//     submitter fixes their payout account, unless they've left the organization.
-//   - `paidOutsideMercury`: an approver recorded that the submitter was paid outside
-//     Mercury, so Mercury won't pay it. Its review status is `approved`.
-type ReimbursementPaymentStatus string
-
-const (
-	ReimbursementPaymentStatusPending            ReimbursementPaymentStatus = "pending"
-	ReimbursementPaymentStatusInitiated          ReimbursementPaymentStatus = "initiated"
-	ReimbursementPaymentStatusPaid               ReimbursementPaymentStatus = "paid"
-	ReimbursementPaymentStatusFailed             ReimbursementPaymentStatus = "failed"
-	ReimbursementPaymentStatusPaidOutsideMercury ReimbursementPaymentStatus = "paidOutsideMercury"
-)
-
-// Review state, separate from payment.
-//
-// - `submitted`: waiting for review.
-// - `updatesRequested`: a reviewer asked the submitter for changes.
-// - `approved`: a reviewer approved it. `paymentStatus` shows the payout.
-// - `denied`: a reviewer denied it.
-// - `canceled`: the submitter canceled it.
-type ReimbursementReviewStatus string
-
-const (
-	ReimbursementReviewStatusSubmitted        ReimbursementReviewStatus = "submitted"
-	ReimbursementReviewStatusUpdatesRequested ReimbursementReviewStatus = "updatesRequested"
-	ReimbursementReviewStatusApproved         ReimbursementReviewStatus = "approved"
-	ReimbursementReviewStatusDenied           ReimbursementReviewStatus = "denied"
-	ReimbursementReviewStatusCanceled         ReimbursementReviewStatus = "canceled"
-)
-
 // Public view of a single reimbursement, keyed on the stable 'ExpenseId'.
-type SpendReimbursementGetResponse struct {
+type Reimbursement struct {
 	// ID for the expense
 	ID string `json:"id" api:"required" format:"uuid"`
 	// The positive amount spent in the submitted currency.
-	Amount      float64                        `json:"amount" api:"required"`
-	Attachments []APIV1ReimbursementAttachment `json:"attachments" api:"required"`
-	Currency    string                         `json:"currency" api:"required"`
-	DatePaidFor time.Time                      `json:"datePaidFor" api:"required" format:"date"`
+	Amount      float64                   `json:"amount" api:"required"`
+	Attachments []ReimbursementAttachment `json:"attachments" api:"required"`
+	Currency    string                    `json:"currency" api:"required"`
+	DatePaidFor time.Time                 `json:"datePaidFor" api:"required" format:"date"`
 	// Payout state, separate from review.
 	//
 	//   - `pending`: no payout in progress. The reimbursement isn't approved yet, or
@@ -352,59 +266,62 @@ type SpendReimbursementGetResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r SpendReimbursementGetResponse) RawJSON() string { return r.JSON.raw }
-func (r *SpendReimbursementGetResponse) UnmarshalJSON(data []byte) error {
+func (r Reimbursement) RawJSON() string { return r.JSON.raw }
+func (r *Reimbursement) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A page of reimbursements plus the cursor for the next/previous page.
-type SpendReimbursementListResponse struct {
-	Page           SpendReimbursementListResponsePage            `json:"page" api:"required"`
-	Reimbursements []SpendReimbursementListResponseReimbursement `json:"reimbursements" api:"required"`
+// A file linked to a reimbursement.
+type ReimbursementAttachment struct {
+	// ID for the expense attachment
+	ID       string `json:"id" api:"required" format:"uuid"`
+	FileName string `json:"fileName" api:"required"`
+	// Presigned download URL. Expires after 24 hours. Request the reimbursement again
+	// for a new URL.
+	URL string `json:"url" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Page           respjson.Field
-		Reimbursements respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
+		ID          respjson.Field
+		FileName    respjson.Field
+		URL         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
-func (r SpendReimbursementListResponse) RawJSON() string { return r.JSON.raw }
-func (r *SpendReimbursementListResponse) UnmarshalJSON(data []byte) error {
+func (r ReimbursementAttachment) RawJSON() string { return r.JSON.raw }
+func (r *ReimbursementAttachment) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type SpendReimbursementListResponsePage struct {
+// The stable id of a freshly created reimbursement; GET it for the full view.
+type ReimbursementIDResponse struct {
 	// ID for the expense
-	NextPage string `json:"nextPage" format:"uuid"`
-	// ID for the expense
-	PreviousPage string `json:"previousPage" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		NextPage     respjson.Field
-		PreviousPage respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
+		ID          respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
-func (r SpendReimbursementListResponsePage) RawJSON() string { return r.JSON.raw }
-func (r *SpendReimbursementListResponsePage) UnmarshalJSON(data []byte) error {
+func (r ReimbursementIDResponse) RawJSON() string { return r.JSON.raw }
+func (r *ReimbursementIDResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // A reimbursement as it appears in the list. Dates, merchant details, notes,
 // category, and transaction id are available from the detail endpoint.
-type SpendReimbursementListResponseReimbursement struct {
+type ReimbursementListItem struct {
 	// ID for the expense
 	ID string `json:"id" api:"required" format:"uuid"`
 	// The positive amount spent in the submitted currency.
-	Amount      float64                        `json:"amount" api:"required"`
-	Attachments []APIV1ReimbursementAttachment `json:"attachments" api:"required"`
-	Currency    string                         `json:"currency" api:"required"`
+	Amount      float64                   `json:"amount" api:"required"`
+	Attachments []ReimbursementAttachment `json:"attachments" api:"required"`
+	Currency    string                    `json:"currency" api:"required"`
 	// Payout state, separate from review.
 	//
 	//   - `pending`: no payout in progress. The reimbursement isn't approved yet, or
@@ -448,34 +365,92 @@ type SpendReimbursementListResponseReimbursement struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r SpendReimbursementListResponseReimbursement) RawJSON() string { return r.JSON.raw }
-func (r *SpendReimbursementListResponseReimbursement) UnmarshalJSON(data []byte) error {
+func (r ReimbursementListItem) RawJSON() string { return r.JSON.raw }
+func (r *ReimbursementListItem) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Payout state, separate from review.
+//
+//   - `pending`: no payout in progress. The reimbursement isn't approved yet, or
+//     it's approved and waiting for a payout batch. A canceled payout, or one
+//     Mercury retries automatically, also returns to `pending`.
+//   - `initiated`: the payout is in progress.
+//   - `paid`: the payout completed.
+//   - `failed`: the payout failed. Mercury retries in a later batch once the
+//     submitter fixes their payout account, unless they've left the organization.
+//   - `paidOutsideMercury`: an approver recorded that the submitter was paid outside
+//     Mercury, so Mercury won't pay it. Its review status is `approved`.
+type ReimbursementPaymentStatus string
+
+const (
+	ReimbursementPaymentStatusPending            ReimbursementPaymentStatus = "pending"
+	ReimbursementPaymentStatusInitiated          ReimbursementPaymentStatus = "initiated"
+	ReimbursementPaymentStatusPaid               ReimbursementPaymentStatus = "paid"
+	ReimbursementPaymentStatusFailed             ReimbursementPaymentStatus = "failed"
+	ReimbursementPaymentStatusPaidOutsideMercury ReimbursementPaymentStatus = "paidOutsideMercury"
+)
+
+// Review state, separate from payment.
+//
+// - `submitted`: waiting for review.
+// - `updatesRequested`: a reviewer asked the submitter for changes.
+// - `approved`: a reviewer approved it. `paymentStatus` shows the payout.
+// - `denied`: a reviewer denied it.
+// - `canceled`: the submitter canceled it.
+type ReimbursementReviewStatus string
+
+const (
+	ReimbursementReviewStatusSubmitted        ReimbursementReviewStatus = "submitted"
+	ReimbursementReviewStatusUpdatesRequested ReimbursementReviewStatus = "updatesRequested"
+	ReimbursementReviewStatusApproved         ReimbursementReviewStatus = "approved"
+	ReimbursementReviewStatusDenied           ReimbursementReviewStatus = "denied"
+	ReimbursementReviewStatusCanceled         ReimbursementReviewStatus = "canceled"
+)
+
 type SpendReimbursementNewParams struct {
-	// Create a reimbursement (a regular, non-mileage expense).
-	APIV1CreateReimbursementRequest APIV1CreateReimbursementRequestParam
-	IdempotencyKey                  param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	// The positive amount spent.
+	Amount float64 `json:"amount" api:"required"`
+	// The currency the money was spent in (e.g. "USD").
+	Currency string `json:"currency" api:"required"`
+	// When the money was actually spent.
+	DatePaidFor time.Time `json:"datePaidFor" api:"required" format:"date"`
+	// Where the money was spent, e.g. "Starbucks".
+	MerchantName string `json:"merchantName" api:"required"`
+	// ID for the category
+	CategoryID     param.Opt[string] `json:"categoryId,omitzero" format:"uuid"`
+	Notes          param.Opt[string] `json:"notes,omitzero"`
+	IdempotencyKey param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
 	paramObj
 }
 
 func (r SpendReimbursementNewParams) MarshalJSON() (data []byte, err error) {
-	return shimjson.Marshal(r.APIV1CreateReimbursementRequest)
+	type shadow SpendReimbursementNewParams
+	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *SpendReimbursementNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 type SpendReimbursementUpdateParams struct {
-	// Create a reimbursement (a regular, non-mileage expense).
-	APIV1CreateReimbursementRequest APIV1CreateReimbursementRequestParam
-	IdempotencyKey                  param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
+	// The positive amount spent.
+	Amount float64 `json:"amount" api:"required"`
+	// The currency the money was spent in (e.g. "USD").
+	Currency string `json:"currency" api:"required"`
+	// When the money was actually spent.
+	DatePaidFor time.Time `json:"datePaidFor" api:"required" format:"date"`
+	// Where the money was spent, e.g. "Starbucks".
+	MerchantName string `json:"merchantName" api:"required"`
+	// ID for the category
+	CategoryID     param.Opt[string] `json:"categoryId,omitzero" format:"uuid"`
+	Notes          param.Opt[string] `json:"notes,omitzero"`
+	IdempotencyKey param.Opt[string] `header:"Idempotency-Key,omitzero" json:"-"`
 	paramObj
 }
 
 func (r SpendReimbursementUpdateParams) MarshalJSON() (data []byte, err error) {
-	return shimjson.Marshal(r.APIV1CreateReimbursementRequest)
+	type shadow SpendReimbursementUpdateParams
+	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *SpendReimbursementUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
