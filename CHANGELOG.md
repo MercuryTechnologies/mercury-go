@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.16.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.15.0...v0.16.0) (2026-11-16)
+
+
+### Features
+
+* **stainless:** fix the Go SDK build and paginate spend.reimbursements ([0d9e625](https://github.com/MercuryTechnologies/mercury-go/commit/0d9e625c2b5bf53d470725052bf4c985e8f17155))
+
+
+### Chores
+
+* **stlc:** autoconfig from OpenAPI spec ([a02165e](https://github.com/MercuryTechnologies/mercury-go/commit/a02165e2c332e3fcc956d14038693379315421df))
+* sync specs from MWB@v2026.11.09.81945+ea9894b ([f30ccfd](https://github.com/MercuryTechnologies/mercury-go/commit/f30ccfdb9a2e8c122a8e973b46c33a98715b22ae))
+* sync specs from MWB@v2026.11.10.82156+e613eed ([21661bf](https://github.com/MercuryTechnologies/mercury-go/commit/21661bfb6ea5f51b20b7d063613c26d4d865c86b))
+* sync specs from MWB@v2026.11.13.82574+a7fd638 ([bf70af7](https://github.com/MercuryTechnologies/mercury-go/commit/bf70af77767f5a273f3266e0ece3e871e93f82fa))
+
 ## [0.15.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.14.1...v0.15.0) (2026-11-05)
 
 
