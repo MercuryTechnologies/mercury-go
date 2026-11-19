@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.1](https://github.com/MercuryTechnologies/mercury-go/compare/v0.16.0...v0.16.1) (2026-11-17)
+
+
+### Chores
+
+* request team-api reviews with CODEOWNERS ([#51](https://github.com/MercuryTechnologies/mercury-go/issues/51)) ([5cfe79b](https://github.com/MercuryTechnologies/mercury-go/commit/5cfe79b07b76a49607bfa3d911cfd4245a8e8c62))
+
 ## [0.16.0](https://github.com/MercuryTechnologies/mercury-go/compare/v0.15.0...v0.16.0) (2026-11-16)
 
 
